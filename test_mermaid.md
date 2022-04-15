@@ -4,7 +4,7 @@ Mermaid lets you create diagrams and visualizations using text and code.
 
 It is a Javascript based diagramming and charting tool that renders Markdown-inspired text definitions to create and modify diagrams dynamically.
 
-<div class="mermaid">
+::: mermaid
     erDiagram
         CUSTOMER ||--o{ ORDER : places
         CUSTOMER {
@@ -22,7 +22,4 @@ It is a Javascript based diagramming and charting tool that renders Markdown-ins
             int quantity
             float pricePerUnit
         }
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-<script>mermaid.initialize({ startOnLoad: true });</script>
+:::

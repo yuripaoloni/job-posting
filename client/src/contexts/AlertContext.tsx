@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 
-type Variant = "success" | "danger" | "warning";
+type Variant = "success" | "danger" | "warning" | "info";
 
 type AlertContextValue = {
   showAlert: boolean;

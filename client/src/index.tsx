@@ -3,13 +3,21 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import Providers from "./Providers";
+
+import "bootstrap-italia/dist/css/bootstrap-italia.min.css";
+import "typeface-titillium-web";
+import "typeface-roboto-mono";
+import "typeface-lora";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <Providers>
+      <App />
+    </Providers>
   </React.StrictMode>
 );
 

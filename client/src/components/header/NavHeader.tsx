@@ -14,7 +14,7 @@ const NavHeader = () => {
   const [openNav, setOpenNav] = useState(false);
 
   return (
-    <Header theme="" type="navbar">
+    <Header theme="" type="navbar" className="primary-bg">
       <HeaderContent expand="lg" megamenu>
         <HeaderToggler
           aria-controls="nav1"
@@ -34,8 +34,7 @@ const NavHeader = () => {
             <Nav navbar>
               <NavItem active>
                 <NavLink active href="#">
-                  <span>link 1 active </span>
-                  <span className="sr-only">current</span>
+                  Link 1
                 </NavLink>
               </NavItem>
               <NavItem>

@@ -4,7 +4,7 @@ import NavHeader from "./NavHeader";
 
 const CustomHeader = () => {
   return (
-    <Headers className="mb-3">
+    <Headers>
       <div className="it-nav-wrapper">
         <CenterHeader />
         <NavHeader />

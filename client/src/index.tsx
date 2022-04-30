@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
-import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import App from "./App";
 import Providers from "./Providers";
 
-import "bootstrap-italia/dist/css/bootstrap-italia.min.css";
+// import "bootstrap-italia/dist/css/bootstrap-italia.min.css";
+import "./scss/bootstrap-italia-custom.scss";
 import "typeface-titillium-web";
 import "typeface-roboto-mono";
 import "typeface-lora";

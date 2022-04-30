@@ -23,9 +23,12 @@ const CenterHeader = () => {
   return (
     <>
       <SignInModal isOpen={showSignInModal} toggleModal={toggleModal} />
-      <Header small theme="" type="center">
+      <Header small theme="" type="center" className="primary-bg">
         <HeaderContent>
-          <HeaderBrand iconName="it-pa" responsive>
+          <HeaderBrand
+            iconName="https://www.unicam.it/themes/custom/italiagov/unicam/img/logo_.png"
+            responsive
+          >
             <h2>Job Posting</h2>
             <h3>Università degli Studi di Camerino</h3>
           </HeaderBrand>

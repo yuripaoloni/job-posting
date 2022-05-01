@@ -1,18 +1,15 @@
 import { useLocation, Navigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { UserType } from "../typings";
 
 type RequireAuthProps = {
-  children: React.ReactNode;
-  requiredUserType: UserType;
+  children: JSX.Element;
 };
 
-const RequireAuth = ({ children, requiredUserType }: RequireAuthProps) => {
+const RequireAuth = ({ children }: RequireAuthProps) => {
   let location = useLocation();
+  const { authToken } = useAuth();
 
-  const { authToken, userType } = useAuth();
-
-  if (!authToken && userType !== requiredUserType) {
+  if (!authToken) {
     return <Navigate to="/" state={{ from: location }} />;
   }
 

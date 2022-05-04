@@ -1,5 +1,5 @@
 type UserType = "worker" | "manager" | "director" | null;
 
-type Jobs = [];
+type Job = [];
 
-export type { UserType, Jobs };
+export type { UserType, Job };

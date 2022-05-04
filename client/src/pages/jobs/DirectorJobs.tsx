@@ -1,7 +1,7 @@
-import { Jobs } from "../../typings";
+import { Job } from "../../typings";
 
 type DirectorJobsProps = {
-  jobs: Jobs[];
+  jobs: Job[];
 };
 
 const DirectorJobs = ({ jobs }: DirectorJobsProps) => {

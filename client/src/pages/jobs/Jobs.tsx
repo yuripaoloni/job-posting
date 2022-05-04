@@ -4,10 +4,10 @@ import DirectorJobs from "./DirectorJobs";
 import ManagerJobs from "./ManagerJobs";
 import WorkerJobs from "./WorkerJobs";
 
-import { Jobs } from "../../typings";
+import { Job } from "../../typings";
 
 const Jobs = () => {
-  const [jobs, setJobs] = useState<Jobs[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
 
   const { userType } = useAuth();
 

@@ -16,7 +16,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route
-          path="/jobs"
+          path="jobs"
           element={
             <RequireAuth>
               <Jobs />
@@ -24,7 +24,7 @@ function App() {
           }
         />
         <Route
-          path="/jobsHistory"
+          path="jobsHistory"
           element={
             <RequireAuth>
               <JobsHistory />

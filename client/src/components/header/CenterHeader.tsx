@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   HeaderContent,
   HeaderBrand,
@@ -7,17 +8,22 @@ import {
   Button,
   HeaderSocialsZone,
 } from "design-react-kit";
-import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import SignInModal from "../SignInModal";
+import UserDropdown from "./UserDropdown";
 
 const CenterHeader = () => {
   const [showSignInModal, setShowSignInModal] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const { authToken } = useAuth();
 
   const toggleModal = () => {
     setShowSignInModal((prev) => !prev);
+  };
+
+  const toggleDropdown = () => {
+    setShowDropdown((prev) => !prev);
   };
 
   return (
@@ -42,14 +48,22 @@ const CenterHeader = () => {
               </ul>
             </HeaderSocialsZone>
             {authToken ? (
-              <div></div>
+              <UserDropdown
+                isOpen={showDropdown}
+                toggleDropdown={toggleDropdown}
+              />
             ) : (
               <Button
-                className="primary-bg-a9 text-white ml-5"
+                className="btn-icon bg-danger text-white ml-5"
                 size="sm"
                 onClick={() => toggleModal()}
               >
-                Accedi
+                <span className="rounded-icon">
+                  <Icon color="primary" icon="it-user" />
+                </span>
+                <span className="d-none d-lg-block">
+                  Accedi alla piattaforma
+                </span>
               </Button>
             )}
           </HeaderRightZone>

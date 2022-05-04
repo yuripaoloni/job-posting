@@ -9,6 +9,7 @@ import {
   NavItem,
   NavLink,
 } from "design-react-kit";
+import { NavLink as ReactRouteNavLink } from "react-router-dom";
 
 const NavHeader = () => {
   const [openNav, setOpenNav] = useState(false);
@@ -32,20 +33,20 @@ const NavHeader = () => {
         >
           <div className="menu-wrapper">
             <Nav navbar>
-              <NavItem active>
-                <NavLink active href="#">
-                  Link 1
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink href="#">Link 2</NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink href="#">Link 3</NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink href="#">Link 4</NavLink>
-              </NavItem>
+              <ReactRouteNavLink to="/">
+                {({ isActive }) => (
+                  <NavItem>
+                    <NavLink active={isActive}>Home</NavLink>
+                  </NavItem>
+                )}
+              </ReactRouteNavLink>
+              <ReactRouteNavLink to="/jobs">
+                {({ isActive }) => (
+                  <NavItem>
+                    <NavLink active={isActive}>Jobs</NavLink>
+                  </NavItem>
+                )}
+              </ReactRouteNavLink>
             </Nav>
           </div>
         </Collapse>

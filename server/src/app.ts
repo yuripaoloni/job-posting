@@ -23,7 +23,7 @@ class App {
   constructor(routes: Routes[]) {
     this.app = express();
     this.env = NODE_ENV || 'development';
-    this.port = PORT || 3000;
+    this.port = PORT || 8000;
 
     this.env !== 'test' && this.connectToDatabase();
     this.initializeMiddlewares();
@@ -49,19 +49,19 @@ class App {
   }
 
   private initializeMiddlewares() {
-    this.app.use(morgan(LOG_FORMAT, { stream }));
+    this.app.use(morgan(LOG_FORMAT, { stream })); //HTTP request logger middleware
     this.app.use(cors({ origin: ORIGIN, credentials: CREDENTIALS }));
-    this.app.use(hpp());
-    this.app.use(helmet());
-    this.app.use(compression());
+    this.app.use(hpp()); //middleware to protect against HTTP Parameter Pollution attacks
+    this.app.use(helmet()); //secure your Express apps by setting various HTTP headers
+    this.app.use(compression()); //compression middleware
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
-    this.app.use(cookieParser());
+    this.app.use(cookieParser()); //populate req.cookies with an object keyed by the cookie names
   }
 
   private initializeRoutes(routes: Routes[]) {
     routes.forEach(route => {
-      this.app.use('/', route.router);
+      this.app.use('/api', route.router);
     });
   }
 
@@ -69,9 +69,9 @@ class App {
     const options = {
       swaggerDefinition: {
         info: {
-          title: 'REST API',
+          title: 'Job Posting REST API',
           version: '1.0.0',
-          description: 'Example docs',
+          description: 'Job Posting REST API documentation',
         },
       },
       apis: ['swagger.yaml'],

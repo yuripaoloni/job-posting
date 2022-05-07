@@ -15,12 +15,13 @@ const NavHeader = () => {
   const [openNav, setOpenNav] = useState(false);
 
   return (
-    <Header theme="" type="navbar" className="primary-bg">
-      <HeaderContent expand="lg" megamenu>
+    <Header theme="" type="navbar">
+      <HeaderContent expand="lg">
         <HeaderToggler
           aria-controls="nav1"
           aria-expanded="false"
           aria-label="Toggle navigation"
+          type="button"
           onClick={() => setOpenNav((prev) => !prev)}
         >
           <Icon icon="it-burger" />

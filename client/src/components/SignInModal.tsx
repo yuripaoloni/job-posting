@@ -23,8 +23,13 @@ const SignInModal = ({ isOpen, toggleModal }: SignInModalProps) => {
   };
 
   return (
-    <Modal isOpen={isOpen} toggle={() => toggleModal()} labelledBy="esempio4">
-      <ModalHeader id="esempio4">
+    <Modal
+      isOpen={isOpen}
+      toggle={() => toggleModal()}
+      labelledBy="loginModal"
+      centered
+    >
+      <ModalHeader id="loginModal">
         <h4>Accedi</h4>
       </ModalHeader>
       <ModalBody>

@@ -20,15 +20,16 @@ const UserDropdown = ({ isOpen, toggleDropdown }: UserDropdownProps) => {
   return (
     <Dropdown isOpen={isOpen} toggle={() => toggleDropdown()}>
       <DropdownToggle
-        color="primary"
         className="btn-icon bg-danger text-white ml-5"
+        size="sm"
+        caret
       >
         <span className="rounded-icon">
-          <Icon color="primary" icon="it-user" />
+          <Icon color="primary" icon="it-user" size="xs" />
         </span>
-        <span className="d-none d-lg-block">{user}</span>
+        <span className="d-none d-lg-block">Mario Rossi</span>
       </DropdownToggle>
-      <DropdownMenu>
+      <DropdownMenu className="mr-4 mr-sm-0">
         <LinkList>
           <Link to="profile">
             <LinkListItem className="right-icon">

@@ -39,7 +39,7 @@ const CenterHeader = () => {
             <h3>Università degli Studi di Camerino</h3>
           </HeaderBrand>
           <HeaderRightZone>
-            <HeaderSocialsZone label="">
+            <HeaderSocialsZone>
               <ul>
                 <li>
                   <Icon icon="it-mail" color="light" className="mr-1" />
@@ -47,7 +47,7 @@ const CenterHeader = () => {
                 </li>
               </ul>
             </HeaderSocialsZone>
-            {authToken ? (
+            {!authToken ? (
               <UserDropdown
                 isOpen={showDropdown}
                 toggleDropdown={toggleDropdown}

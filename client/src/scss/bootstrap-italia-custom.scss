@@ -1,5 +1,15 @@
-$primary: #222c4a;
+$primary-h: 225;
+$primary-s: 54;
+$primary-b: 29;
 
+$primary: #222c4a;
 $danger: #c3253d;
+
+// navbar bg color when not wrapped
+.it-header-navbar-wrapper {
+  @media (min-width: 992px) {
+    background-color: $primary !important;
+  }
+}
 
 @import "../../node_modules/bootstrap-italia/src/scss/bootstrap-italia.scss";

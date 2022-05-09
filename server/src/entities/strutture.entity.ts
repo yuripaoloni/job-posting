@@ -11,6 +11,9 @@ export class StruttureEntity extends BaseEntity {
   @Column('text', { name: 'desc_struttura', nullable: true })
   descStruttura: string | null;
 
+  @Column('varchar', { name: 'Codice_CSA', nullable: true, length: 6 })
+  codiceCsa: string | null;
+
   @OneToMany(() => CaricheUtentiEntity, caricheUtenti => caricheUtenti.idStruttura)
   caricheUtentis: CaricheUtentiEntity[];
 

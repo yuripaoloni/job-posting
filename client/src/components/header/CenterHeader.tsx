@@ -43,7 +43,12 @@ const CenterHeader = () => {
               <ul>
                 <li>
                   <Icon icon="it-mail" color="light" className="mr-1" />
-                  <span>cinfo@unicam.it</span>
+                  <a
+                    href="mailto:cinfo@unicam.it"
+                    className="text-white text-decoration-none"
+                  >
+                    cinfo@unicam.it
+                  </a>
                 </li>
               </ul>
             </HeaderSocialsZone>

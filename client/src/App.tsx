@@ -1,6 +1,7 @@
 import { Container } from "design-react-kit";
 import { Routes, Route } from "react-router-dom";
 import CustomAlert from "./components/CustomAlert";
+import Footer from "./components/Footer";
 import CustomNavbar from "./components/header/CustomHeader";
 import RequireAuth from "./components/RequireAuth";
 import Jobs from "./pages/jobs/Jobs";
@@ -49,6 +50,7 @@ function App() {
           }
         />
       </Routes>
+      <Footer />
     </Container>
   );
 }

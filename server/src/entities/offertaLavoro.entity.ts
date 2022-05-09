@@ -1,7 +1,6 @@
 import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
 import { CandidaturaEntity } from './candidatura.entity';
 import { RichiestaSoftSkillEntity } from './richiestaSoftSkill.entity';
-import { RisposteUtenteEntity } from './risposteUtente.entity';
 
 @Index('PK__offerta___3213E83F411E9D17', ['id'], { unique: true })
 @Entity('offerta_lavoro', { schema: 'dbo' })
@@ -9,8 +8,8 @@ export class OffertaLavoroEntity extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
 
-  @Column('int', { name: 'responsabile_id', nullable: true })
-  responsabileId: number | null;
+  @Column('nvarchar', { name: 'responsabile_cf', nullable: true, length: 255 })
+  responsabileCf: string | null;
 
   @Column('nvarchar', { name: 'ruolo', nullable: true, length: 255 })
   ruolo: string | null;
@@ -39,7 +38,4 @@ export class OffertaLavoroEntity extends BaseEntity {
 
   @OneToMany(() => RichiestaSoftSkillEntity, richiestaSoftSkill => richiestaSoftSkill.offerta)
   richiestaSoftSkills: RichiestaSoftSkillEntity[];
-
-  @OneToMany(() => RisposteUtenteEntity, risposteUtente => risposteUtente.offerta)
-  risposteUtentes: RisposteUtenteEntity[];
 }

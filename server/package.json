@@ -1,18 +1,18 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "TypeScript + TypeORM + PostgreSQL + Express API Server",
-  "author": "",
+  "description": "job posting server",
+  "author": "Yuri Paoloni",
   "license": "ISC",
   "scripts": {
-    "start": "npm run build && cross-env NODE_ENV=production node dist/server.js",
+    "start": "yarn build && cross-env NODE_ENV=production node dist/server.js",
     "dev": "cross-env NODE_ENV=development nodemon",
     "build": "swc src -d dist --source-maps --copy-files",
     "build:tsc": "tsc && tsc-alias",
     "test": "jest --forceExit --detectOpenHandles",
     "lint": "eslint --ignore-path .gitignore --ext .ts src/",
-    "lint:fix": "npm run lint -- --fix",
-    "deploy:prod": "npm run build && pm2 start ecosystem.config.js --only prod",
+    "lint:fix": "yarn lint -- --fix",
+    "deploy:prod": "yarn build && pm2 start ecosystem.config.js --only prod",
     "deploy:dev": "pm2 start ecosystem.config.js --only dev"
   },
   "dependencies": {
@@ -28,6 +28,7 @@
     "helmet": "^4.6.0",
     "hpp": "^0.2.3",
     "jsonwebtoken": "^8.5.1",
+    "ldapjs-promise": "^1.0.7",
     "morgan": "^1.10.0",
     "mssql": "^8.1.0",
     "pg": "^8.6.0",

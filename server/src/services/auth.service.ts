@@ -1,55 +1,56 @@
-import { compare, hash } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { EntityRepository, Repository } from 'typeorm';
-import { SECRET_KEY } from '@config';
-import { CreateUserDto } from '@dtos/users.dto';
-import { UserEntity } from '@entities/users.entity';
+import { SECRET_KEY, LDAP_SERVER } from '@config';
+import { LoginDto } from '@dtos/auth.dto';
 import { HttpException } from '@exceptions/HttpException';
 import { DataStoredInToken, TokenData } from '@interfaces/auth.interface';
-import { User } from '@interfaces/users.interface';
+import { Utente } from '@interfaces/utente.interface';
 import { isEmpty } from '@utils/util';
+import { UtenteEntity } from '@/entities/utente.entity';
+import { CaricheUtentiEntity } from '@/entities/caricheUtenti.entity';
+import { createClient, SearchOptions } from 'ldapjs-promise';
+import { TipiUtenteEntity } from '@/entities/tipiUtente.entity';
 
 @EntityRepository()
-class AuthService extends Repository<UserEntity> {
-  public async signup(userData: CreateUserDto): Promise<User> {
-    if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
+class AuthService extends Repository<UtenteEntity> {
+  public async login(loginData: LoginDto): Promise<{ cookie: string; tipoUtenteId: number }> {
+    if (isEmpty(loginData)) throw new HttpException(400, 'Credenziali di accesso non corrette');
 
-    const findUser: User = await UserEntity.findOne({ where: { email: userData.email } });
-    if (findUser) throw new HttpException(409, `You're email ${userData.email} already exists`);
+    const client = await createClient({ url: `ldap://${LDAP_SERVER}` });
 
-    const hashedPassword = await hash(userData.password, 10);
-    const createUserData: User = await UserEntity.create({ ...userData, password: hashedPassword }).save();
-    return createUserData;
-  }
+    await client.bind(`${loginData.username}@amministrazione.unicam`, loginData.password);
 
-  public async login(userData: CreateUserDto): Promise<{ cookie: string; findUser: User }> {
-    if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
+    const opts: SearchOptions = {
+      filter: `(sAMAccountName=${loginData.username})`,
+      scope: 'sub',
+      attributes: ['employeeid'],
+    };
 
-    const findUser: User = await UserEntity.findOne({ where: { email: userData.email } });
-    if (!findUser) throw new HttpException(409, `You're email ${userData.email} not found`);
+    const results = await client.searchReturnAll('OU=PERSONALE,DC=Amministrazione,DC=Unicam', opts);
 
-    const isPasswordMatching: boolean = await compare(userData.password, findUser.password);
-    if (!isPasswordMatching) throw new HttpException(409, "You're password not matching");
+    const employeeId = results.entries[0].employeeID;
 
-    const tokenData = this.createToken(findUser);
+    const utente: Utente = await UtenteEntity.findOne({ where: { cf: employeeId } });
+    if (!utente) throw new HttpException(401, `Utente ${loginData.username} non registrato`);
+
+    let tipoUtenteId = 0;
+
+    const caricaUtente = await CaricheUtentiEntity.findOne({ where: { utenteCf: utente.cf } });
+    if (caricaUtente) {
+      const tipoUtente = await TipiUtenteEntity.findOne({ where: { idTipoutente: caricaUtente.idTipoutente } });
+      tipoUtenteId = tipoUtente.idTipoutente;
+    }
+
+    const tokenData = this.createToken(utente, tipoUtenteId);
     const cookie = this.createCookie(tokenData);
 
-    return { cookie, findUser };
+    return { cookie, tipoUtenteId };
   }
 
-  public async logout(userData: User): Promise<User> {
-    if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
-
-    const findUser: User = await UserEntity.findOne({ where: { email: userData.email, password: userData.password } });
-    if (!findUser) throw new HttpException(409, "You're not user");
-
-    return findUser;
-  }
-
-  public createToken(user: User): TokenData {
-    const dataStoredInToken: DataStoredInToken = { id: user.id };
+  public createToken(user: Utente, tipoUtenteId: number): TokenData {
+    const dataStoredInToken: DataStoredInToken = { cf: user.cf, username: user.username, tipoUtenteId };
     const secretKey: string = SECRET_KEY;
-    const expiresIn: number = 60 * 60;
+    const expiresIn: number = 60 * 60 * 24; //1 week
 
     return { expiresIn, token: sign(dataStoredInToken, secretKey, { expiresIn }) };
   }

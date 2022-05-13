@@ -1,12 +1,13 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, BaseEntity } from 'typeorm';
 import { CandidaturaEntity } from './candidatura.entity';
 import { CompetenzeLinguisticheEntity } from './competenzeLinguistiche.entity';
+import { Utente } from '@interfaces/utente.interface';
 import { RisposteUtenteEntity } from './risposteUtente.entity';
 import { StruttureEntity } from './strutture.entity';
 
 @Index('PK__utente__32136660462A933F', ['cf'], { unique: true })
 @Entity('utente', { schema: 'dbo' })
-export class UtenteEntity extends BaseEntity {
+export class UtenteEntity extends BaseEntity implements Utente {
   @Column('nvarchar', { primary: true, name: 'cf', length: 255 })
   cf: string;
 

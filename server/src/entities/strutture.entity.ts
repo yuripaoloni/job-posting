@@ -8,7 +8,7 @@ export class StruttureEntity extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id_struttura' })
   idStruttura: number;
 
-  @Column('text', { name: 'desc_struttura', nullable: true })
+  @Column('varchar', { name: 'desc_struttura', nullable: true, length: 200 })
   descStruttura: string | null;
 
   @Column('varchar', { name: 'Codice_CSA', nullable: true, length: 6 })

@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
+import { Index, Column, Entity, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
 
+@Index('PK_coeff_risposte', ['id'], { unique: true })
 @Entity('coeff_risposte', { schema: 'dbo' })
 export class CoeffRisposteEntity extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
@@ -8,7 +9,7 @@ export class CoeffRisposteEntity extends BaseEntity {
   @Column('int', { name: 'ordine', nullable: true })
   ordine: number | null;
 
-  @Column('int', { name: 'valore', nullable: true })
+  @Column('float', { name: 'valore', nullable: true, precision: 53 })
   valore: number | null;
 
   @Column('date', { name: 'data_fin', nullable: true })

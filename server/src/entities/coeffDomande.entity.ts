@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
+import { Index, Column, Entity, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
 
+@Index('PK_coeff_domande', ['id'], { unique: true })
 @Entity('coeff_domande', { schema: 'dbo' })
 export class CoeffDomandeEntity extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })

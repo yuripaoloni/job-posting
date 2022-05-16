@@ -1,12 +1,11 @@
 import { createContext, useContext, useState } from "react";
-
-type Variant = "success" | "danger" | "warning" | "info";
+import { AlertVariant } from "../typings";
 
 type AlertContextValue = {
   showAlert: boolean;
   alertMessage: string;
-  alertVariant: Variant;
-  toggleAlert: (alertMessage: string, alertVariant: Variant) => void;
+  alertVariant: AlertVariant;
+  toggleAlert: (alertMessage: string, alertVariant: AlertVariant) => void;
 };
 type AlertProviderProps = { children: React.ReactNode };
 
@@ -15,9 +14,9 @@ const AlertContext = createContext<AlertContextValue | undefined>(undefined);
 const AlertProvider = ({ children }: AlertProviderProps) => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
-  const [alertVariant, setAlertVariant] = useState<Variant>("success");
+  const [alertVariant, setAlertVariant] = useState<AlertVariant>("success");
 
-  const toggleAlert = (alertMessage: string, alertVariant: Variant) => {
+  const toggleAlert = (alertMessage: string, alertVariant: AlertVariant) => {
     setAlertVariant(alertVariant);
     setAlertMessage(alertMessage);
     setShowAlert(true);

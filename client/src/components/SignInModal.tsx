@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Modal,
   ModalHeader,
@@ -7,7 +8,11 @@ import {
   ModalFooter,
   Button,
 } from "design-react-kit";
-import { useState } from "react";
+
+import { useAuth } from "../hooks/AuthContext";
+import { useFetch } from "../hooks/FetchContext";
+
+import { LoginRes } from "../typings";
 
 type SignInModalProps = {
   isOpen: boolean;
@@ -18,8 +23,19 @@ const SignInModal = ({ isOpen, toggleModal }: SignInModalProps) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const onSignIn = () => {
-    //TODO add signIn function, setToken and userType
+  const { fetchData } = useFetch();
+  const { toggleAuth } = useAuth();
+
+  const onSignIn = async () => {
+    const res = await fetchData<LoginRes>("/auth/login", "POST", {
+      username: username,
+      password: password,
+    });
+
+    if (res?.data.tipoUtenteId) {
+      toggleAuth(true, res?.data.tipoUtenteId, username);
+      toggleModal();
+    }
   };
 
   return (
@@ -29,8 +45,8 @@ const SignInModal = ({ isOpen, toggleModal }: SignInModalProps) => {
       labelledBy="loginModal"
       centered
     >
-      <ModalHeader id="loginModal">
-        <h4>Accedi</h4>
+      <ModalHeader tag="h4" id="loginModal">
+        Accedi
       </ModalHeader>
       <ModalBody>
         <FormGroup>
@@ -44,7 +60,7 @@ const SignInModal = ({ isOpen, toggleModal }: SignInModalProps) => {
         </FormGroup>
         <FormGroup>
           <Input
-            type="text"
+            type="password"
             id="password"
             value={password}
             label="Password"

@@ -7,12 +7,15 @@ import { DataStoredInToken, TokenData } from '@interfaces/auth.interface';
 import { Utente } from '@interfaces/utente.interface';
 import { isEmpty } from '@utils/util';
 import { UtenteEntity } from '@/entities/utente.entity';
-import { CaricheUtentiEntity } from '@/entities/caricheUtenti.entity';
 import { createClient, SearchOptions } from 'ldapjs-promise';
-import { TipiUtenteEntity } from '@/entities/tipiUtente.entity';
+import UtenteService from './utente.service';
+import CaricheUtentiService from './caricheUtenti.service';
 
 @EntityRepository()
 class AuthService extends Repository<UtenteEntity> {
+  public utenteService = new UtenteService();
+  public caricheUtentiService = new CaricheUtentiService();
+
   public async login(loginData: LoginDto): Promise<{ cookie: string; tipoUtenteId: number }> {
     if (isEmpty(loginData)) throw new HttpException(400, 'Credenziali di accesso non corrette');
 
@@ -28,18 +31,11 @@ class AuthService extends Repository<UtenteEntity> {
 
     const results = await client.searchReturnAll('OU=PERSONALE,DC=Amministrazione,DC=Unicam', opts);
 
-    const employeeId = results.entries[0].employeeID;
+    const employeeId = results.entries[0].employeeID as string;
 
-    const utente: Utente = await UtenteEntity.findOne({ where: { cf: employeeId } });
-    if (!utente) throw new HttpException(401, `Utente ${loginData.username} non registrato`);
+    const utente = await this.utenteService.findUserByCf(employeeId);
 
-    let tipoUtenteId = 0;
-
-    const caricaUtente = await CaricheUtentiEntity.findOne({ where: { utenteCf: utente.cf } });
-    if (caricaUtente) {
-      const tipoUtente = await TipiUtenteEntity.findOne({ where: { idTipoutente: caricaUtente.idTipoutente } });
-      tipoUtenteId = tipoUtente.idTipoutente;
-    }
+    const tipoUtenteId = await this.caricheUtentiService.getCaricaIdByCf(employeeId);
 
     const tokenData = this.createToken(utente, tipoUtenteId);
     const cookie = this.createCookie(tokenData);

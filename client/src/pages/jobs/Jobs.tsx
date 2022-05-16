@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../../contexts/AuthContext";
+
 import DirectorJobs from "./DirectorJobs";
 import ManagerJobs from "./ManagerJobs";
 import WorkerJobs from "./WorkerJobs";
+
+import { useAuth } from "../../hooks/AuthContext";
 
 import { Job } from "../../typings";
 
@@ -16,12 +18,12 @@ const Jobs = () => {
   }, []);
 
   let page =
-    userType === "worker" ? (
+    userType === 0 ? (
       <WorkerJobs jobs={jobs} />
-    ) : userType === "manager" ? (
-      <ManagerJobs jobs={jobs} />
-    ) : (
+    ) : userType === 1 ? (
       <DirectorJobs jobs={jobs} />
+    ) : (
+      <ManagerJobs jobs={jobs} />
     );
 
   return page;

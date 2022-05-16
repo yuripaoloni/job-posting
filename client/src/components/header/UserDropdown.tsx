@@ -7,7 +7,9 @@ import {
   Icon,
 } from "design-react-kit";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
+
+import { useAuth } from "../../hooks/AuthContext";
+import { useFetch } from "../../hooks/FetchContext";
 
 type UserDropdownProps = {
   isOpen: boolean;
@@ -15,7 +17,14 @@ type UserDropdownProps = {
 };
 
 const UserDropdown = ({ isOpen, toggleDropdown }: UserDropdownProps) => {
-  const { user } = useAuth();
+  const { user, toggleAuth } = useAuth();
+  const { fetchData } = useFetch();
+
+  const onLogout = async () => {
+    await fetchData("/auth/logout", "GET");
+
+    toggleAuth(false, 0, "");
+  };
 
   return (
     <Dropdown isOpen={isOpen} toggle={() => toggleDropdown()}>
@@ -27,7 +36,7 @@ const UserDropdown = ({ isOpen, toggleDropdown }: UserDropdownProps) => {
         <span className="rounded-icon">
           <Icon color="primary" icon="it-user" size="xs" />
         </span>
-        <span className="d-none d-lg-block">Mario Rossi</span>
+        <span className="d-none d-lg-block">{user}</span>
       </DropdownToggle>
       <DropdownMenu className="mr-4 mr-sm-0">
         <LinkList>
@@ -55,7 +64,11 @@ const UserDropdown = ({ isOpen, toggleDropdown }: UserDropdownProps) => {
               <span>Storico lavori</span>
             </LinkListItem>
           </Link>
-          <LinkListItem className="right-icon" onClick={() => {}}>
+          <LinkListItem
+            className="right-icon"
+            onClick={() => onLogout()}
+            role="button"
+          >
             <Icon
               className="right"
               color="primary"

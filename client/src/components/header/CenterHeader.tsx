@@ -8,15 +8,17 @@ import {
   Button,
   HeaderSocialsZone,
 } from "design-react-kit";
-import { useAuth } from "../../contexts/AuthContext";
+
 import SignInModal from "../SignInModal";
 import UserDropdown from "./UserDropdown";
+
+import { useAuth } from "../../hooks/AuthContext";
 
 const CenterHeader = () => {
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const { authToken } = useAuth();
+  const { isAuth } = useAuth();
 
   const toggleModal = () => {
     setShowSignInModal((prev) => !prev);
@@ -52,7 +54,7 @@ const CenterHeader = () => {
                 </li>
               </ul>
             </HeaderSocialsZone>
-            {!authToken ? (
+            {isAuth ? (
               <UserDropdown
                 isOpen={showDropdown}
                 toggleDropdown={toggleDropdown}

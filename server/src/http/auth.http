@@ -12,6 +12,12 @@ Content-Type: application/json
 }
 
 ###
+# Logout
+GET {{ baseURL }}/logout 
+Cookie: Authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjZiI6IlBMTllSVTk4VDAzSTE1NkkiLCJ1c2VybmFtZSI6Inl1cmkwMS5wYW9sb25pIiwidGlwb1V0ZW50ZUlkIjoxLCJpYXQiOjE2NTI2OTQ0NzgsImV4cCI6MTY1Mjc4MDg3OH0.FVsNTuhMskBLFdy6Lv-fscJZ1wHNMm9iqj28FlVd59Q; HttpOnly; Max-Age=86400
+
+
+###
 # Validate access token
 GET {{ baseURL }}/validate 
-Cookie: Authorization=bar
+Cookie: Authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjZiI6IlBMTllSVTk4VDAzSTE1NkkiLCJ1c2VybmFtZSI6Inl1cmkwMS5wYW9sb25pIiwidGlwb1V0ZW50ZUlkIjoxLCJpYXQiOjE2NTI2OTQ0NzgsImV4cCI6MTY1Mjc4MDg3OH0.FVsNTuhMskBLFdy6Lv-fscJZ1wHNMm9iqj28FlVd59Q; HttpOnly; Max-Age=86400

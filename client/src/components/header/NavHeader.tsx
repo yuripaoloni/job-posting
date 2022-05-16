@@ -9,10 +9,14 @@ import {
   NavItem,
   NavLink,
 } from "design-react-kit";
-import { NavLink as ReactRouteNavLink } from "react-router-dom";
+import { NavLink as RRNavLink } from "react-router-dom";
+
+import { useAuth } from "../../hooks/AuthContext";
 
 const NavHeader = () => {
   const [openNav, setOpenNav] = useState(false);
+
+  const { isAuth } = useAuth();
 
   return (
     <Header theme="" type="navbar">
@@ -34,20 +38,18 @@ const NavHeader = () => {
         >
           <div className="menu-wrapper">
             <Nav navbar>
-              <ReactRouteNavLink to="/">
-                {({ isActive }) => (
-                  <NavItem>
-                    <NavLink active={isActive}>Home</NavLink>
-                  </NavItem>
-                )}
-              </ReactRouteNavLink>
-              <ReactRouteNavLink to="/jobs">
-                {({ isActive }) => (
-                  <NavItem>
-                    <NavLink active={isActive}>Jobs</NavLink>
-                  </NavItem>
-                )}
-              </ReactRouteNavLink>
+              <NavItem>
+                <NavLink to="/" tag={RRNavLink}>
+                  Home
+                </NavLink>
+              </NavItem>
+              {isAuth && (
+                <NavItem>
+                  <NavLink to="/jobs" tag={RRNavLink}>
+                    Jobs
+                  </NavLink>
+                </NavItem>
+              )}
             </Nav>
           </div>
         </Collapse>

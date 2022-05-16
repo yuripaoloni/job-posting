@@ -1,55 +1,45 @@
-import { Container } from "design-react-kit";
-import { Routes, Route } from "react-router-dom";
+import axios from "axios";
+import { useEffect } from "react";
+import { Container, Progress } from "design-react-kit";
+
+import { useAuth } from "./hooks/AuthContext";
+import { useFetch } from "./hooks/FetchContext";
+
 import CustomAlert from "./components/CustomAlert";
-import Footer from "./components/Footer";
 import CustomNavbar from "./components/header/CustomHeader";
-import RequireAuth from "./components/RequireAuth";
-import Jobs from "./pages/jobs/Jobs";
-import Landing from "./pages/Landing";
-import JobsHistory from "./pages/user/JobsHistory";
-import Profile from "./pages/user/Profile";
-import SoftSkill from "./pages/user/SoftSkill";
+import Footer from "./components/Footer";
+
+import Routes from "./Routes";
 
 function App() {
+  const { loading } = useFetch();
+  const { toggleAuth } = useAuth();
+
+  useEffect(() => {
+    async function onValidateCookie() {
+      const res = await axios.get("/auth/validate");
+
+      if (res?.data.tipoUtenteId) {
+        toggleAuth(true, res?.data.tipoUtenteId, res?.data.username);
+      }
+    }
+
+    onValidateCookie();
+  }, [toggleAuth]);
+
   return (
     <Container fluid className="p-0">
+      {loading && (
+        <Progress
+          indeterminate
+          label="In elaborazione..."
+          color="danger"
+          style={{ zIndex: 999999 }}
+        />
+      )}
       <CustomNavbar />
       <CustomAlert />
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route
-          path="jobs"
-          element={
-            <RequireAuth>
-              <Jobs />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="jobsHistory"
-          element={
-            <RequireAuth>
-              <JobsHistory />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="profile"
-          element={
-            // <RequireAuth>
-            <Profile />
-            // </RequireAuth>
-          }
-        />
-        <Route
-          path="softSkill"
-          element={
-            // <RequireAuth>
-            <SoftSkill />
-            // </RequireAuth>
-          }
-        />
-      </Routes>
+      <Routes />
       <Footer />
     </Container>
   );

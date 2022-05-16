@@ -1,5 +1,11 @@
-type UserType = "worker" | "manager" | "director" | null;
+export type UserType = 0 | 1 | 2; //1 - DG, 2 - responsabile struttura
 
-type Job = [];
+export type AlertVariant = "success" | "danger" | "warning" | "info";
 
-export type { UserType, Job };
+export type Job = [];
+
+export type LoginRes = {
+  tipoUtenteId: UserType;
+  message: string;
+  username?: string;
+};

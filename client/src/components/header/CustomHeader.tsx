@@ -1,4 +1,6 @@
+import { memo } from "react";
 import { Headers } from "design-react-kit";
+
 import CenterHeader from "./CenterHeader";
 import NavHeader from "./NavHeader";
 
@@ -13,4 +15,4 @@ const CustomHeader = () => {
   );
 };
 
-export default CustomHeader;
+export default memo(CustomHeader);

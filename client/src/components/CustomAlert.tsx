@@ -1,5 +1,5 @@
 import { Alert } from "design-react-kit";
-import { useAlert } from "../contexts/AlertContext";
+import { useAlert } from "../hooks/AlertContext";
 
 const CustomAlert = () => {
   const { showAlert, alertMessage, alertVariant } = useAlert();
@@ -10,12 +10,12 @@ const CustomAlert = () => {
       color={alertVariant}
       fade
       style={{
-        zIndex: 1000,
+        zIndex: 999999,
         position: "fixed",
         top: 0,
         right: 0,
-        marginTop: 55,
-        marginRight: 10,
+        marginTop: 85,
+        marginRight: 20,
         minWidth: 200,
         maxWidth: 300,
         backgroundColor: "white",

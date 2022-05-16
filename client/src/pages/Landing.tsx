@@ -9,11 +9,8 @@ import {
   CardText,
   CardReadMore,
 } from "design-react-kit";
-import { useAlert } from "../contexts/AlertContext";
 
 const Landing = () => {
-  const { toggleAlert } = useAlert();
-
   return (
     <Container fluid className="p-4">
       <Row className="justify-content-center">
@@ -40,6 +37,8 @@ const Landing = () => {
               <CardReadMore
                 iconName="it-arrow-right"
                 text="Visualizza offerte"
+                role="button"
+                onClick={() => {}}
               />
             </CardBody>
           </Card>
@@ -54,7 +53,12 @@ const Landing = () => {
                 Sei un responsabile di una struttura Unicam?
               </CardTitle>
               <CardText>Apri una nuova posizione lavorativa</CardText>
-              <CardReadMore iconName="it-arrow-right" text="Crea offerta" />
+              <CardReadMore
+                iconName="it-arrow-right"
+                text="Crea offerta"
+                role="button"
+                onClick={() => {}}
+              />
             </CardBody>
           </Card>
         </Col>

@@ -7,11 +7,11 @@ import {
   Col,
   Chip,
   ChipLabel,
-  Button,
   Icon,
 } from "design-react-kit";
-import LanguagesModal from "../../components/profile/LanguagesModal";
 import { Link } from "react-router-dom";
+
+import LanguagesModal from "../../components/profile/LanguagesModal";
 
 type ProfileProps = {};
 

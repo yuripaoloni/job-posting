@@ -30,7 +30,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --transformIgnorePatterns 'node_modules/(?!(design-react-kit|bootstrap-italia)/)'",
     "test:ci": "CI=true react-scripts test",
     "eject": "react-scripts eject"
   },

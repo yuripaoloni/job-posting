@@ -14,24 +14,10 @@ type FetchContextValue = {
 
 type FetchProviderProps = { children: React.ReactNode };
 
-axios.defaults.baseURL = process.env.REACT_APP_API_URL;
-
-axios.defaults.withCredentials = true;
-
-axios.interceptors.response.use(
-  (res) => {
-    return res;
-  },
-  (err) => {
-    if (err.response.status === 403) {
-      //TODO remove cookie or token
-    }
-
-    return Promise.reject(err);
-  }
-);
-
 const FetchContext = createContext<FetchContextValue | undefined>(undefined);
+
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
+axios.defaults.withCredentials = true;
 
 const FetchProvider = ({ children }: FetchProviderProps) => {
   const [loading, setLoading] = useState(false);
@@ -48,9 +34,13 @@ const FetchProvider = ({ children }: FetchProviderProps) => {
       let res;
 
       try {
-        res = await axios({ url, method, data, headers });
+        res = await axios.request({ url, method, data, headers });
       } catch (err: any) {
-        toggleAlert("Credenziali errate", "danger");
+        let message: any = "Errore nella richiesta. Riprova.";
+        if (axios.isAxiosError(err)) {
+          message = err?.response?.data;
+        }
+        toggleAlert(message.message, "danger");
       }
 
       setLoading(false);

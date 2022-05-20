@@ -1,9 +1,8 @@
-import axios from "axios";
 import { useEffect } from "react";
-import { Container, Progress } from "design-react-kit";
+import { Container } from "design-react-kit";
+import axios from "axios";
 
 import { useAuth } from "./hooks/AuthContext";
-import { useFetch } from "./hooks/FetchContext";
 
 import CustomAlert from "./components/CustomAlert";
 import CustomNavbar from "./components/header/CustomHeader";
@@ -12,7 +11,6 @@ import Footer from "./components/Footer";
 import Routes from "./Routes";
 
 function App() {
-  const { loading } = useFetch();
   const { toggleAuth } = useAuth();
 
   useEffect(() => {
@@ -29,16 +27,8 @@ function App() {
 
   return (
     <Container fluid className="p-0">
-      {loading && (
-        <Progress
-          indeterminate
-          label="In elaborazione..."
-          color="danger"
-          style={{ zIndex: 999999 }}
-        />
-      )}
-      <CustomNavbar />
       <CustomAlert />
+      <CustomNavbar />
       <Routes />
       <Footer />
     </Container>

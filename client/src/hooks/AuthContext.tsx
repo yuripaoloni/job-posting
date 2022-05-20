@@ -5,7 +5,11 @@ type AuthContextValue = {
   isAuth: boolean;
   userType: UserType;
   user: string;
-  toggleAuth: (isAuth: boolean, userType: UserType, user: string) => void;
+  toggleAuth: (
+    isAuth: boolean,
+    userType: UserType,
+    user: string | undefined
+  ) => void;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -18,10 +22,10 @@ const AuthProvider = memo(({ children }: AuthProviderProps) => {
   const [user, setUser] = useState("");
 
   const toggleAuth = useCallback(
-    (isAuth: boolean, userType: UserType, user: string) => {
+    (isAuth: boolean, userType: UserType, user: string | undefined) => {
       setIsAuth(isAuth);
       setUserType(userType);
-      setUser(user);
+      setUser(user ? user : "");
     },
     []
   );

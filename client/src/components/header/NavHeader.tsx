@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import {
   HeaderContent,
   Header,
@@ -58,4 +58,4 @@ const NavHeader = () => {
   );
 };
 
-export default NavHeader;
+export default memo(NavHeader);

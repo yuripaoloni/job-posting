@@ -17,7 +17,7 @@ const CustomAlert = () => {
         marginTop: 85,
         marginRight: 20,
         minWidth: 200,
-        maxWidth: 300,
+        maxWidth: 370,
         backgroundColor: "white",
         borderRadius: 10,
       }}

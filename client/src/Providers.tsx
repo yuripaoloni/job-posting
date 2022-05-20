@@ -8,13 +8,13 @@ type ProvidersProps = { children: React.ReactNode };
 
 const Providers = ({ children }: ProvidersProps) => {
   return (
-    <AuthProvider>
-      <AlertProvider>
+    <AlertProvider>
+      <AuthProvider>
         <FetchProvider>
           <BrowserRouter>{children}</BrowserRouter>
         </FetchProvider>
-      </AlertProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </AlertProvider>
   );
 };
 

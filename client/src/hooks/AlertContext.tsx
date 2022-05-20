@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 import { AlertVariant } from "../typings";
 
 type AlertContextValue = {
@@ -16,15 +16,18 @@ const AlertProvider = ({ children }: AlertProviderProps) => {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertVariant, setAlertVariant] = useState<AlertVariant>("success");
 
-  const toggleAlert = (alertMessage: string, alertVariant: AlertVariant) => {
-    setAlertVariant(alertVariant);
-    setAlertMessage(alertMessage);
-    setShowAlert(true);
+  const toggleAlert = useCallback(
+    (alertMessage: string, alertVariant: AlertVariant) => {
+      setAlertVariant(alertVariant);
+      setAlertMessage(alertMessage);
+      setShowAlert(true);
 
-    setTimeout(() => {
-      setShowAlert(false);
-    }, 5000);
-  };
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 5000);
+    },
+    []
+  );
 
   const value = {
     showAlert,

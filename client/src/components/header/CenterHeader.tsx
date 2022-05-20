@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import {
   HeaderContent,
   HeaderBrand,
@@ -80,4 +80,4 @@ const CenterHeader = () => {
   );
 };
 
-export default CenterHeader;
+export default memo(CenterHeader);

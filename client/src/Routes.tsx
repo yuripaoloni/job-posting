@@ -5,7 +5,7 @@ import Jobs from "./pages/jobs/Jobs";
 import Landing from "./pages/Landing";
 import JobsHistory from "./pages/user/JobsHistory";
 import Profile from "./pages/user/Profile";
-import SoftSkill from "./pages/user/SoftSkill";
+import SoftSkills from "./pages/user/SoftSkills";
 
 import RequireAuth from "./components/RequireAuth";
 
@@ -41,7 +41,7 @@ const Routes = () => {
         path="softSkill"
         element={
           <RequireAuth>
-            <SoftSkill />
+            <SoftSkills />
           </RequireAuth>
         }
       />

@@ -9,3 +9,15 @@ export type LoginRes = {
   message: string;
   username?: string;
 };
+
+export type SoftSkill = {
+  id: number;
+  titolo: string | null;
+  descrizione: string | null;
+  risposteSoftSkills: RisposteSoftSkill[];
+};
+
+type RisposteSoftSkill = {
+  idRisposta: number;
+  descrizione: string | null;
+};

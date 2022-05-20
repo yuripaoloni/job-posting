@@ -1,0 +1,6 @@
+# baseURL
+@baseURL = http://localhost:8000/api/softSkills
+
+###
+# Get soft skills questions and answers
+GET {{ baseURL }} 

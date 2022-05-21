@@ -44,6 +44,8 @@ const FetchProvider = ({ children }: FetchProviderProps) => {
       }
 
       setLoading(false);
+
+      res?.data?.message && toggleAlert(res?.data?.message, "success");
       return res;
     },
     [toggleAlert]

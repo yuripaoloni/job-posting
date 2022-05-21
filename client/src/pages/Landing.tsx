@@ -9,8 +9,11 @@ import {
   CardText,
   CardReadMore,
 } from "design-react-kit";
+import { useNavigate } from "react-router-dom";
 
 const Landing = () => {
+  const navigate = useNavigate();
+
   return (
     <Container fluid className="p-4">
       <Row className="justify-content-center">
@@ -38,7 +41,7 @@ const Landing = () => {
                 iconName="it-arrow-right"
                 text="Visualizza offerte"
                 role="button"
-                onClick={() => {}}
+                onClick={() => navigate("/jobs")}
               />
             </CardBody>
           </Card>
@@ -57,7 +60,7 @@ const Landing = () => {
                 iconName="it-arrow-right"
                 text="Crea offerta"
                 role="button"
-                onClick={() => {}}
+                onClick={() => navigate("/jobs")}
               />
             </CardBody>
           </Card>

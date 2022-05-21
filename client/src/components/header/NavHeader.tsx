@@ -11,7 +11,7 @@ import {
 } from "design-react-kit";
 import { NavLink as RRNavLink } from "react-router-dom";
 
-import { useAuth } from "../../hooks/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 const NavHeader = () => {
   const [openNav, setOpenNav] = useState(false);

@@ -1,5 +1,5 @@
 import { rest, DefaultRequestBody, PathParams } from "msw";
-import { LoginRes } from "../typings";
+import { LoginRes } from "../typings/auth.type";
 
 export const handlers = [
   rest.post<DefaultRequestBody, PathParams, LoginRes>(

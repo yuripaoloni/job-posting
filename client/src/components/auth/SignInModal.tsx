@@ -9,10 +9,10 @@ import {
   Button,
 } from "design-react-kit";
 
-import { useAuth } from "../hooks/AuthContext";
-import { useFetch } from "../hooks/FetchContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { useFetch } from "../../contexts/FetchContext";
 
-import { LoginRes } from "../typings";
+import { LoginRes } from "../../typings/auth.type";
 
 type SignInModalProps = {
   isOpen: boolean;

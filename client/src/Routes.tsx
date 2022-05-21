@@ -7,7 +7,7 @@ import JobsHistory from "./pages/user/JobsHistory";
 import Profile from "./pages/user/Profile";
 import SoftSkills from "./pages/user/SoftSkills";
 
-import RequireAuth from "./components/RequireAuth";
+import RequireAuth from "./components/auth/RequireAuth";
 
 const Routes = () => {
   return (

@@ -2,7 +2,7 @@ import { Headers, Progress } from "design-react-kit";
 
 import CenterHeader from "./CenterHeader";
 import NavHeader from "./NavHeader";
-import { useFetch } from "../../hooks/FetchContext";
+import { useFetch } from "../../contexts/FetchContext";
 
 const CustomHeader = () => {
   const { loading } = useFetch();

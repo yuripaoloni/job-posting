@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useState, memo } from "react";
-import { UserType } from "../typings";
+import { UserType } from "../typings/utente.type";
 
 type AuthContextValue = {
   isAuth: boolean;

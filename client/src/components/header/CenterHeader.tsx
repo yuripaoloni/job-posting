@@ -9,10 +9,10 @@ import {
   HeaderSocialsZone,
 } from "design-react-kit";
 
-import SignInModal from "../SignInModal";
+import SignInModal from "../auth/SignInModal";
 import UserDropdown from "./UserDropdown";
 
-import { useAuth } from "../../hooks/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 const CenterHeader = () => {
   const [showSignInModal, setShowSignInModal] = useState(false);

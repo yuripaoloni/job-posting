@@ -2,11 +2,11 @@ import { useEffect } from "react";
 import { Container } from "design-react-kit";
 import axios from "axios";
 
-import { useAuth } from "./hooks/AuthContext";
+import { useAuth } from "./contexts/AuthContext";
 
-import CustomAlert from "./components/CustomAlert";
+import CustomAlert from "./components/layout/CustomAlert";
 import CustomNavbar from "./components/header/CustomHeader";
-import Footer from "./components/Footer";
+import Footer from "./components/layout/Footer";
 
 import Routes from "./Routes";
 

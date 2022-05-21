@@ -1,5 +1,5 @@
 import { Alert } from "design-react-kit";
-import { useAlert } from "../hooks/AlertContext";
+import { useAlert } from "../../contexts/AlertContext";
 
 const CustomAlert = () => {
   const { showAlert, alertMessage, alertVariant } = useAlert();

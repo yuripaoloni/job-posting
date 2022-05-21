@@ -1,8 +1,8 @@
 import { BrowserRouter } from "react-router-dom";
 
-import { AlertProvider } from "./hooks/AlertContext";
-import { AuthProvider } from "./hooks/AuthContext";
-import { FetchProvider } from "./hooks/FetchContext";
+import { AlertProvider } from "./contexts/AlertContext";
+import { AuthProvider } from "./contexts/AuthContext";
+import { FetchProvider } from "./contexts/FetchContext";
 
 type ProvidersProps = { children: React.ReactNode };
 

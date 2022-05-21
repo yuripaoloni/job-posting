@@ -4,7 +4,7 @@ import DirectorJobs from "./DirectorJobs";
 import ManagerJobs from "./ManagerJobs";
 import WorkerJobs from "./WorkerJobs";
 
-import { useAuth } from "../../hooks/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 import { Job } from "../../typings";
 

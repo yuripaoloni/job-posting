@@ -8,8 +8,8 @@ import {
 } from "design-react-kit";
 import { Link } from "react-router-dom";
 
-import { useAuth } from "../../hooks/AuthContext";
-import { useFetch } from "../../hooks/FetchContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { useFetch } from "../../contexts/FetchContext";
 
 type UserDropdownProps = {
   isOpen: boolean;

@@ -14,8 +14,8 @@ import {
   Label,
   Button,
 } from "design-react-kit";
-import { useFetch } from "../../hooks/FetchContext";
-import { SoftSkill } from "../../typings";
+import { useFetch } from "../../contexts/FetchContext";
+import { SoftSkill } from "../../typings/softSkill.type";
 
 type SoftSkillProps = {};
 
@@ -23,20 +23,23 @@ const SoftSkills = (props: SoftSkillProps) => {
   const [softSkills, setSoftSkills] = useState<SoftSkill[] | undefined>(
     undefined
   );
-  const [activeTab, setActiveTab] = useState(1);
+  const [activeTab, setActiveTab] = useState(0);
   const [answers, setAnswers] = useState([0]);
 
   const { fetchData } = useFetch();
 
   useEffect(() => {
-    const fetchSoftSkills = async () => {
-      const res = await fetchData<SoftSkill[]>("/softSkills", "GET");
+    const fetchSoftSkillsAndUserAnswers = async () => {
+      const res = await fetchData<{
+        softSkills: SoftSkill[];
+        userAnswers: number[];
+      }>("/softSkills/user/answers", "GET");
 
-      setAnswers(Array(res?.data.length).fill(0));
-      setSoftSkills(res?.data);
+      setAnswers(res?.data.userAnswers ? res.data.userAnswers : [0]);
+      setSoftSkills(res?.data.softSkills);
     };
 
-    fetchSoftSkills();
+    fetchSoftSkillsAndUserAnswers();
   }, [fetchData]);
 
   const toggle = (tab: number) => {
@@ -49,7 +52,9 @@ const SoftSkills = (props: SoftSkillProps) => {
     setAnswers(updatedAnswers);
   };
 
-  const onSubmit = async () => {};
+  const onSubmit = async () => {
+    await fetchData("/softSkills/user/answers", "POST", { answers });
+  };
 
   return (
     <Container fluid className="py-4">
@@ -89,7 +94,7 @@ const SoftSkills = (props: SoftSkillProps) => {
                     {softSkill.risposteSoftSkills.map((risposta) => (
                       <FormGroup check key={risposta.idRisposta}>
                         <Input
-                          onClick={() =>
+                          onChange={() =>
                             onCheckAnswer(softSkill.id - 1, risposta.idRisposta)
                           }
                           id={`radio-${risposta.idRisposta}`}

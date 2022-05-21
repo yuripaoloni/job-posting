@@ -9,7 +9,6 @@ import { AuthRequest } from '@/interfaces/routes.interface';
 const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const Authorization = req.cookies['Authorization'] || (req.header('Authorization') ? req.header('Authorization').split('Bearer ')[1] : null);
-
     if (Authorization) {
       const secretKey: string = SECRET_KEY;
       const { cf, tipoUtenteId, username } = verify(Authorization, secretKey) as DataStoredInToken;
@@ -18,15 +17,16 @@ const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunctio
       if (utente) {
         req.tipoUtenteId = tipoUtenteId;
         req.username = username;
+        req.cf = cf;
         next();
       } else {
-        next(new HttpException(401, 'Token di autenticazione errato'));
+        next(new HttpException(401, 'Token di autenticazione errato. Effettua nuovamente il login.'));
       }
     } else {
-      next(new HttpException(404, 'Token di autenticazione mancante'));
+      next(new HttpException(404, 'Token di autenticazione mancante. Effettua nuovamente il login.'));
     }
   } catch (error) {
-    next(new HttpException(401, 'Token di autenticazione errato'));
+    next(new HttpException(401, 'Token di autenticazione errato. Effettua nuovamente il login.'));
   }
 };
 

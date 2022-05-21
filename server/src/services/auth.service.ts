@@ -8,14 +8,11 @@ import { Utente } from '@interfaces/utente.interface';
 import { isEmpty } from '@utils/util';
 import { UtenteEntity } from '@/entities/utente.entity';
 import { createClient, SearchOptions } from 'ldapjs-promise';
-import UtenteService from './utente.service';
-import CaricheUtentiService from './caricheUtenti.service';
+import { CaricheUtentiEntity } from '@/entities/caricheUtenti.entity';
+import { CaricheUtenti } from '@/interfaces/caricheUtenti.interface';
 
 @EntityRepository()
 class AuthService extends Repository<UtenteEntity> {
-  public utenteService = new UtenteService();
-  public caricheUtentiService = new CaricheUtentiService();
-
   public async login(loginData: LoginDto): Promise<{ cookie: string; tipoUtenteId: number }> {
     if (isEmpty(loginData)) throw new HttpException(400, 'Credenziali di accesso non corrette');
 
@@ -33,9 +30,12 @@ class AuthService extends Repository<UtenteEntity> {
 
     const employeeId = results.entries[0].employeeID as string;
 
-    const utente = await this.utenteService.findUserByCf(employeeId);
+    const utente: Utente = await UtenteEntity.getRepository().findOne({ where: { cf: employeeId } });
+    if (!utente) throw new HttpException(401, `Utente ${employeeId} non registrato`);
 
-    const tipoUtenteId = await this.caricheUtentiService.getCaricaIdByCf(employeeId);
+    const caricaUtente: CaricheUtenti = await CaricheUtentiEntity.getRepository().findOne({ where: { utenteCf: employeeId }, loadRelationIds: true });
+
+    const tipoUtenteId = caricaUtente.idTipoutente ? caricaUtente.idTipoutente : 0;
 
     const tokenData = this.createToken(utente, tipoUtenteId);
     const cookie = this.createCookie(tokenData);
@@ -52,7 +52,7 @@ class AuthService extends Repository<UtenteEntity> {
   }
 
   public createCookie(tokenData: TokenData): string {
-    return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn};`;
+    return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}; Path=/api;`;
   }
 }
 

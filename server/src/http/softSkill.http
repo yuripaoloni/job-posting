@@ -3,4 +3,13 @@
 
 ###
 # Get soft skills questions and answers
-GET {{ baseURL }} 
+GET {{ baseURL }}/user/answers 
+
+###
+# Update user answers on soft skills' questions
+POST {{ baseURL }}/user/answers
+Content-Type: application/json
+
+{
+    "answers": [3,5,9,13,17,21,25,29,33,37,43,45,49,53]
+}

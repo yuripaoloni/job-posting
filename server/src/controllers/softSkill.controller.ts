@@ -1,16 +1,17 @@
 import { NextFunction, Response } from 'express';
 import SoftSkillService from '@/services/softSkill.service';
 import { AuthRequest } from '@/interfaces/routes.interface';
-import { AnswersDto } from '@/dtos/softSkills.dto';
+import { SoftSkillAnswersDto } from '@/dtos/softSkills.dto';
 
 class SoftSkillController {
   public softSkillsService = new SoftSkillService();
 
-  public getSoftSkills = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+  public getSoftSkillsAndUserAnswers = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const softSkills = await this.softSkillsService.getSoftSkills();
+      const userAnswers = await this.softSkillsService.getAnswersArray(req.cf);
 
-      res.status(200).json(softSkills);
+      res.status(200).json({ softSkills, userAnswers });
     } catch (error) {
       next(error);
     }
@@ -18,11 +19,11 @@ class SoftSkillController {
 
   public updateUserAnswers = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const answers: AnswersDto = req.body;
+      const softSkillAnswers: SoftSkillAnswersDto = req.body;
 
-      await this.softSkillsService.updateUserAnswers(req.cf, answers);
+      const updatedAnswers = await this.softSkillsService.updateUserAnswers(req.cf, softSkillAnswers);
 
-      // res.status(200).json(softSkills);
+      res.status(200).json({ message: `Risposte aggiornate con successo`, updatedAnswers });
     } catch (error) {
       next(error);
     }

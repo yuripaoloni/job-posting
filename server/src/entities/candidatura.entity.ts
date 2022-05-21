@@ -1,10 +1,11 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
 import { UtenteEntity } from './utente.entity';
 import { OffertaLavoroEntity } from './offertaLavoro.entity';
+import { Candidatura } from '@/interfaces/candidatura.interface';
 
 @Index('PK__candidat__3213E83F83AC25FB', ['id'], { unique: true })
 @Entity('candidatura', { schema: 'dbo' })
-export class CandidaturaEntity extends BaseEntity {
+export class CandidaturaEntity extends BaseEntity implements Candidatura {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
 

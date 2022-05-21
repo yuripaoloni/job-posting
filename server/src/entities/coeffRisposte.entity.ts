@@ -1,8 +1,9 @@
 import { Index, Column, Entity, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
+import { CoeffRisposte } from '@/interfaces/coeffRisposte.interface';
 
 @Index('PK_coeff_risposte', ['id'], { unique: true })
 @Entity('coeff_risposte', { schema: 'dbo' })
-export class CoeffRisposteEntity extends BaseEntity {
+export class CoeffRisposteEntity extends BaseEntity implements CoeffRisposte {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
 

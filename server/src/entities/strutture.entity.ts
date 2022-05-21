@@ -1,10 +1,11 @@
 import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
 import { CaricheUtentiEntity } from './caricheUtenti.entity';
 import { UtenteEntity } from './utente.entity';
+import { Strutture } from '@/interfaces/strutture.interface';
 
 @Index('PK_strutture', ['idStruttura'], { unique: true })
 @Entity('strutture', { schema: 'dbo' })
-export class StruttureEntity extends BaseEntity {
+export class StruttureEntity extends BaseEntity implements Strutture {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id_struttura' })
   idStruttura: number;
 

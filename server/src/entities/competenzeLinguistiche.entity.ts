@@ -1,9 +1,10 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
 import { UtenteEntity } from './utente.entity';
+import { CompetenzeLinguistiche } from '@/interfaces/competenzeLinguistiche.interface';
 
 @Index('PK__competen__3213E83F76E9509B', ['id'], { unique: true })
 @Entity('competenze_linguistiche', { schema: 'dbo' })
-export class CompetenzeLinguisticheEntity extends BaseEntity {
+export class CompetenzeLinguisticheEntity extends BaseEntity implements CompetenzeLinguistiche {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
 

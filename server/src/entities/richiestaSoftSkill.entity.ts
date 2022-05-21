@@ -2,10 +2,11 @@ import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, B
 import { OffertaLavoroEntity } from './offertaLavoro.entity';
 import { RisposteSoftSkillEntity } from './risposteSoftSkill.entity';
 import { SoftSkillEntity } from './softSkill.entity';
+import { RichiestaSoftSkill } from '@/interfaces/richiestaSoftSkill.interface';
 
 @Index('PK__richiest__3213E83F865269E9', ['id'], { unique: true })
 @Entity('richiesta_soft_skill', { schema: 'dbo' })
-export class RichiestaSoftSkillEntity extends BaseEntity {
+export class RichiestaSoftSkillEntity extends BaseEntity implements RichiestaSoftSkill {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
 

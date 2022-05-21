@@ -2,10 +2,11 @@ import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, B
 import { RisposteSoftSkillEntity } from './risposteSoftSkill.entity';
 import { SoftSkillEntity } from './softSkill.entity';
 import { UtenteEntity } from './utente.entity';
+import { RisposteUtente } from '@/interfaces/risposteUtente.interface';
 
 @Index('PK__risposte__3213E83F4959AFE8', ['id'], { unique: true })
 @Entity('risposte_utente', { schema: 'dbo' })
-export class RisposteUtenteEntity extends BaseEntity {
+export class RisposteUtenteEntity extends BaseEntity implements RisposteUtente {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
 

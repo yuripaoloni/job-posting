@@ -8,4 +8,5 @@ export interface Routes {
 export interface AuthRequest extends Request {
   tipoUtenteId: number;
   username: string;
+  cf: string;
 }

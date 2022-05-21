@@ -1,10 +1,11 @@
 import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
 import { CandidaturaEntity } from './candidatura.entity';
 import { RichiestaSoftSkillEntity } from './richiestaSoftSkill.entity';
+import { OffertaLavoro } from '@/interfaces/offertaLavoro.interface';
 
 @Index('PK__offerta___3213E83F411E9D17', ['id'], { unique: true })
 @Entity('offerta_lavoro', { schema: 'dbo' })
-export class OffertaLavoroEntity extends BaseEntity {
+export class OffertaLavoroEntity extends BaseEntity implements OffertaLavoro {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
 

@@ -1,0 +1,16 @@
+# baseURL
+@baseURL = http://localhost:8000/api/jobs
+
+###
+# Get job offers of the manager structure
+GET {{ baseURL }}/offers
+
+###
+# Create new job offer
+POST {{ baseURL }}/offers
+Content-Type: application/json
+
+{
+    "role": "Software developer",
+    "expiryDate": "2022-08-23"
+}

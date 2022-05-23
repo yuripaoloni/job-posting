@@ -46,7 +46,7 @@ const NavHeader = () => {
               {isAuth && (
                 <NavItem>
                   <NavLink to="/jobs" tag={RRNavLink}>
-                    Jobs
+                    Offerte lavorative
                   </NavLink>
                 </NavItem>
               )}

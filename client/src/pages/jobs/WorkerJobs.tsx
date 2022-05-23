@@ -1,11 +1,32 @@
-import { Job } from "../../typings";
+import { Container, Row, Col } from "design-react-kit";
+
+import JobCard from "../../components/jobs/JobCard";
+
+import { Job } from "../../typings/jobs.type";
+import { UserType } from "../../typings/utente.type";
+
+//TODO mostrare un Dimmer per dire di completare processo di Profilazione
 
 type WorkerJobsProps = {
-  jobs: Job[];
+  jobs: Job[] | undefined;
+  userType: UserType;
 };
 
-const WorkerJobs = ({ jobs }: WorkerJobsProps) => {
-  return <div>WorkerJobs</div>;
+const WorkerJobs = ({ jobs, userType }: WorkerJobsProps) => {
+  return (
+    <Container fluid className="p-4">
+      <Row className="justify-content-between align-items-center px-3 mb-4">
+        <h2 className="align-middle">Offerte di lavoro</h2>
+      </Row>
+      <Row>
+        {jobs?.map((job) => (
+          <Col xs="12" lg="4" key={job.id}>
+            <JobCard job={job} userType={userType} />
+          </Col>
+        ))}
+      </Row>
+    </Container>
+  );
 };
 
 export default WorkerJobs;

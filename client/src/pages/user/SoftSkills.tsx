@@ -67,7 +67,7 @@ const SoftSkills = (props: SoftSkillProps) => {
             {Array(14)
               .fill(0)
               .map((i, index) => (
-                <NavItem key={index} className="col text-center ">
+                <NavItem key={index} className="col text-center">
                   <NavLink
                     role="button"
                     active={activeTab === index}

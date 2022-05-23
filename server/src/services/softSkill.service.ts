@@ -1,10 +1,11 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { SoftSkillEntity } from '@entities/softSkill.entity';
-import { RisposteUtente, SoftSkills } from '@/interfaces/softSkill.interface';
+import { SoftSkills } from '@/interfaces/softSkill.interface';
 import { SoftSkillAnswersDto } from '@/dtos/softSkills.dto';
 import { RisposteUtenteEntity } from '@/entities/risposteUtente.entity';
 import { RisposteSoftSkillEntity } from '@/entities/risposteSoftSkill.entity';
 import { UtenteEntity } from '@/entities/utente.entity';
+import { RisposteUtente } from '@/interfaces/risposteUtente.interface';
 
 @EntityRepository()
 class SoftSkillService extends Repository<SoftSkillEntity> {

@@ -45,7 +45,12 @@ const SignInModal = ({ isOpen, toggleModal }: SignInModalProps) => {
       labelledBy="loginModal"
       centered
     >
-      <ModalHeader tag="h4" id="loginModal">
+      <ModalHeader
+        tag="h4"
+        id="loginModal"
+        className="align-items-center mb-3"
+        toggle={() => toggleModal()}
+      >
         Accedi
       </ModalHeader>
       <ModalBody>
@@ -69,9 +74,6 @@ const SignInModal = ({ isOpen, toggleModal }: SignInModalProps) => {
         </FormGroup>
       </ModalBody>
       <ModalFooter>
-        <Button outline color="danger" onClick={() => toggleModal()}>
-          Chiudi
-        </Button>
         <Button color="primary" onClick={() => onSignIn()}>
           Accedi
         </Button>

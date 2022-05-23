@@ -6,7 +6,7 @@ import WorkerJobsHistory from "./WorkerJobsHistory";
 
 import { useAuth } from "../../contexts/AuthContext";
 
-import { Job } from "../../typings";
+import { Job } from "../../typings/jobs.type";
 
 const JobsHistory = () => {
   const [jobs, setJobs] = useState<Job[]>([]);

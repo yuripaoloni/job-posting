@@ -1,4 +1,4 @@
-import { Job } from "../../typings";
+import { Job } from "../../typings/jobs.type";
 
 type ManagerJobsHistoryProps = {
   jobs: Job[];

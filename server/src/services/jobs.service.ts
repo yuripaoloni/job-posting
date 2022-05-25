@@ -16,6 +16,10 @@ import { SoftSkillEntity } from '@/entities/softSkill.entity';
 import { RisposteSoftSkillEntity } from '@/entities/risposteSoftSkill.entity';
 import { RichiestaSoftSkillEntity } from '@/entities/richiestaSoftSkill.entity';
 import { RispostaRichiestaSoftSkillEntity } from '@/entities/rispostaRichiestaSoftSkill.entity';
+import { CoeffDomande } from '@/interfaces/coeffDomande.interface';
+import { CoeffDomandeEntity } from '@/entities/coeffDomande.entity';
+import { CoeffRisposte } from '@/interfaces/coeffRisposte.interface';
+import { CoeffRisposteEntity } from '@/entities/coeffRisposte.entity';
 
 @EntityRepository()
 class JobsService extends Repository<OffertaLavoroEntity> {
@@ -69,10 +73,38 @@ class JobsService extends Repository<OffertaLavoroEntity> {
   public async getWorkerJobOffers(cf: string): Promise<OffertaLavoro[]> {
     const userAnswers: RisposteUtente[] = await RisposteUtenteEntity.getRepository().find({ where: { utenteCf: cf }, loadRelationIds: true });
     if (!userAnswers) throw new HttpException(400, 'Completa la profilazione per visualizzare le offerte');
+    const coeffDomande: CoeffDomande[] = await CoeffDomandeEntity.getRepository().find();
+    const coeffRisposte: CoeffRisposte[] = await CoeffRisposteEntity.getRepository().find();
+    const jobOffers: OffertaLavoro[] = await OffertaLavoroEntity.find({
+      order: { approvata: 'ASC', dataCreazione: 'ASC' },
+      loadRelationIds: true,
+    });
 
-    //TODO load job offers and compute points
-    const jobOffers = await OffertaLavoroEntity.find({ order: { approvata: 'ASC', dataCreazione: 'ASC' } });
-    return jobOffers;
+    for (const jobOffer of jobOffers) {
+      let punteggio = 0;
+      for (const richiestaSoftSkillId of jobOffer.richiestaSoftSkills) {
+        const richiestaSoftSkill = await RichiestaSoftSkillEntity.getRepository().findOne({
+          where: { id: richiestaSoftSkillId },
+          loadRelationIds: true,
+        });
+
+        const coeffDomanda = coeffDomande.find(item => item.ordine === richiestaSoftSkill.ordine);
+        const userAnswer = userAnswers.find(item => item.softSkill === richiestaSoftSkill.softSkill);
+
+        const rispostaRichiestaSoftSkill = await RispostaRichiestaSoftSkillEntity.getRepository().findOne({
+          where: { richiestaId: richiestaSoftSkill.id, rispostaId: userAnswer.risposta },
+          loadRelationIds: true,
+        });
+
+        const coeffRisposta = coeffRisposte.find(item => item.ordine === rispostaRichiestaSoftSkill.ordine);
+
+        punteggio = punteggio + coeffDomanda.valore * coeffRisposta.valore;
+      }
+
+      jobOffer.punteggio = Math.ceil((punteggio * 100) / 525); //percentage
+    }
+
+    return jobOffers.sort((a, b) => b.punteggio - a.punteggio);
   }
 
   public async getStructureJobOffers(cf: string): Promise<OffertaLavoro[]> {
@@ -94,6 +126,14 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     const jobOffers = await OffertaLavoroEntity.find({ order: { approvata: 'ASC', dataCreazione: 'ASC' } });
 
     return jobOffers;
+  }
+
+  public async removeJobOffer(cf: string, jobOfferId: number): Promise<OffertaLavoro> {
+    const jobOfferToDelete = await OffertaLavoroEntity.findOne({ where: { id: jobOfferId } });
+
+    await OffertaLavoroEntity.remove(jobOfferToDelete);
+
+    return jobOfferToDelete;
   }
 }
 

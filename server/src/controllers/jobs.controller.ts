@@ -11,9 +11,9 @@ class JobsController {
     try {
       const jobOfferData: JobOfferDto = req.body;
 
-      const createdJobOffer = await this.jobsService.createJobOffer(jobOfferData, req.cf);
+      const jobOffer = await this.jobsService.createJobOffer(jobOfferData, req.cf);
 
-      res.status(200).json({ message: `Nuova offerta di lavoro creata`, createdJobOffer });
+      res.status(200).json({ message: `Nuova offerta di lavoro creata`, jobOffer });
     } catch (error) {
       next(error);
     }
@@ -29,6 +29,17 @@ class JobsController {
           : await this.jobsService.getStructureJobOffers(req.cf);
 
       res.status(200).json(jobOffers);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public removeJobOffer = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const jobOfferId = Number(req.params.id);
+      const jobOffer = await this.jobsService.removeJobOffer(req.cf, jobOfferId);
+
+      res.status(200).json({ message: `Offerta di lavoro rimossa`, jobOffer });
     } catch (error) {
       next(error);
     }

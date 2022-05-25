@@ -17,7 +17,7 @@ import {
   Label,
 } from "design-react-kit";
 import { useFetch } from "../../contexts/FetchContext";
-import { CreateJobRes, Job } from "../../typings/jobs.type";
+import { JobRes, Job } from "../../typings/jobs.type";
 import { SoftSkill } from "../../typings/softSkill.type";
 import { useAlert } from "../../contexts/AlertContext";
 
@@ -123,16 +123,16 @@ const JobModal = ({ isOpen, toggleModal, updateJobs }: JobModalProps) => {
       );
 
     if (!hasDuplicateSkills && duplicateAnswers.length === 0) {
-      const res = await fetchData<CreateJobRes>("/jobs/offers", "POST", {
+      toggleModal();
+
+      const res = await fetchData<JobRes>("/jobs/offers", "POST", {
         role,
         expiryDate,
         skillsOrder,
         answersOrder,
       });
 
-      res?.data.createdJobOffer && updateJobs(res.data.createdJobOffer, true);
-
-      toggleModal();
+      res?.data.jobOffer && updateJobs(res.data.jobOffer, true);
     }
   };
 

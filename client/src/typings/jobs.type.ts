@@ -1,6 +1,6 @@
-export type CreateJobRes = {
+export type JobRes = {
   message: string;
-  createdJobOffer: Job;
+  jobOffer: Job;
 };
 
 export type Job = {

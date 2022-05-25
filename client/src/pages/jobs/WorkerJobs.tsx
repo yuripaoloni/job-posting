@@ -1,4 +1,4 @@
-import { Container, Row, Col } from "design-react-kit";
+import { Container, Row } from "design-react-kit";
 
 import JobCard from "../../components/jobs/JobCard";
 
@@ -20,9 +20,7 @@ const WorkerJobs = ({ jobs, userType }: WorkerJobsProps) => {
       </Row>
       <Row>
         {jobs?.map((job) => (
-          <Col xs="12" lg="4" key={job.id}>
-            <JobCard job={job} userType={userType} />
-          </Col>
+          <JobCard job={job} userType={userType} onApplyJob={() => {}} />
         ))}
       </Row>
     </Container>

@@ -26,6 +26,18 @@ class AuthController {
       next(error);
     }
   };
+  public changeUserType = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userType = Number(req.params.userType);
+
+      const cookie = await this.authService.changeUserType(req.cf, userType);
+
+      res.setHeader('Set-Cookie', [cookie]);
+      res.status(200).json({ userType, message: 'Passato a profilo lavoratore' });
+    } catch (error) {
+      next(error);
+    }
+  };
 
   public validate = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {

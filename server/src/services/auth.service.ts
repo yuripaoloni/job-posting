@@ -44,6 +44,15 @@ class AuthService extends Repository<UtenteEntity> {
     return { cookie, tipoUtenteId };
   }
 
+  public async changeUserType(cf: string, userType: number): Promise<string> {
+    const utente: Utente = await UtenteEntity.getRepository().findOne({ where: { cf } });
+
+    const tokenData = this.createToken(utente, userType);
+    const cookie = this.createCookie(tokenData);
+
+    return cookie;
+  }
+
   public createToken(user: Utente, tipoUtenteId: number): TokenData {
     const dataStoredInToken: DataStoredInToken = { cf: user.cf, username: user.username, tipoUtenteId };
     const secretKey: string = SECRET_KEY;

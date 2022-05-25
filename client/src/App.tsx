@@ -9,6 +9,8 @@ import CustomNavbar from "./components/header/CustomHeader";
 import Footer from "./components/layout/Footer";
 
 import Routes from "./Routes";
+import ConfirmModal from "./components/layout/ConfirmModal";
+import { isUserType } from "./utils/isUserType";
 
 function App() {
   const { toggleAuth } = useAuth();
@@ -17,7 +19,7 @@ function App() {
     async function onValidateCookie() {
       const res = await axios.get("/auth/validate");
 
-      if (res?.data.tipoUtenteId) {
+      if (isUserType(res?.data.tipoUtenteId)) {
         toggleAuth(true, res?.data.tipoUtenteId, res?.data.username);
       }
     }
@@ -27,6 +29,7 @@ function App() {
 
   return (
     <Container fluid className="p-0">
+      <ConfirmModal />
       <CustomAlert />
       <CustomNavbar />
       <Routes />

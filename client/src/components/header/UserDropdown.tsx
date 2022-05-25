@@ -6,10 +6,11 @@ import {
   LinkListItem,
   Icon,
 } from "design-react-kit";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../contexts/AuthContext";
 import { useFetch } from "../../contexts/FetchContext";
+import { UserType } from "../../typings/utente.type";
 
 type UserDropdownProps = {
   isOpen: boolean;
@@ -17,13 +18,21 @@ type UserDropdownProps = {
 };
 
 const UserDropdown = ({ isOpen, toggleDropdown }: UserDropdownProps) => {
-  const { user, toggleAuth } = useAuth();
+  const { user, toggleAuth, userType } = useAuth();
   const { fetchData } = useFetch();
+  const navigate = useNavigate();
 
   const onLogout = async () => {
     await fetchData("/auth/logout", "GET");
 
     toggleAuth(false, 0, "");
+    navigate("/");
+  };
+
+  const onChangeUserType = async (userType: UserType) => {
+    await fetchData(`/auth/userType/${userType}`, "GET");
+
+    toggleAuth(true, userType, user);
   };
 
   return (
@@ -64,6 +73,22 @@ const UserDropdown = ({ isOpen, toggleDropdown }: UserDropdownProps) => {
               <span>Storico lavori</span>
             </LinkListItem>
           </Link>
+          {userType === 2 && (
+            <LinkListItem
+              className="right-icon"
+              onClick={() => onChangeUserType(0)}
+              role="button"
+            >
+              <Icon
+                className="right"
+                color="primary"
+                icon="it-exchange-circle"
+                aria-hidden
+                size="sm"
+              />
+              <span>Cerca lavori</span>
+            </LinkListItem>
+          )}
           <LinkListItem
             className="right-icon"
             onClick={() => onLogout()}

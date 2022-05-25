@@ -13,6 +13,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useFetch } from "../../contexts/FetchContext";
 
 import { LoginRes } from "../../typings/auth.type";
+import { isUserType } from "../../utils/isUserType";
 
 type SignInModalProps = {
   isOpen: boolean;
@@ -32,8 +33,8 @@ const SignInModal = ({ isOpen, toggleModal }: SignInModalProps) => {
       password: password,
     });
 
-    if (res?.data.tipoUtenteId) {
-      toggleAuth(true, res?.data.tipoUtenteId, username);
+    if (isUserType(res?.data.tipoUtenteId)) {
+      toggleAuth(true, res!.data.tipoUtenteId, username);
       toggleModal();
     }
   };

@@ -16,7 +16,6 @@ const Jobs = () => {
   const { fetchData } = useFetch();
 
   useEffect(() => {
-    //TODO fetchJobs - /jobs/:userType
     const fetchJobs = async () => {
       const res = await fetchData<Job[]>("/jobs/offers", "GET");
 
@@ -26,13 +25,24 @@ const Jobs = () => {
     fetchJobs();
   }, [fetchData]);
 
+  const updateJobs = (job: Job, update: boolean) => {
+    let updatedJobs = jobs ? jobs?.slice() : [];
+    if (update) {
+      const index = updatedJobs.findIndex((item) => item.id === job.id);
+      index > -1 ? (updatedJobs[index] = job) : updatedJobs.unshift(job);
+    } else {
+      updatedJobs = updatedJobs.filter((item) => item.id !== job.id);
+    }
+    setJobs(updatedJobs);
+  };
+
   let page =
     userType === 0 ? (
       <WorkerJobs jobs={jobs} userType={0} />
     ) : userType === 1 ? (
-      <DirectorJobs jobs={jobs} userType={1} />
+      <DirectorJobs jobs={jobs} userType={1} updateJobs={updateJobs} />
     ) : (
-      <ManagerJobs jobs={jobs} userType={2} />
+      <ManagerJobs jobs={jobs} userType={2} updateJobs={updateJobs} />
     );
 
   return page;

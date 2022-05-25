@@ -2,7 +2,7 @@
 @baseURL = http://localhost:8000/api/softSkills
 
 ###
-# Get soft skills questions and answers
+# Get soft skills questions and user answers
 GET {{ baseURL }}/user/answers 
 
 ###
@@ -13,3 +13,7 @@ Content-Type: application/json
 {
     "answers": [3,5,9,13,17,21,25,29,33,37,43,45,49,53]
 }
+
+###
+# Get soft skills questions and answers
+GET {{ baseURL }} 

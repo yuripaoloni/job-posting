@@ -1,6 +1,6 @@
 export type CreateJobRes = {
   message: string;
-  updatedJobOffer: Job;
+  createdJobOffer: Job;
 };
 
 export type Job = {

@@ -1,8 +1,8 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, BaseEntity, OneToMany } from 'typeorm';
 import { OffertaLavoroEntity } from './offertaLavoro.entity';
-import { RisposteSoftSkillEntity } from './risposteSoftSkill.entity';
 import { SoftSkillEntity } from './softSkill.entity';
 import { RichiestaSoftSkill } from '@/interfaces/richiestaSoftSkill.interface';
+import { RispostaRichiestaSoftSkillEntity } from './rispostaRichiestaSoftSkill.entity';
 
 @Index('PK__richiest__3213E83F865269E9', ['id'], { unique: true })
 @Entity('richiesta_soft_skill', { schema: 'dbo' })
@@ -21,7 +21,6 @@ export class RichiestaSoftSkillEntity extends BaseEntity implements RichiestaSof
   @JoinColumn([{ name: 'soft_skill_id', referencedColumnName: 'id' }])
   softSkill: SoftSkillEntity;
 
-  @ManyToOne(() => RisposteSoftSkillEntity, risposteSoftSkill => risposteSoftSkill.richiestaSoftSkills)
-  @JoinColumn([{ name: 'risposta_id', referencedColumnName: 'idRisposta' }])
-  risposta: RisposteSoftSkillEntity;
+  @OneToMany(() => RispostaRichiestaSoftSkillEntity, rispostaRichiestaSoftSkillEntity => rispostaRichiestaSoftSkillEntity.richiestaId)
+  rispostaRichiestaSoftSkills: RispostaRichiestaSoftSkillEntity[];
 }

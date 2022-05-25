@@ -14,56 +14,148 @@ import {
   NavLink,
   TabContent,
   TabPane,
-  Form,
   Label,
 } from "design-react-kit";
 import { useFetch } from "../../contexts/FetchContext";
-import { CreateJobRes } from "../../typings/jobs.type";
+import { CreateJobRes, Job } from "../../typings/jobs.type";
 import { SoftSkill } from "../../typings/softSkill.type";
+import { useAlert } from "../../contexts/AlertContext";
 
 type JobModalProps = {
   isOpen: boolean;
   toggleModal: () => void;
+  updateJobs: (job: Job, update: boolean) => void;
 };
 
-const JobModal = ({ isOpen, toggleModal }: JobModalProps) => {
+type SkillsOrder = {
+  id: number;
+  order: number;
+}[];
+
+type AnswersOrder = {
+  softSkillId: number;
+  answers: {
+    answerId: number;
+    order: number;
+  }[];
+}[];
+
+const JobModal = ({ isOpen, toggleModal, updateJobs }: JobModalProps) => {
   const [role, setRole] = useState("");
   const [expiryDate, setExpiryData] = useState("");
 
-  const { fetchData } = useFetch();
-
+  const [softSkillsTitle, setSoftSkillsTitles] = useState([""]);
   const [softSkills, setSoftSkills] = useState<SoftSkill[] | undefined>(
     undefined
   );
+
   const [activeTab, setActiveTab] = useState(0);
-  const [answers, setAnswers] = useState([0]);
+
+  const [skillsOrder, setSkillsOrder] = useState<SkillsOrder>([
+    { id: 1, order: 1 },
+  ]);
+  const [answersOrder, setAnswersOrder] = useState<AnswersOrder>([
+    { softSkillId: 1, answers: [{ answerId: 1, order: 1 }] },
+  ]);
+
+  const { fetchData } = useFetch();
+  const { toggleAlert } = useAlert();
 
   useEffect(() => {
     const fetchSoftSkillsAndUserAnswers = async () => {
-      const res = await fetchData<{
-        softSkills: SoftSkill[];
-        userAnswers: number[];
-      }>("/softSkills/user/answers", "GET");
+      const res = await fetchData<SoftSkill[]>("/softSkills", "GET");
 
-      setAnswers(res?.data.userAnswers ? res.data.userAnswers : [0]);
-      setSoftSkills(res?.data.softSkills);
+      const titles = res?.data
+        ? res?.data.map((softSkill) => softSkill.titolo)
+        : [""];
+
+      const newSkillsOrder = res?.data
+        ? res?.data.map((skill, index) => {
+            return { id: skill.id, order: index + 1 };
+          })
+        : [{ id: 1, order: 1 }];
+
+      const newAnswersOrder = res?.data
+        ? res?.data.map((skill, index) => {
+            return {
+              softSkillId: skill.id,
+              answers: skill.risposteSoftSkills.map((anwser, index) => {
+                return {
+                  answerId: anwser.idRisposta,
+                  order: index + 1,
+                };
+              }),
+            };
+          })
+        : [{ softSkillId: 1, answers: [{ answerId: 1, order: 1 }] }];
+
+      setSoftSkillsTitles(titles);
+      setSoftSkills(res?.data);
+      setSkillsOrder(newSkillsOrder);
+      setAnswersOrder(newAnswersOrder);
     };
 
     fetchSoftSkillsAndUserAnswers();
   }, [fetchData]);
 
   const createJobOffer = async () => {
-    const res = await fetchData<CreateJobRes>("/jobs/offers", "POST", {
-      role,
-      expiryDate,
+    const valueArr = skillsOrder.map((item) => item.order);
+    const hasDuplicateSkills = valueArr.some(
+      (item, index) => valueArr.indexOf(item) !== index
+    );
+
+    const duplicateAnswers = answersOrder.flatMap((item, index) => {
+      const valueArr = item.answers.map((item) => item.order);
+      return valueArr.some((item, index) => valueArr.indexOf(item) !== index)
+        ? [index]
+        : [];
     });
 
-    //TODO add res?.data.updatedJobOffer to array of current jobs or fetch again all jobs
-    toggleModal();
+    hasDuplicateSkills &&
+      toggleAlert("2 o più skill hanno lo stesso ordinamento.", "danger");
+
+    duplicateAnswers.length > 0 &&
+      toggleAlert(
+        `Risposte con stesso indice in ${duplicateAnswers.map(
+          (answer) => softSkillsTitle[answer]
+        )}`,
+        "danger"
+      );
+
+    if (!hasDuplicateSkills && duplicateAnswers.length === 0) {
+      const res = await fetchData<CreateJobRes>("/jobs/offers", "POST", {
+        role,
+        expiryDate,
+        skillsOrder,
+        answersOrder,
+      });
+
+      res?.data.createdJobOffer && updateJobs(res.data.createdJobOffer, true);
+
+      toggleModal();
+    }
   };
 
   const toggle = (tab: number) => {
     if (activeTab !== tab) setActiveTab(tab);
+  };
+
+  const handleSkillsOrderChange = (order: number, skillIndex: number) => {
+    const updatedSkillsOrder = skillsOrder.slice();
+    updatedSkillsOrder[skillIndex].order = order;
+    setSkillsOrder(updatedSkillsOrder);
+  };
+
+  const handleAnswersOrderChange = (
+    order: number,
+    skillIndex: number,
+    answerIndex: number
+  ) => {
+    const updatedAnswersOrder = answersOrder.map((item) => {
+      return { softSkillId: item.softSkillId, answers: item.answers.slice() };
+    });
+    updatedAnswersOrder[skillIndex].answers[answerIndex].order = order;
+    setAnswersOrder(updatedAnswersOrder);
   };
 
   return (
@@ -71,7 +163,7 @@ const JobModal = ({ isOpen, toggleModal }: JobModalProps) => {
       isOpen={isOpen}
       toggle={() => toggleModal()}
       labelledBy="jobModal"
-      size="lg"
+      size="xl"
     >
       <ModalHeader
         className="align-items-center mb-3"
@@ -102,60 +194,90 @@ const JobModal = ({ isOpen, toggleModal }: JobModalProps) => {
             onChange={(e) => setExpiryData(e.target.value)}
           />
         </FormGroup>
-        <Row className="justify-content-center">
-          <Col xs={2}>
+        <h6>
+          Ordina le soft skill da 1 a 14 considerando la rilevanza che hanno per
+          la posizione lavorativa.
+        </h6>
+        <h6>
+          Per ogni skill dovranno essere ordinate anche le risposte da 1 a 3. La
+          numero 4 è di default "Preferisco non rispondere".
+        </h6>
+        <h6>
+          L'ordinamento delle skill e le relative risposte viene utilizzato per
+          calcolare un punteggio di affinità per i candidati.
+        </h6>
+        <Row className="justify-content-center mt-4">
+          <Col xs={3}>
             <Nav pills vertical>
-              {Array(14)
-                .fill(0)
-                .map((i, index) => (
-                  <NavItem key={index} className="col text-center">
-                    <NavLink
-                      role="button"
-                      active={activeTab === index}
-                      onClick={() => toggle(index)}
-                    >
-                      {index + 1}
-                    </NavLink>
-                  </NavItem>
-                ))}
+              {softSkillsTitle?.map((title, index) => (
+                <NavItem key={index} className="col ">
+                  <NavLink
+                    role="button"
+                    active={activeTab === index}
+                    onClick={() => toggle(index)}
+                  >
+                    {skillsOrder[index].order} - {title}
+                  </NavLink>
+                </NavItem>
+              ))}
             </Nav>
           </Col>
           <Col md={9} xs={10}>
             <TabContent activeTab={activeTab}>
-              {softSkills?.map((softSkill) => (
+              {softSkills?.map((softSkill, softSkillIndex) => (
                 <TabPane
                   key={softSkill.id - 1}
                   tabId={softSkill.id - 1}
                   className="p-2"
                 >
-                  <Form className="m-3">
-                    <h5>{softSkill.titolo}</h5>
-                    <p>{softSkill.descrizione}</p>
-                    <fieldset>
-                      {softSkill.risposteSoftSkills.map((risposta) => (
-                        <FormGroup check key={risposta.idRisposta}>
-                          <Input
-                            onChange={() => {}}
-                            id={`radio-${risposta.idRisposta}`}
-                            checked={
-                              answers[softSkill.id - 1] === risposta.idRisposta
-                            }
-                            type="radio"
-                          />
-                          <Label for={`radio-${risposta.idRisposta}`} check>
-                            {risposta.descrizione}
-                          </Label>
-                        </FormGroup>
-                      ))}
-                    </fieldset>
-                  </Form>
+                  <Row className="mb-4 align-items-center">
+                    <Col xs={10}>
+                      <strong>{softSkill.titolo}: </strong>
+                      {softSkill.descrizione}
+                    </Col>
+                    <Col xs={1}>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={14}
+                        value={skillsOrder[softSkillIndex].order}
+                        onChange={(e) =>
+                          handleSkillsOrderChange(
+                            e.target.valueAsNumber,
+                            softSkillIndex
+                          )
+                        }
+                      />
+                    </Col>
+                  </Row>
+                  {softSkill.risposteSoftSkills.map((risposta, answerIndex) => (
+                    <Row key={risposta.idRisposta} className="mb-4 ml-1">
+                      <Col xs={8}>
+                        <Label>{risposta.descrizione}</Label>
+                      </Col>
+                      <Col xs={1}>
+                        <Input
+                          type="number"
+                          min={1}
+                          max={3}
+                          disabled={answerIndex === 3}
+                          value={
+                            answersOrder[softSkillIndex].answers[answerIndex]
+                              .order
+                          }
+                          onChange={(e) =>
+                            handleAnswersOrderChange(
+                              e.target.valueAsNumber,
+                              softSkillIndex,
+                              answerIndex
+                            )
+                          }
+                        />
+                      </Col>
+                    </Row>
+                  ))}
                 </TabPane>
               ))}
-              <Row className="justify-content-end m-1">
-                <Button color="primary" onClick={() => {}}>
-                  INVIA
-                </Button>
-              </Row>
             </TabContent>
           </Col>
         </Row>

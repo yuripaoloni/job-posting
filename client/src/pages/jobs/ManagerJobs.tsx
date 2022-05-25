@@ -10,11 +10,10 @@ import { UserType } from "../../typings/utente.type";
 type ManagerJobsProps = {
   jobs: Job[] | undefined;
   userType: UserType;
+  updateJobs: (job: Job, update: boolean) => void;
 };
 
-//TODO card per lavori
-
-const ManagerJobs = ({ jobs, userType }: ManagerJobsProps) => {
+const ManagerJobs = ({ jobs, userType, updateJobs }: ManagerJobsProps) => {
   const [showJobModal, setShowJobModal] = useState(false);
 
   const toggleModal = () => {
@@ -23,7 +22,11 @@ const ManagerJobs = ({ jobs, userType }: ManagerJobsProps) => {
 
   return (
     <Container fluid className="p-4">
-      <JobModal isOpen={showJobModal} toggleModal={toggleModal} />
+      <JobModal
+        isOpen={showJobModal}
+        toggleModal={toggleModal}
+        updateJobs={updateJobs}
+      />
       <Row className="justify-content-between align-items-center px-3 mb-4">
         <h2 className="align-middle">Offerte di lavoro</h2>
         <Button color="primary" onClick={() => toggleModal()}>

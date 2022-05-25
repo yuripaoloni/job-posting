@@ -28,6 +28,16 @@ class SoftSkillController {
       next(error);
     }
   };
+
+  public getSoftSkills = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const softSkills = await this.softSkillsService.getSoftSkills();
+
+      res.status(200).json(softSkills);
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default SoftSkillController;

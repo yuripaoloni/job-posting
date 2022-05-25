@@ -12,6 +12,10 @@ import { HttpException } from '@/exceptions/HttpException';
 import { CaricheUtentiEntity } from '@/entities/caricheUtenti.entity';
 import { CaricheUtenti } from '@/interfaces/caricheUtenti.interface';
 import { DIRECTOR } from '@/utils/userTypes';
+import { SoftSkillEntity } from '@/entities/softSkill.entity';
+import { RisposteSoftSkillEntity } from '@/entities/risposteSoftSkill.entity';
+import { RichiestaSoftSkillEntity } from '@/entities/richiestaSoftSkill.entity';
+import { RispostaRichiestaSoftSkillEntity } from '@/entities/rispostaRichiestaSoftSkill.entity';
 
 @EntityRepository()
 class JobsService extends Repository<OffertaLavoroEntity> {
@@ -20,7 +24,6 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     const struttura: Strutture = await StruttureEntity.getRepository().findOne({ where: { idStruttura: user.struttura } });
 
     const newJobOffer = new OffertaLavoroEntity();
-
     newJobOffer.dataScadenza = new Date(jobOfferData.expiryDate);
     newJobOffer.ruolo = jobOfferData.role;
     newJobOffer.responsabileCf = cf;
@@ -29,6 +32,34 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     newJobOffer.attiva = false;
 
     const result = await OffertaLavoroEntity.insert(newJobOffer);
+
+    for (const skillOrder of jobOfferData.skillsOrder) {
+      const softSkill = await SoftSkillEntity.getRepository().findOne({ where: { id: skillOrder.id } });
+
+      const newRichiestaSoftSkill = new RichiestaSoftSkillEntity();
+      newRichiestaSoftSkill.ordine = skillOrder.order;
+      newRichiestaSoftSkill.softSkill = softSkill;
+      newRichiestaSoftSkill.offerta = newJobOffer;
+
+      await newRichiestaSoftSkill.save();
+
+      for (const answerOrder of jobOfferData.answersOrder) {
+        if (answerOrder.softSkillId === skillOrder.id) {
+          for (const answer of answerOrder.answers) {
+            const rispostaSoftSkill = await RisposteSoftSkillEntity.getRepository().findOne({
+              where: { softSkill: skillOrder.id, idRisposta: answer.answerId },
+            });
+
+            const newRispostaRichiestaSoftSkill = new RispostaRichiestaSoftSkillEntity();
+            newRispostaRichiestaSoftSkill.ordine = answer.order;
+            newRispostaRichiestaSoftSkill.rispostaId = rispostaSoftSkill;
+            newRispostaRichiestaSoftSkill.richiestaId = newRichiestaSoftSkill;
+
+            await newRispostaRichiestaSoftSkill.save();
+          }
+        }
+      }
+    }
 
     const jobOffer: OffertaLavoro = await OffertaLavoroEntity.findOne(result.identifiers[0].id);
 

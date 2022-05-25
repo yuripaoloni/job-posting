@@ -10,6 +10,7 @@ export interface OffertaLavoro {
   dataScadenza: Date | null;
   approvata: boolean | null;
   attiva: boolean | null;
+  punteggio?: number | null;
   candidaturas?: Candidatura[] | null;
   richiestaSoftSkills?: RichiestaSoftSkill[] | null;
 }

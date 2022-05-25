@@ -1,7 +1,7 @@
 export type SoftSkill = {
   id: number;
-  titolo: string | null;
-  descrizione: string | null;
+  titolo: string;
+  descrizione: string;
   risposteSoftSkills: RisposteSoftSkill[];
 };
 

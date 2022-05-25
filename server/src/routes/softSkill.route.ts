@@ -22,6 +22,7 @@ class SoftSkillRoute implements Routes {
       validationMiddleware(SoftSkillAnswersDto, 'body'),
       this.softSkillController.updateUserAnswers,
     );
+    this.router.get(`${this.path}`, authMiddleware, this.softSkillController.getSoftSkills);
   }
 }
 

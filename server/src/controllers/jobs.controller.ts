@@ -11,9 +11,9 @@ class JobsController {
     try {
       const jobOfferData: JobOfferDto = req.body;
 
-      const updatedJobOffer = await this.jobsService.createJobOffer(jobOfferData, req.cf);
+      const createdJobOffer = await this.jobsService.createJobOffer(jobOfferData, req.cf);
 
-      res.status(200).json({ message: `Nuova offerta di lavoro creata`, updatedJobOffer });
+      res.status(200).json({ message: `Nuova offerta di lavoro creata`, createdJobOffer });
     } catch (error) {
       next(error);
     }

@@ -206,23 +206,24 @@ const JobModal = ({ isOpen, toggleModal, updateJobs }: JobModalProps) => {
           L'ordinamento delle skill e le relative risposte viene utilizzato per
           calcolare un punteggio di affinità per i candidati.
         </h6>
-        <Row className="justify-content-center mt-4">
-          <Col xs={3}>
+        <Row className="justify-content-between mt-4">
+          <Col xl={3} lg={4} xs={1}>
             <Nav pills vertical>
               {softSkillsTitle?.map((title, index) => (
-                <NavItem key={index} className="col ">
+                <NavItem key={index} className="text-center text-lg-left">
                   <NavLink
                     role="button"
                     active={activeTab === index}
                     onClick={() => toggle(index)}
                   >
-                    {skillsOrder[index].order} - {title}
+                    <span>{skillsOrder[index].order}</span>
+                    <span className="d-none d-lg-inline"> - {title}</span>
                   </NavLink>
                 </NavItem>
               ))}
             </Nav>
           </Col>
-          <Col md={9} xs={10}>
+          <Col xl={9} lg={8} sm={10} xs={9}>
             <TabContent activeTab={activeTab}>
               {softSkills?.map((softSkill, softSkillIndex) => (
                 <TabPane
@@ -230,12 +231,14 @@ const JobModal = ({ isOpen, toggleModal, updateJobs }: JobModalProps) => {
                   tabId={softSkill.id - 1}
                   className="p-2"
                 >
-                  <Row className="mb-4 align-items-center">
-                    <Col xs={10}>
-                      <strong>{softSkill.titolo}: </strong>
-                      {softSkill.descrizione}
+                  <Row className="justify-content-between mb-4 align-items-center">
+                    <Col xl={11} lg={10} sm={9}>
+                      <p className="text-justify">
+                        <strong>{softSkill.titolo}: </strong>
+                        {softSkill.descrizione}.
+                      </p>
                     </Col>
-                    <Col xs={1}>
+                    <Col xl={1} lg={2} sm={3} xs={4}>
                       <Input
                         type="number"
                         min={1}
@@ -251,11 +254,13 @@ const JobModal = ({ isOpen, toggleModal, updateJobs }: JobModalProps) => {
                     </Col>
                   </Row>
                   {softSkill.risposteSoftSkills.map((risposta, answerIndex) => (
-                    <Row key={risposta.idRisposta} className="mb-4 ml-1">
-                      <Col xs={8}>
-                        <Label>{risposta.descrizione}</Label>
+                    <Row key={risposta.idRisposta} className="mb-4 ml-1 ">
+                      <Col xl={9} md={8} sm={9} xs={11}>
+                        <Label className="text-justify" tag="p">
+                          {risposta.descrizione}.
+                        </Label>
                       </Col>
-                      <Col xs={1}>
+                      <Col xl={1} sm={2} xs={4}>
                         <Input
                           type="number"
                           min={1}

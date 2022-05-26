@@ -49,18 +49,20 @@ const UserDropdown = ({ isOpen, toggleDropdown }: UserDropdownProps) => {
       </DropdownToggle>
       <DropdownMenu className="mr-4 mr-sm-0">
         <LinkList>
-          <Link to="profile">
-            <LinkListItem className="right-icon">
-              <Icon
-                className="right"
-                color="primary"
-                icon="it-user"
-                aria-hidden
-                size="sm"
-              />
-              <span>Profilo</span>
-            </LinkListItem>
-          </Link>
+          {userType === 0 && (
+            <Link to="profile">
+              <LinkListItem className="right-icon">
+                <Icon
+                  className="right"
+                  color="primary"
+                  icon="it-user"
+                  aria-hidden
+                  size="sm"
+                />
+                <span>Profilo</span>
+              </LinkListItem>
+            </Link>
+          )}
           <Link to="jobsHistory">
             <LinkListItem className="right-icon">
               <Icon
@@ -82,11 +84,11 @@ const UserDropdown = ({ isOpen, toggleDropdown }: UserDropdownProps) => {
               <Icon
                 className="right"
                 color="primary"
-                icon="it-exchange-circle"
+                icon="it-search"
                 aria-hidden
                 size="sm"
               />
-              <span>Cerca lavori</span>
+              <span>Cerca lavoro</span>
             </LinkListItem>
           )}
           <LinkListItem

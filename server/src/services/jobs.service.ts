@@ -1,6 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { OffertaLavoroEntity } from '@/entities/offertaLavoro.entity';
-import { JobOfferDto } from '@/dtos/jobs.dto';
+import { ApplyJobDto, JobOfferDto } from '@/dtos/jobs.dto';
 import { UtenteEntity } from '@/entities/utente.entity';
 import { StruttureEntity } from '@/entities/strutture.entity';
 import { Utente } from '@/interfaces/utente.interface';
@@ -20,6 +20,8 @@ import { CoeffDomande } from '@/interfaces/coeffDomande.interface';
 import { CoeffDomandeEntity } from '@/entities/coeffDomande.entity';
 import { CoeffRisposte } from '@/interfaces/coeffRisposte.interface';
 import { CoeffRisposteEntity } from '@/entities/coeffRisposte.entity';
+import { CandidaturaEntity } from '@/entities/candidatura.entity';
+import { Candidatura } from '@/interfaces/candidatura.interface';
 
 @EntityRepository()
 class JobsService extends Repository<OffertaLavoroEntity> {
@@ -75,10 +77,15 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     if (!userAnswers) throw new HttpException(400, 'Completa la profilazione per visualizzare le offerte');
     const coeffDomande: CoeffDomande[] = await CoeffDomandeEntity.getRepository().find();
     const coeffRisposte: CoeffRisposte[] = await CoeffRisposteEntity.getRepository().find();
-    const jobOffers: OffertaLavoro[] = await OffertaLavoroEntity.find({
-      order: { approvata: 'ASC', dataCreazione: 'ASC' },
+    const applications: Candidatura[] = await CandidaturaEntity.getRepository().find({ where: { utenteCf: cf }, loadRelationIds: true });
+    let jobOffers: OffertaLavoro[] = await OffertaLavoroEntity.find({
+      where: { approvata: true, attiva: true },
+      order: { dataScadenza: 'DESC', dataCreazione: 'DESC' },
       loadRelationIds: true,
     });
+
+    // remove jobs for which the user already applied
+    jobOffers = jobOffers.filter(jobOffer => applications.some(application => application.offerta !== jobOffer.id));
 
     for (const jobOffer of jobOffers) {
       let punteggio = 0;
@@ -114,6 +121,7 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     const jobOffers = await OffertaLavoroEntity.find({
       where: { struttura: struttura.descStruttura },
       order: { approvata: 'ASC', dataCreazione: 'ASC' },
+      relations: ['candidaturas', 'candidaturas.utenteCf'],
     });
 
     return jobOffers;
@@ -123,7 +131,7 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     const caricaUtente: CaricheUtenti = await CaricheUtentiEntity.getRepository().findOne({ where: cf, loadRelationIds: true });
     if (caricaUtente.idTipoutente !== DIRECTOR) throw new HttpException(403, 'Accesso negato');
 
-    const jobOffers = await OffertaLavoroEntity.find({ order: { approvata: 'ASC', dataCreazione: 'ASC' } });
+    const jobOffers = await OffertaLavoroEntity.find({ order: { approvata: 'ASC', dataCreazione: 'ASC' }, relations: ['candidaturas'] });
 
     return jobOffers;
   }
@@ -134,6 +142,32 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     await OffertaLavoroEntity.remove(jobOfferToDelete);
 
     return jobOfferToDelete;
+  }
+
+  public async applyToJobOffer(cf: string, applyJobData: ApplyJobDto): Promise<void> {
+    const user = await UtenteEntity.getRepository().findOne({ where: { cf } });
+    const jobOffer = await OffertaLavoroEntity.findOne({ where: { id: applyJobData.jobOfferId } });
+
+    const newApplication = new CandidaturaEntity();
+    newApplication.approvata = false;
+    newApplication.punteggio = applyJobData.score;
+    newApplication.offerta = jobOffer;
+    newApplication.utenteCf = user;
+
+    await newApplication.save();
+  }
+
+  public async acceptApplication(applicationId: number): Promise<void> {
+    const application = await CandidaturaEntity.getRepository().findOne({ where: { id: applicationId }, loadRelationIds: true });
+    application.approvata = true;
+
+    console.log(application);
+
+    const jobOffer = await OffertaLavoroEntity.findOne({ where: { id: application.offerta } });
+    jobOffer.attiva = false;
+
+    await application.save();
+    await jobOffer.save();
   }
 }
 

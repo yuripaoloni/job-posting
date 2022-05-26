@@ -8,6 +8,7 @@ import { Job, JobRes } from "../../typings/jobs.type";
 import { UserType } from "../../typings/utente.type";
 import { useFetch } from "../../contexts/FetchContext";
 import { useConfirm } from "../../contexts/ConfirmContext";
+import JobParticipantsModal from "../../components/jobs/JobParticipantsModal";
 
 type ManagerJobsProps = {
   jobs: Job[] | undefined;
@@ -17,33 +18,66 @@ type ManagerJobsProps = {
 
 const ManagerJobs = ({ jobs, userType, updateJobs }: ManagerJobsProps) => {
   const [showJobModal, setShowJobModal] = useState(false);
+  const [showParticipantsModal, setShowParticipantsModal] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
 
   const { fetchData } = useFetch();
   const { toggleConfirm } = useConfirm();
 
-  const toggleModal = () => {
+  const toggleJobModal = () => {
     setShowJobModal((prev) => !prev);
   };
 
+  const toggleParticipantsModal = (job?: Job) => {
+    setShowParticipantsModal((prev) => !prev);
+    job && setSelectedJob(job);
+  };
+
   const onDeleteOffer = async (jobId: number) => {
-    const res = await fetchData<JobRes>(`/jobs/offer/${jobId}`, "DELETE");
+    const res = await fetchData<JobRes>(`/jobs/offers/${jobId}`, "DELETE");
 
     res?.data.jobOffer && updateJobs(res.data.jobOffer, false);
+  };
+
+  const onAcceptApplication = async (
+    applicationId: number,
+    candidate: string
+  ) => {
+    toggleConfirm(`Approva candidatura di ${candidate} ?`, () =>
+      acceptApplication(applicationId)
+    );
+  };
+
+  const acceptApplication = async (applicationId: number) => {
+    toggleParticipantsModal();
+
+    const res = await fetchData<{ success: boolean }>(
+      `/jobs/offers/accept/${applicationId}`,
+      "GET"
+    );
+
+    res?.data.success && updateJobs(selectedJob!, false);
   };
 
   return (
     <Container fluid className="p-4">
       <JobModal
         isOpen={showJobModal}
-        toggleModal={toggleModal}
+        toggleModal={toggleJobModal}
         updateJobs={updateJobs}
+      />
+      <JobParticipantsModal
+        isOpen={showParticipantsModal}
+        toggleModal={toggleParticipantsModal}
+        onAcceptApplication={onAcceptApplication}
+        job={selectedJob}
       />
       <Row className="justify-content-between align-items-center px-3 mb-4">
         <h2 className="align-middle">Offerte di lavoro</h2>
         <Button
           color="primary"
           className="btn-icon"
-          onClick={() => toggleModal()}
+          onClick={() => toggleJobModal()}
         >
           <span>
             <Icon color="white" icon="it-plus" size="sm" />
@@ -65,6 +99,7 @@ const ManagerJobs = ({ jobs, userType, updateJobs }: ManagerJobsProps) => {
               )
             }
             onEditJob={() => {}}
+            onShowParticipants={() => toggleParticipantsModal(job)}
           />
         ))}
       </Row>

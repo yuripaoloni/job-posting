@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
 import { AuthRequest } from '@/interfaces/routes.interface';
-import { JobOfferDto } from '@/dtos/jobs.dto';
+import { ApplyJobDto, JobOfferDto } from '@/dtos/jobs.dto';
 import JobsService from '@/services/jobs.service';
 import { DIRECTOR, WORKER } from '@/utils/userTypes';
 
@@ -40,6 +40,29 @@ class JobsController {
       const jobOffer = await this.jobsService.removeJobOffer(req.cf, jobOfferId);
 
       res.status(200).json({ message: `Offerta di lavoro rimossa`, jobOffer });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public applyToJobOffer = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const applyJobData: ApplyJobDto = req.body;
+      await this.jobsService.applyToJobOffer(req.cf, applyJobData);
+
+      res.status(200).json({ message: `Candidatura inviata`, success: true });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public acceptApplication = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const applicationId = Number(req.params.applicationId);
+
+      await this.jobsService.acceptApplication(applicationId);
+
+      res.status(200).json({ message: 'Candidatura accettata. Offerta lavorativa chiusa', success: true });
     } catch (error) {
       next(error);
     }

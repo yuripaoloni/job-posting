@@ -42,3 +42,11 @@ class Answer {
   @IsNumber()
   public order: number;
 }
+
+export class ApplyJobDto {
+  @IsNumber()
+  public jobOfferId: number;
+
+  @IsNumber()
+  public score: number;
+}

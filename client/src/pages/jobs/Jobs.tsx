@@ -38,7 +38,7 @@ const Jobs = () => {
 
   let page =
     userType === 0 ? (
-      <WorkerJobs jobs={jobs} userType={0} />
+      <WorkerJobs jobs={jobs} userType={0} updateJobs={updateJobs} />
     ) : userType === 1 ? (
       <DirectorJobs jobs={jobs} userType={1} updateJobs={updateJobs} />
     ) : (

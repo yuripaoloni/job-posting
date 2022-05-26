@@ -2,8 +2,22 @@
 @baseURL = http://localhost:8000/api/jobs
 
 ###
-# Get job offers of the manager structure
+# Get job offers - based on userType in the cookie returns different results
 GET {{ baseURL }}/offers
+
+###
+# Delete a job offer
+DELETE  {{baseURL}}/offers/5
+
+###
+# Apply for job offer
+POST {{baseURL}}/offers/apply
+Content-Type: application/json
+
+{
+    "jobOfferId": 0,
+    "score": 85
+}
 
 ###
 # Create new job offer

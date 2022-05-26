@@ -18,3 +18,7 @@ GET {{ baseURL }}/logout
 ###
 # Validate access token
 GET {{ baseURL }}/validate 
+
+###
+# Change user type
+GET {{baseURL}}/userType/0

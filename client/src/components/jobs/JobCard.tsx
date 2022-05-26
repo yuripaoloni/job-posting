@@ -5,19 +5,20 @@ import {
   CardSignature,
   CardTagsHeader,
   Badge,
-  Progress,
   Col,
   Icon,
   CardFooterCTA,
 } from "design-react-kit";
 import { Job } from "../../typings/jobs.type";
 import { UserType } from "../../typings/utente.type";
+import Score from "./Score";
 
 type UserTypeProps =
   | {
       // manager
       onDeleteJob: () => void;
       onEditJob: () => void;
+      onShowParticipants: () => void;
       onApplyJob?: never;
       onApproveJob?: never;
       onRejectJob?: never;
@@ -29,11 +30,13 @@ type UserTypeProps =
       onEditJob?: never;
       onApproveJob?: never;
       onRejectJob?: never;
+      onShowParticipants?: never;
     }
   | {
       // director
       onApproveJob: () => void;
       onRejectJob: () => void;
+      onShowParticipants?: never;
       onDeleteJob?: never;
       onEditJob?: never;
       onApplyJob?: never;
@@ -52,6 +55,7 @@ const JobCard = ({
   onDeleteJob,
   onEditJob,
   onRejectJob,
+  onShowParticipants,
 }: JobCardProps) => {
   return (
     <Col lg={4} md={5} sm={12}>
@@ -72,12 +76,7 @@ const JobCard = ({
             </Badge>
             {userType === 0 ? (
               <>
-                <div>
-                  <h6 className="text-success">Affinità {job.punteggio}%</h6>
-                  <span>
-                    <Progress value="75" color="success" />
-                  </span>
-                </div>
+                <Score score={job.punteggio} />
                 <Icon
                   icon="it-plus-circle"
                   className="ml-2"
@@ -104,12 +103,12 @@ const JobCard = ({
             ) : (
               <div>
                 <Icon
-                  icon="it-pencil"
-                  onClick={() => onEditJob!()}
+                  icon="it-user"
+                  onClick={() => onShowParticipants!()}
                   role="button"
                 />
                 <Icon
-                  icon="it-user"
+                  icon="it-pencil"
                   className="ml-2"
                   onClick={() => onEditJob!()}
                   role="button"

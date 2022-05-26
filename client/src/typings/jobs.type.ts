@@ -1,3 +1,5 @@
+import { Utente } from "./utente.type";
+
 export type JobRes = {
   message: string;
   jobOffer: Job;
@@ -21,7 +23,8 @@ export type Candidatura = {
   id: number;
   data: Date | null;
   approvata: boolean | null;
-  utenteCf?: string | any;
+  punteggio: number | null;
+  utenteCf?: Utente | null;
   offerta?: number | any;
 };
 

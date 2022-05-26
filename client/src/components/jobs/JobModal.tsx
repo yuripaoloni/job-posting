@@ -181,6 +181,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs }: JobModalProps) => {
             value={role}
             placeholder="Software developer"
             label="Ruolo"
+            infoText="Posizione richiesta"
             onChange={(e) => setRole(e.target.value)}
           />
         </FormGroup>
@@ -190,6 +191,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs }: JobModalProps) => {
             id="expiryDate"
             value={expiryDate}
             label="Data di scadenza"
+            infoText="Data di scadenza dell'offerta"
             placeholder={new Date().toUTCString()}
             onChange={(e) => setExpiryData(e.target.value)}
           />

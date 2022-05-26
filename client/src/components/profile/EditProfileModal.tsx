@@ -46,7 +46,8 @@ const EditProfileModal = ({
             type="text"
             id="preparation"
             value={preparation}
-            placeholder="Diploma/Laurea"
+            infoText="Aggiungi diploma/laurea"
+            placeholder="Laurea Triennale in..."
             label="Preparazione"
             onChange={(e) => setPreparation(e.target.value)}
           />

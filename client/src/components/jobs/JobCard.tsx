@@ -93,7 +93,7 @@ const JobCard = ({
                   role="button"
                 />
                 <Icon
-                  icon="it-ban"
+                  icon="it-close-circle"
                   color="danger"
                   className="ml-2"
                   onClick={() => onRejectJob!()}

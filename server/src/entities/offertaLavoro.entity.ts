@@ -34,6 +34,9 @@ export class OffertaLavoroEntity extends BaseEntity implements OffertaLavoro {
   @Column('bit', { name: 'attiva', nullable: true })
   attiva: boolean | null;
 
+  @Column('nvarchar', { name: 'desc_esito', nullable: true, length: 255 })
+  descEsito: string | null;
+
   @OneToMany(() => CandidaturaEntity, candidatura => candidatura.offerta)
   candidaturas: CandidaturaEntity[];
 

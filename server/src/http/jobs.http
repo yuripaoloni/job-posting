@@ -20,6 +20,21 @@ Content-Type: application/json
 }
 
 ###
+# Accept/reject a job offer
+POST {{baseURL}}/offers/determine
+Content-Type: application/json
+
+{
+    "approved": true,
+    "jobOfferId": 1,
+    "message": "Richiesta approvata"
+}
+
+###
+# Accept a candidate on a job offer
+GET {{baseURL}}/offers/accept/1
+
+###
 # Create new job offer
 POST {{ baseURL }}/offers
 Content-Type: application/json

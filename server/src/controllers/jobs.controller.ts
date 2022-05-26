@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
 import { AuthRequest } from '@/interfaces/routes.interface';
-import { ApplyJobDto, JobOfferDto } from '@/dtos/jobs.dto';
+import { ApplyJobDto, DetermineJobDto, JobOfferDto } from '@/dtos/jobs.dto';
 import JobsService from '@/services/jobs.service';
 import { DIRECTOR, WORKER } from '@/utils/userTypes';
 
@@ -36,7 +36,7 @@ class JobsController {
 
   public removeJobOffer = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const jobOfferId = Number(req.params.id);
+      const jobOfferId = Number(req.params.offerId);
       const jobOffer = await this.jobsService.removeJobOffer(req.cf, jobOfferId);
 
       res.status(200).json({ message: `Offerta di lavoro rimossa`, jobOffer });
@@ -63,6 +63,18 @@ class JobsController {
       await this.jobsService.acceptApplication(applicationId);
 
       res.status(200).json({ message: 'Candidatura accettata. Offerta lavorativa chiusa', success: true });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public determineJob = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const determineJobData: DetermineJobDto = req.body;
+
+      await this.jobsService.determineJob(determineJobData);
+
+      res.status(200).json({ message: `Offerta di lavoro ${determineJobData.approved ? 'approvata' : 'non approvata'}`, success: true });
     } catch (error) {
       next(error);
     }

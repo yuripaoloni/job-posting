@@ -1,6 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { OffertaLavoroEntity } from '@/entities/offertaLavoro.entity';
-import { ApplyJobDto, JobOfferDto } from '@/dtos/jobs.dto';
+import { ApplyJobDto, DetermineJobDto, JobOfferDto } from '@/dtos/jobs.dto';
 import { UtenteEntity } from '@/entities/utente.entity';
 import { StruttureEntity } from '@/entities/strutture.entity';
 import { Utente } from '@/interfaces/utente.interface';
@@ -34,7 +34,6 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     newJobOffer.ruolo = jobOfferData.role;
     newJobOffer.responsabileCf = cf;
     newJobOffer.struttura = struttura.descStruttura;
-    newJobOffer.approvata = false;
     newJobOffer.attiva = false;
 
     const result = await OffertaLavoroEntity.insert(newJobOffer);
@@ -128,7 +127,7 @@ class JobsService extends Repository<OffertaLavoroEntity> {
   }
 
   public async getDirectorJobOffers(cf: string): Promise<OffertaLavoro[]> {
-    const caricaUtente: CaricheUtenti = await CaricheUtentiEntity.getRepository().findOne({ where: cf, loadRelationIds: true });
+    const caricaUtente: CaricheUtenti = await CaricheUtentiEntity.getRepository().findOne({ where: { utenteCf: cf }, loadRelationIds: true });
     if (caricaUtente.idTipoutente !== DIRECTOR) throw new HttpException(403, 'Accesso negato');
 
     const jobOffers = await OffertaLavoroEntity.find({ order: { approvata: 'ASC', dataCreazione: 'ASC' }, relations: ['candidaturas'] });
@@ -167,6 +166,16 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     jobOffer.attiva = false;
 
     await application.save();
+    await jobOffer.save();
+  }
+
+  public async determineJob(determineJobData: DetermineJobDto): Promise<void> {
+    const jobOffer = await OffertaLavoroEntity.findOne({ where: { id: determineJobData.jobOfferId } });
+
+    jobOffer.approvata = determineJobData.approved;
+    jobOffer.attiva = determineJobData.approved;
+    jobOffer.descEsito = determineJobData.message;
+
     await jobOffer.save();
   }
 }

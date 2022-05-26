@@ -1,11 +1,13 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsBoolean, IsNumber, IsString, MaxLength, ValidateNested } from 'class-validator';
 
 export class JobOfferDto {
   @IsString()
+  @MaxLength(255)
   public role: string;
 
   @IsString()
+  @MaxLength(255)
   public expiryDate: string;
 
   @IsArray()
@@ -49,4 +51,16 @@ export class ApplyJobDto {
 
   @IsNumber()
   public score: number;
+}
+
+export class DetermineJobDto {
+  @IsBoolean()
+  public approved: boolean;
+
+  @IsNumber()
+  public jobOfferId: number;
+
+  @IsString()
+  @MaxLength(255)
+  public message: string;
 }

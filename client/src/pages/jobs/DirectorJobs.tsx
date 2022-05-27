@@ -51,7 +51,7 @@ const DirectorJobs = ({ jobs, userType, updateJobs }: DirectorJobsProps) => {
         onDetermineJob={onDetermineJob}
       />
       <Row className="justify-content-between align-items-center px-3 mb-4">
-        <h2 className="align-middle">Offerte di lavoro</h2>
+        <h2 className="align-middle">Nuove offerte di lavoro</h2>
       </Row>
       <Row>
         {jobs?.map((job) => (

@@ -73,7 +73,7 @@ const ManagerJobs = ({ jobs, userType, updateJobs }: ManagerJobsProps) => {
         job={selectedJob}
       />
       <Row className="justify-content-between align-items-center px-3 mb-4">
-        <h2 className="align-middle">Offerte di lavoro</h2>
+        <h2 className="align-middle">Offerte di lavoro create</h2>
         <Button
           color="primary"
           className="btn-icon"

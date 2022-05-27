@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import {
   Modal,
   ModalHeader,
@@ -298,4 +298,4 @@ const JobModal = ({ isOpen, toggleModal, updateJobs }: JobModalProps) => {
   );
 };
 
-export default JobModal;
+export default memo(JobModal);

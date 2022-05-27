@@ -1,5 +1,10 @@
 import { createContext, useCallback, useContext, useState } from "react";
-import axios, { Method, AxiosRequestHeaders, AxiosResponse } from "axios";
+import axios, {
+  Method,
+  AxiosRequestHeaders,
+  AxiosResponse,
+  AxiosError,
+} from "axios";
 import { useAlert } from "./AlertContext";
 
 type FetchContextValue = {
@@ -34,16 +39,24 @@ const FetchProvider = ({ children }: FetchProviderProps) => {
       let res;
 
       try {
-        res = await axios.request({ url, method, data, headers });
+        res = await axios.request({
+          url,
+          method,
+          data,
+          headers,
+        });
       } catch (err: any) {
-        let message: any = "Errore nella richiesta. Riprova.";
+        let message: string = "Errore nella richiesta. Riprova.";
         if (axios.isAxiosError(err)) {
-          message = err?.response?.data;
+          let error = err as AxiosError<{ message: string }>;
+          message = error.response?.data
+            ? error.response.data.message
+            : message;
         }
-        toggleAlert(message.message, "danger");
+        toggleAlert(message, "danger");
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
 
       res?.data?.message && toggleAlert(res?.data?.message, "success");
       return res;

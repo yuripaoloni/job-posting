@@ -1,3 +1,5 @@
+import { Job } from "./jobs.type";
+
 export type UserType = 0 | 1 | 2; //1 - DG, 2 - responsabile struttura
 
 export type Utente = {
@@ -19,8 +21,9 @@ export type Candidatura = {
   id: number;
   data: Date | null;
   approvata: boolean | null;
+  punteggio: number | null;
   utenteCf?: string | any;
-  offerta?: number | any;
+  offerta?: Job;
 };
 
 export type CompetenzeLinguistiche = {

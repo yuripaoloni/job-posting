@@ -11,6 +11,7 @@ import {
 } from "design-react-kit";
 import { Job } from "../../typings/jobs.type";
 import { UserType } from "../../typings/utente.type";
+
 import Score from "./Score";
 
 type UserTypeProps =
@@ -58,19 +59,23 @@ const JobCard = ({
   onShowParticipants,
 }: JobCardProps) => {
   return (
-    <Col lg={4} md={5} sm={12}>
+    <Col lg={4} md={6} sm={12}>
       <Card spacing className="card-bg">
         <CardBody>
           <CardTagsHeader className="align-items-center">
             <Badge
               color={
-                job.attiva ? "success" : !job.approvata ? "warning" : "danger"
+                job.approvata === true
+                  ? "success"
+                  : job.approvata === null
+                  ? "warning"
+                  : "danger"
               }
               pill
             >
-              {job.attiva
+              {job.approvata === true
                 ? "Attiva"
-                : !job.approvata
+                : job.approvata === null
                 ? "In approvazione"
                 : "Non attiva"}
             </Badge>

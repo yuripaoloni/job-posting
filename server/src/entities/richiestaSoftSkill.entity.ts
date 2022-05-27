@@ -13,7 +13,7 @@ export class RichiestaSoftSkillEntity extends BaseEntity implements RichiestaSof
   @Column('int', { name: 'ordine', nullable: true })
   ordine: number | null;
 
-  @ManyToOne(() => OffertaLavoroEntity, offertaLavoro => offertaLavoro.richiestaSoftSkills)
+  @ManyToOne(() => OffertaLavoroEntity, offertaLavoro => offertaLavoro.richiestaSoftSkills, { onDelete: 'CASCADE' })
   @JoinColumn([{ name: 'offerta_id', referencedColumnName: 'id' }])
   offerta: OffertaLavoroEntity;
 

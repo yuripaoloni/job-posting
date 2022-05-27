@@ -22,7 +22,7 @@ export class CandidaturaEntity extends BaseEntity implements Candidatura {
   @JoinColumn([{ name: 'utente_cf', referencedColumnName: 'cf' }])
   utenteCf: UtenteEntity;
 
-  @ManyToOne(() => OffertaLavoroEntity, offertaLavoro => offertaLavoro.candidaturas)
+  @ManyToOne(() => OffertaLavoroEntity, offertaLavoro => offertaLavoro.candidaturas, { onDelete: 'CASCADE' })
   @JoinColumn([{ name: 'offerta_id', referencedColumnName: 'id' }])
   offerta: OffertaLavoroEntity;
 }

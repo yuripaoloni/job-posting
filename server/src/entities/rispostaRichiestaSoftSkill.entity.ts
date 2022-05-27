@@ -12,7 +12,7 @@ export class RispostaRichiestaSoftSkillEntity extends BaseEntity implements Risp
   @Column('int', { name: 'ordine', nullable: true })
   ordine: number | null;
 
-  @ManyToOne(() => RichiestaSoftSkillEntity, richiestaSoftSkill => richiestaSoftSkill.rispostaRichiestaSoftSkills)
+  @ManyToOne(() => RichiestaSoftSkillEntity, richiestaSoftSkill => richiestaSoftSkill.rispostaRichiestaSoftSkills, { onDelete: 'CASCADE' })
   @JoinColumn([{ name: 'richiesta_id', referencedColumnName: 'id' }])
   richiestaId: RichiestaSoftSkillEntity;
 

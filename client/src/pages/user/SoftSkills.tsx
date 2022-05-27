@@ -17,14 +17,16 @@ import {
 import { useFetch } from "../../contexts/FetchContext";
 import { SoftSkill } from "../../typings/softSkill.type";
 
-type SoftSkillProps = {};
+type UserAnswers = { skillId: number; answerId: number };
 
-const SoftSkills = (props: SoftSkillProps) => {
+const SoftSkills = () => {
   const [softSkills, setSoftSkills] = useState<SoftSkill[] | undefined>(
     undefined
   );
   const [activeTab, setActiveTab] = useState(0);
-  const [answers, setAnswers] = useState([0]);
+  const [answers, setAnswers] = useState<UserAnswers[]>([
+    { skillId: 1, answerId: 1 },
+  ]);
 
   const { fetchData } = useFetch();
 
@@ -32,10 +34,19 @@ const SoftSkills = (props: SoftSkillProps) => {
     const fetchSoftSkillsAndUserAnswers = async () => {
       const res = await fetchData<{
         softSkills: SoftSkill[];
-        userAnswers: number[];
+        userAnswers: UserAnswers[];
       }>("/softSkills/user/answers", "GET");
 
-      setAnswers(res?.data.userAnswers ? res.data.userAnswers : [0]);
+      let userAnswers = res?.data.userAnswers
+        ? res.data.userAnswers
+        : res?.data.softSkills.map((skill, index) => {
+            return {
+              skillId: skill.id,
+              answerId: skill.risposteSoftSkills[0].idRisposta,
+            };
+          });
+
+      setAnswers(userAnswers!);
       setSoftSkills(res?.data.softSkills);
     };
 
@@ -48,7 +59,7 @@ const SoftSkills = (props: SoftSkillProps) => {
 
   const onCheckAnswer = (idDomanda: number, idRisposta: number) => {
     const updatedAnswers = answers.slice();
-    updatedAnswers[idDomanda] = idRisposta;
+    updatedAnswers[idDomanda].answerId = idRisposta;
     setAnswers(updatedAnswers);
   };
 
@@ -81,7 +92,7 @@ const SoftSkills = (props: SoftSkillProps) => {
         </Col>
         <Col md={9} xs={10}>
           <TabContent activeTab={activeTab}>
-            {softSkills?.map((softSkill) => (
+            {softSkills?.map((softSkill, index) => (
               <TabPane
                 key={softSkill.id - 1}
                 tabId={softSkill.id - 1}
@@ -95,11 +106,11 @@ const SoftSkills = (props: SoftSkillProps) => {
                       <FormGroup check key={risposta.idRisposta}>
                         <Input
                           onChange={() =>
-                            onCheckAnswer(softSkill.id - 1, risposta.idRisposta)
+                            onCheckAnswer(index, risposta.idRisposta)
                           }
                           id={`radio-${risposta.idRisposta}`}
                           checked={
-                            answers[softSkill.id - 1] === risposta.idRisposta
+                            answers[index].answerId === risposta.idRisposta
                           }
                           type="radio"
                         />

@@ -102,17 +102,13 @@ const Profile = (props: ProfileProps) => {
                   </dl>
                 </Col>
                 <Col className="border-top mt-2 pt-2">
-                  <Row>
-                    <h4>Soft skill</h4>
-                    <p className="text-muted mb-2">
-                      Risponde alle domande nella sezione soft skill per
-                      completare il tuo profile e candidarti per le posizione
-                      aperte
-                    </p>
-                    <Link to="/softSkill">
-                      Vai alla pagina delle soft skill
-                    </Link>
-                  </Row>
+                  <h4>Soft skill</h4>
+                  <p className="text-muted mb-2">
+                    Risponde alle domande nella sezione soft skill per
+                    completare il tuo profile e candidarti per le posizione
+                    aperte
+                  </p>
+                  <Link to="/softSkill">Vai alla pagina delle soft skill</Link>
                 </Col>
               </Col>
             </Row>

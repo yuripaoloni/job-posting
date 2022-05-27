@@ -15,26 +15,28 @@ class SoftSkillService extends Repository<SoftSkillEntity> {
     return softSkills;
   }
 
-  public async getAnswersArray(cf: string): Promise<number[]> {
+  public async getAnswersArray(cf: string): Promise<{ skillId: number; answerId: number }[]> {
     const updatedAnswers: RisposteUtente[] = await RisposteUtenteEntity.getRepository().find({ where: { utenteCf: cf }, loadRelationIds: true });
 
-    const answers = updatedAnswers.map(answer => answer.risposta);
+    const answers = updatedAnswers.map(answer => {
+      return { skillId: answer.softSkill, answerId: answer.risposta };
+    });
 
     return answers;
   }
 
   public async updateUserAnswers(cf: string, softSkillAnswers: SoftSkillAnswersDto): Promise<RisposteUtente[]> {
-    for (const [index, answer] of softSkillAnswers.answers.entries()) {
+    for (const answer of softSkillAnswers.answers) {
       const userAnswers = await RisposteUtenteEntity.getRepository().findOne({
-        where: { utenteCf: cf, softSkill: index + 1 },
+        where: { utenteCf: cf, softSkill: answer.skillId },
         relations: ['utenteCf', 'softSkill', 'risposta'],
       });
 
       const newUserAnswers = new RisposteUtenteEntity();
       const user = await UtenteEntity.getRepository().findOne({ where: { cf: cf } });
-      const softSkill = await SoftSkillEntity.findOne({ where: { id: index + 1 } });
+      const softSkill = await SoftSkillEntity.findOne({ where: { id: answer.skillId } });
       const rispostaSoftSkill = await RisposteSoftSkillEntity.getRepository().findOne({
-        where: { softSkill: index + 1, idRisposta: answer },
+        where: { softSkill: answer.skillId, idRisposta: answer.answerId },
       });
 
       if (!userAnswers) {

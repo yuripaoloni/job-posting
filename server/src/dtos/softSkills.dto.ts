@@ -1,6 +1,17 @@
-import { IsNumber } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNumber, IsArray, ValidateNested } from 'class-validator';
 
 export class SoftSkillAnswersDto {
-  @IsNumber({}, { each: true })
-  public answers: number[];
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SoftSkillAnswer)
+  public answers: SoftSkillAnswer[];
+}
+
+export class SoftSkillAnswer {
+  @IsNumber()
+  public skillId: number;
+
+  @IsNumber()
+  public answerId: number;
 }

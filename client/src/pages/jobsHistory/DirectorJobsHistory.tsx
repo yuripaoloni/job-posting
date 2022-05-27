@@ -1,7 +1,7 @@
 import { Job } from "../../typings/jobs.type";
 
 type DirectorJobsHistoryProps = {
-  jobs: Job[];
+  jobs: Job[] | undefined;
 };
 
 const DirectorJobsHistory = ({ jobs }: DirectorJobsHistoryProps) => {

@@ -17,6 +17,7 @@ class JobsRoute implements Routes {
 
   private initializeRoutes() {
     this.router.get(`${this.path}/offers`, authMiddleware, this.jobsController.getJobOffers);
+    this.router.get(`${this.path}/history`, authMiddleware, this.jobsController.getJobsHistory);
     this.router.post(
       `${this.path}/offers`,
       authMiddleware,
@@ -26,6 +27,7 @@ class JobsRoute implements Routes {
     );
     this.router.delete(`${this.path}/offers/:offerId`, authMiddleware, onlyManager, this.jobsController.removeJobOffer);
     this.router.post(`${this.path}/offers/apply`, authMiddleware, validationMiddleware(ApplyJobDto, 'body'), this.jobsController.applyToJobOffer);
+    this.router.delete(`${this.path}/offers/withdraw/:applicationId`, authMiddleware, this.jobsController.withdrawApplication);
     this.router.get(`${this.path}/offers/accept/:applicationId`, authMiddleware, onlyManager, this.jobsController.acceptApplication);
     this.router.post(
       `${this.path}/offers/determine`,

@@ -63,7 +63,7 @@ const UserDropdown = ({ isOpen, toggleDropdown }: UserDropdownProps) => {
               </LinkListItem>
             </Link>
           )}
-          <Link to="jobsHistory">
+          <Link to="history">
             <LinkListItem className="right-icon">
               <Icon
                 className="right"
@@ -72,7 +72,7 @@ const UserDropdown = ({ isOpen, toggleDropdown }: UserDropdownProps) => {
                 aria-hidden
                 size="sm"
               />
-              <span>Storico lavori</span>
+              <span>{userType === 0 ? "Candidature" : "Storico offerte"}</span>
             </LinkListItem>
           </Link>
           {userType === 2 && (

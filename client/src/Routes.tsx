@@ -3,7 +3,7 @@ import { Routes as RRRoutes, Route } from "react-router-dom";
 
 import Jobs from "./pages/jobs/Jobs";
 import Landing from "./pages/Landing";
-import JobsHistory from "./pages/user/JobsHistory";
+import JobsHistory from "./pages/jobsHistory/JobsHistory";
 import Profile from "./pages/user/Profile";
 import SoftSkills from "./pages/user/SoftSkills";
 
@@ -22,7 +22,7 @@ const Routes = () => {
         }
       />
       <Route
-        path="jobsHistory"
+        path="history"
         element={
           <RequireAuth>
             <JobsHistory />

@@ -25,7 +25,7 @@ class JobsController {
         req.tipoUtenteId === WORKER
           ? await this.jobsService.getWorkerJobOffers(req.cf)
           : req.tipoUtenteId === DIRECTOR
-          ? await this.jobsService.getDirectorJobOffers(req.cf)
+          ? await this.jobsService.getDirectorJobOffers()
           : await this.jobsService.getStructureJobOffers(req.cf);
 
       res.status(200).json(jobOffers);
@@ -76,6 +76,34 @@ class JobsController {
 
       res.status(200).json({ message: `Offerta di lavoro ${determineJobData.approved ? 'approvata' : 'non approvata'}`, success: true });
     } catch (error) {
+      next(error);
+    }
+  };
+
+  public getJobsHistory = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const jobsHistory =
+        req.tipoUtenteId === WORKER
+          ? await this.jobsService.getWorkerJobsHistory(req.cf)
+          : req.tipoUtenteId === DIRECTOR
+          ? await this.jobsService.getDirectorJobsHistory()
+          : await this.jobsService.getStructureJobHistory(req.cf);
+
+      res.status(200).json(jobsHistory);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public withdrawApplication = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const applicationId = Number(req.params.applicationId);
+
+      await this.jobsService.withdrawApplication(applicationId);
+
+      res.status(200).json({ message: 'Candidatura annullata', success: true });
+    } catch (error) {
+      console.log(error);
       next(error);
     }
   };

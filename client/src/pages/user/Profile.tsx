@@ -11,9 +11,9 @@ import {
 } from "design-react-kit";
 import { Link } from "react-router-dom";
 
-import LanguagesModal from "../../components/profile/EditProfileModal";
+import EditProfileModal from "../../components/profile/EditProfileModal";
 
-import { Utente } from "../../typings/utente.type";
+import { CompetenzeLinguistiche, Utente } from "../../typings/utente.type";
 import { useFetch } from "../../contexts/FetchContext";
 
 type ProfileProps = {};
@@ -38,12 +38,28 @@ const Profile = (props: ProfileProps) => {
     setshowEditProfileModal((prev) => !prev);
   };
 
+  const updateUser = (
+    firstOccupationYear: number,
+    preparation: string,
+    languages: CompetenzeLinguistiche[]
+  ) => {
+    setUser((prev) => {
+      return {
+        ...prev!,
+        annoPrimaOccupazione: firstOccupationYear,
+        preparazione: preparation,
+        competenzeLinguistiches: languages,
+      };
+    });
+  };
+
   return (
     <Container fluid className="p-md-5 p-3">
-      <LanguagesModal
+      <EditProfileModal
         isOpen={showEditProfileModal}
         toggleModal={toggleEditProfileModal}
         user={user}
+        updateUser={updateUser}
       />
       <Row className="justify-content-center">
         <Col lg={10} md={11} xs={12}>
@@ -81,23 +97,40 @@ const Profile = (props: ProfileProps) => {
                     <h4>Informazioni generali</h4>
                   </Row>
                   <dl className="row">
-                    <dt className="col-sm-5">Preparazione:</dt>
-                    <dd className="col-sm-6">{user?.preparazione}</dd>
-                    <dt className="col-sm-5">
+                    <dt className="col-sm-6">Preparazione:</dt>
+                    <dd className="col-sm-6">
+                      {user?.preparazione ? user?.preparazione : "N/A"}
+                    </dd>
+                    <dt className="col-sm-6">
                       Anno prima occupazione lavorativa:{" "}
                     </dt>
-                    <dd className="col-sm-6">{user?.annoPrimaOccupazione}</dd>
-                    <dt className="col-sm-5">Anno ingresso in Unicam: </dt>
-                    <dd className="col-sm-6">{user?.annoIngressoUnicam}</dd>
-                    <dt className="col-sm-5">Competenze linguistiche: </dt>
                     <dd className="col-sm-6">
-                      {user?.competenzeLinguistiches?.map((item) => (
-                        <Chip simple color="primary" className="mr-1">
-                          <ChipLabel>
-                            {item.lingua} {item.lingua}
-                          </ChipLabel>
-                        </Chip>
-                      ))}
+                      {user?.annoPrimaOccupazione
+                        ? user?.annoPrimaOccupazione
+                        : "N/A"}{" "}
+                    </dd>
+                    <dt className="col-sm-6">Anno ingresso in Unicam: </dt>
+                    <dd className="col-sm-6">
+                      {user?.annoIngressoUnicam
+                        ? user?.annoIngressoUnicam
+                        : "N/A"}
+                    </dd>
+                    <dt className="col-sm-6">Competenze linguistiche: </dt>
+                    <dd className="col-sm-6">
+                      {user?.competenzeLinguistiches
+                        ? user.competenzeLinguistiches.map((item, index) => (
+                            <Chip
+                              key={index}
+                              simple
+                              color="primary"
+                              className="mr-1"
+                            >
+                              <ChipLabel>
+                                {item.lingua} {item.livello}
+                              </ChipLabel>
+                            </Chip>
+                          ))
+                        : "N/A"}
                     </dd>
                   </dl>
                 </Col>

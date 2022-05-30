@@ -28,7 +28,7 @@ export type Candidatura = {
 
 export type CompetenzeLinguistiche = {
   id: number;
-  lingua: string | null;
+  lingua: string;
   livello: string;
   utenteCf?: string | any;
 };

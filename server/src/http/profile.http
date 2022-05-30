@@ -4,3 +4,18 @@
 ###
 # Get user data
 GET {{ baseURL }}
+
+### 
+# Update profile data
+POST {{baseURL}}
+Content-Type: application/json
+
+{
+    "firstOccupationYear": 2020,
+    "preparation": "Laurea Magistrale in Computer Science",
+    "languages": [{
+        "id": 1,
+        "lingua": "Inglese",
+        "livello": "B2"
+    }]
+}

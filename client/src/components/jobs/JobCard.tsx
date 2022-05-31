@@ -8,7 +8,9 @@ import {
   Col,
   Icon,
   CardFooterCTA,
+  Tooltip,
 } from "design-react-kit";
+import { useState } from "react";
 import { Job } from "../../typings/jobs.type";
 import { UserType } from "../../typings/utente.type";
 
@@ -41,11 +43,20 @@ type UserTypeProps =
       onDeleteJob?: never;
       onEditJob?: never;
       onApplyJob?: never;
+    }
+  | {
+      // jobs history manager-director
+      onShowParticipants: () => void;
+      onApplyJob?: never;
+      onDeleteJob?: never;
+      onEditJob?: never;
+      onApproveJob?: never;
+      onRejectJob?: never;
     };
 
 type JobCardProps = {
   job: Job;
-  userType: UserType;
+  userType?: UserType;
 } & UserTypeProps;
 
 const JobCard = ({
@@ -58,12 +69,23 @@ const JobCard = ({
   onRejectJob,
   onShowParticipants,
 }: JobCardProps) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+
   return (
     <Col lg={4} md={6} sm={12}>
       <Card spacing className="card-bg">
         <CardBody>
           <CardTagsHeader className="align-items-center">
+            <Tooltip
+              placement="top"
+              target={`status-badge-${job.id}`}
+              isOpen={job.approvata === false && showTooltip}
+              toggle={() => setShowTooltip((prev) => !prev)}
+            >
+              {job.descEsito}
+            </Tooltip>
             <Badge
+              id={`status-badge-${job.id}`}
               color={
                 job.approvata === true
                   ? "success"
@@ -105,7 +127,7 @@ const JobCard = ({
                   role="button"
                 />
               </div>
-            ) : (
+            ) : userType === 2 ? (
               <div>
                 <Icon
                   icon="it-user"
@@ -123,6 +145,14 @@ const JobCard = ({
                   color="danger"
                   className="ml-2"
                   onClick={() => onDeleteJob!()}
+                  role="button"
+                />
+              </div>
+            ) : (
+              <div>
+                <Icon
+                  icon="it-user"
+                  onClick={() => onShowParticipants!()}
                   role="button"
                 />
               </div>

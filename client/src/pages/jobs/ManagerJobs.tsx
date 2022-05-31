@@ -40,26 +40,6 @@ const ManagerJobs = ({ jobs, userType, updateJobs }: ManagerJobsProps) => {
     res?.data.jobOffer && updateJobs(res.data.jobOffer, false);
   };
 
-  const onAcceptApplication = async (
-    applicationId: number,
-    candidate: string
-  ) => {
-    toggleConfirm(`Approva candidatura di ${candidate} ?`, () =>
-      acceptApplication(applicationId)
-    );
-  };
-
-  const acceptApplication = async (applicationId: number) => {
-    toggleParticipantsModal();
-
-    const res = await fetchData<{ success: boolean }>(
-      `/jobs/offers/accept/${applicationId}`,
-      "GET"
-    );
-
-    res?.data.success && updateJobs(selectedJob!, false);
-  };
-
   return (
     <Container fluid className="p-4">
       <JobModal
@@ -71,7 +51,6 @@ const ManagerJobs = ({ jobs, userType, updateJobs }: ManagerJobsProps) => {
       <JobParticipantsModal
         isOpen={showParticipantsModal}
         toggleModal={toggleParticipantsModal}
-        onAcceptApplication={onAcceptApplication}
         job={selectedJob}
       />
       <Row className="justify-content-between align-items-center px-3 mb-4">

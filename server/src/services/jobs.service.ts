@@ -1,4 +1,4 @@
-import { EntityRepository, IsNull, Repository } from 'typeorm';
+import { EntityRepository, IsNull, Not, Repository } from 'typeorm';
 import { OffertaLavoroEntity } from '@/entities/offertaLavoro.entity';
 import { ApplyJobDto, DetermineJobDto, JobOfferDto } from '@/dtos/jobs.dto';
 import { UtenteEntity } from '@/entities/utente.entity';
@@ -161,7 +161,6 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     const jobOffers = await OffertaLavoroEntity.find({
       where: { approvata: IsNull(), attiva: true },
       order: { dataCreazione: 'ASC' },
-      relations: ['candidaturas'],
     });
 
     return jobOffers;
@@ -237,9 +236,9 @@ class JobsService extends Repository<OffertaLavoroEntity> {
 
   public async getDirectorJobsHistory(): Promise<OffertaLavoro[]> {
     const jobOffers = await OffertaLavoroEntity.find({
-      where: { attiva: false },
-      order: { dataCreazione: 'ASC' },
-      relations: ['candidaturas'],
+      where: { approvata: Not(IsNull()) },
+      order: { attiva: 'DESC', dataCreazione: 'ASC' },
+      relations: ['candidaturas', 'candidaturas.utenteCf'],
     });
 
     return jobOffers;

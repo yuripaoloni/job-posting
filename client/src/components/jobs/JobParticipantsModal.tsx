@@ -7,6 +7,7 @@ import {
   Row,
   Col,
 } from "design-react-kit";
+import { useAuth } from "../../contexts/AuthContext";
 import { Job } from "../../typings/jobs.type";
 import { formatNameSurname } from "../../utils/formatNameSurname";
 import Score from "./Score";
@@ -15,7 +16,7 @@ type JobParticipantsProps = {
   isOpen: boolean;
   toggleModal: () => void;
   job: Job | null;
-  onAcceptApplication: (applicationId: number, candidate: string) => void;
+  onAcceptApplication?: (applicationId: number, candidate: string) => void;
 };
 
 const JobParticipantsModal = ({
@@ -24,13 +25,18 @@ const JobParticipantsModal = ({
   job,
   onAcceptApplication,
 }: JobParticipantsProps) => {
+  const { userType } = useAuth();
+
   return (
     <Modal isOpen={isOpen} toggle={() => toggleModal()} scrollable size="lg">
       <ModalHeader>Lista candidature - {job?.ruolo}</ModalHeader>
       <ModalBody>
         {job?.candidaturas && job?.candidaturas?.length > 0
           ? job?.candidaturas?.map((candidatura) => (
-              <Row className="align-items-center justify-content-between border-bottom px-2 pb-2 mb-2">
+              <Row
+                key={candidatura.id}
+                className="align-items-center justify-content-between border-bottom px-2 pb-2 mb-2"
+              >
                 <Col xs={8}>
                   <h6>
                     {formatNameSurname(
@@ -53,23 +59,25 @@ const JobParticipantsModal = ({
                   </p>
                   <Score score={candidatura.punteggio} />
                 </Col>
-                <Col xs={2}>
-                  <Button
-                    size="sm"
-                    color="primary"
-                    onClick={() =>
-                      onAcceptApplication(
-                        candidatura.id,
-                        formatNameSurname(
-                          candidatura.utenteCf!.nome!,
-                          candidatura.utenteCf!.cognome!
+                {userType === 1 && (
+                  <Col xs={2}>
+                    <Button
+                      size="sm"
+                      color="primary"
+                      onClick={() =>
+                        onAcceptApplication!(
+                          candidatura.id,
+                          formatNameSurname(
+                            candidatura.utenteCf!.nome!,
+                            candidatura.utenteCf!.cognome!
+                          )
                         )
-                      )
-                    }
-                  >
-                    Approva
-                  </Button>
-                </Col>
+                      }
+                    >
+                      Approva
+                    </Button>
+                  </Col>
+                )}
               </Row>
             ))
           : "Nessun candidatura"}

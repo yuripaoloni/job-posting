@@ -56,6 +56,7 @@ const DirectorJobs = ({ jobs, userType, updateJobs }: DirectorJobsProps) => {
       <Row>
         {jobs?.map((job) => (
           <JobCard
+            key={job.id}
             job={job}
             userType={userType}
             onApproveJob={() => toggleDetermineJobModal(job, true)}

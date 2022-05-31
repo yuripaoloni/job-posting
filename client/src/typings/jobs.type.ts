@@ -1,3 +1,4 @@
+import { RisposteSoftSkill, SoftSkill } from "./softSkill.type";
 import { Utente } from "./utente.type";
 
 export type JobRes = {
@@ -10,8 +11,8 @@ export type Job = {
   responsabileCf: string | null;
   ruolo: string | null;
   struttura: string | null;
-  dataCreazione: Date | null;
-  dataScadenza: Date | null;
+  dataCreazione: string | null;
+  dataScadenza: string | null;
   approvata: boolean | null;
   attiva: boolean | null;
   punteggio?: number | null;
@@ -30,8 +31,15 @@ export type Candidatura = {
 
 export type RichiestaSoftSkill = {
   id: number;
-  ordine: number | null;
+  ordine: number;
   offerta?: number | any;
-  softSkill?: number | any;
-  risposta?: number | any;
+  softSkill?: SoftSkill;
+  rispostaRichiestaSoftSkills?: RispostaRichiestaSoftSkill[];
+};
+
+export type RispostaRichiestaSoftSkill = {
+  id: number;
+  ordine: number;
+  richiestaId: number | any;
+  rispostaId: RisposteSoftSkill;
 };

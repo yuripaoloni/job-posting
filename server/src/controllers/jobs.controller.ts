@@ -19,6 +19,19 @@ class JobsController {
     }
   };
 
+  public updateJobOffer = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const jobOfferData: JobOfferDto = req.body;
+      const jobOfferId = Number(req.params.offerId);
+
+      const jobOffer = await this.jobsService.updateJobOffer(jobOfferData, jobOfferId);
+
+      res.status(200).json({ message: `Offerta di lavoro aggiornata`, jobOffer });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public getJobOffers = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const jobOffers =

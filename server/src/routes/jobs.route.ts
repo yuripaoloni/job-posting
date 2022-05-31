@@ -25,6 +25,13 @@ class JobsRoute implements Routes {
       validationMiddleware(JobOfferDto, 'body'),
       this.jobsController.createJobOffer,
     );
+    this.router.patch(
+      `${this.path}/offers/:offerId`,
+      authMiddleware,
+      onlyManager,
+      validationMiddleware(JobOfferDto, 'body'),
+      this.jobsController.updateJobOffer,
+    );
     this.router.delete(`${this.path}/offers/:offerId`, authMiddleware, onlyManager, this.jobsController.removeJobOffer);
     this.router.post(`${this.path}/offers/apply`, authMiddleware, validationMiddleware(ApplyJobDto, 'body'), this.jobsController.applyToJobOffer);
     this.router.delete(`${this.path}/offers/withdraw/:applicationId`, authMiddleware, this.jobsController.withdrawApplication);

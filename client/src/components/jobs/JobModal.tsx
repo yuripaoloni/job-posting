@@ -24,9 +24,10 @@ type JobModalProps = {
   isOpen: boolean;
   toggleModal: () => void;
   updateJobs: (job: Job, update: boolean) => void;
+  job: Job | null;
 };
 
-const JobModal = ({ isOpen, toggleModal, updateJobs }: JobModalProps) => {
+const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
   const [role, setRole] = useState("");
   const [expiryDate, setExpiryData] = useState("");
 
@@ -35,10 +36,10 @@ const JobModal = ({ isOpen, toggleModal, updateJobs }: JobModalProps) => {
     undefined
   );
 
-  const [skillsOrder, setSkillsOrder] = useState<SkillsOrder>([
+  const [skillsOrder, setSkillsOrder] = useState<SkillsOrder[]>([
     { id: 1, order: 1 },
   ]);
-  const [answersOrder, setAnswersOrder] = useState<AnswersOrder>([
+  const [answersOrder, setAnswersOrder] = useState<AnswersOrder[]>([
     { softSkillId: 1, answers: [{ answerId: 1, order: 1 }] },
   ]);
 
@@ -82,7 +83,43 @@ const JobModal = ({ isOpen, toggleModal, updateJobs }: JobModalProps) => {
     fetchSoftSkills();
   }, [fetchData]);
 
-  const createJobOffer = async () => {
+  useEffect(() => {
+    if (job) {
+      setRole(job.ruolo!);
+      setExpiryData(job.dataScadenza!);
+
+      const titles = job.richiestaSoftSkills!.map(
+        (item) => item.softSkill!.titolo
+      );
+
+      const softSkills = job.richiestaSoftSkills!.map(
+        (item) => item.softSkill!
+      );
+
+      const skillsOrder = job.richiestaSoftSkills!.map((item) => {
+        return { id: item.softSkill!.id, order: item.ordine };
+      });
+
+      const answersOrder = job.richiestaSoftSkills!.map((item) => {
+        return {
+          softSkillId: item.softSkill!.id,
+          answers: item.rispostaRichiestaSoftSkills!.map((answer) => {
+            return {
+              answerId: answer.rispostaId.idRisposta,
+              order: answer.ordine,
+            };
+          }),
+        };
+      });
+
+      setSoftSkillsTitles(titles);
+      setSoftSkills(softSkills);
+      setSkillsOrder(skillsOrder);
+      setAnswersOrder(answersOrder);
+    }
+  }, [job]);
+
+  const validateInputs = (): boolean => {
     const valueArr = skillsOrder.map((item) => item.order);
     const hasDuplicateSkills = valueArr.some(
       (item, index) => valueArr.indexOf(item) !== index
@@ -106,15 +143,25 @@ const JobModal = ({ isOpen, toggleModal, updateJobs }: JobModalProps) => {
         "danger"
       );
 
-    if (!hasDuplicateSkills && duplicateAnswers.length === 0) {
+    return !hasDuplicateSkills && duplicateAnswers.length === 0;
+  };
+
+  const createOrUpdateJobOffer = async () => {
+    const hasValidInput = validateInputs();
+
+    if (hasValidInput) {
       toggleModal();
 
-      const res = await fetchData<JobRes>("/jobs/offers", "POST", {
-        role,
-        expiryDate,
-        skillsOrder,
-        answersOrder,
-      });
+      const res = await fetchData<JobRes>(
+        job ? `/jobs/offers/${job.id}` : "/jobs/offers",
+        job ? "PATCH" : "POST",
+        {
+          role,
+          expiryDate,
+          skillsOrder,
+          answersOrder,
+        }
+      );
 
       res?.data.jobOffer && updateJobs(res.data.jobOffer, true);
     }
@@ -151,7 +198,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs }: JobModalProps) => {
         toggle={() => toggleModal()}
         id="jobModal"
       >
-        Nuova offerta lavorativa
+        {job ? "Aggiorna" : "Nuova"} offerta lavorativa
       </ModalHeader>
       <ModalBody>
         <FormGroup>
@@ -196,8 +243,8 @@ const JobModal = ({ isOpen, toggleModal, updateJobs }: JobModalProps) => {
         />
       </ModalBody>
       <ModalFooter>
-        <Button color="primary" onClick={() => createJobOffer()}>
-          Crea offerta
+        <Button color="primary" onClick={() => createOrUpdateJobOffer()}>
+          {job ? "Aggiorna" : "Crea"} offerta
         </Button>
       </ModalFooter>
     </Modal>

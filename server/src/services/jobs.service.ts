@@ -65,6 +65,36 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     return jobOffer;
   }
 
+  public async updateJobOffer(jobOfferData: JobOfferDto, jobOfferId: number): Promise<OffertaLavoro> {
+    await OffertaLavoroEntity.update({ id: jobOfferId }, { ruolo: jobOfferData.role, dataScadenza: jobOfferData.expiryDate });
+
+    for (const skillOrder of jobOfferData.skillsOrder) {
+      const richiestaSoftSkill = await RichiestaSoftSkillEntity.getRepository().findOne({ where: { offerta: jobOfferId, softSkill: skillOrder.id } });
+
+      richiestaSoftSkill.ordine = skillOrder.order;
+
+      for (const answerOrder of jobOfferData.answersOrder) {
+        if (answerOrder.softSkillId === skillOrder.id) {
+          for (const answer of answerOrder.answers) {
+            const rispostaSoftSkill = await RisposteSoftSkillEntity.getRepository().findOne({
+              where: { softSkill: skillOrder.id, idRisposta: answer.answerId },
+            });
+
+            await RispostaRichiestaSoftSkillEntity.getRepository().update(
+              { richiestaId: richiestaSoftSkill, rispostaId: rispostaSoftSkill },
+              { ordine: answer.order },
+            );
+          }
+        }
+      }
+      await richiestaSoftSkill.save();
+    }
+
+    const jobOffer: OffertaLavoro = await OffertaLavoroEntity.findOne({ where: { id: jobOfferId } });
+
+    return jobOffer;
+  }
+
   public async getWorkerJobOffers(cf: string): Promise<OffertaLavoro[]> {
     const userAnswers: RisposteUtente[] = await RisposteUtenteEntity.getRepository().find({ where: { utenteCf: cf }, loadRelationIds: true });
     if (!userAnswers) throw new HttpException(400, 'Completa la profilazione per visualizzare le offerte');
@@ -111,7 +141,15 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     const jobOffers = await OffertaLavoroEntity.find({
       where: { struttura: user.struttura.descStruttura, attiva: true },
       order: { approvata: 'ASC', dataCreazione: 'ASC' },
-      relations: ['candidaturas', 'candidaturas.utenteCf'],
+      relations: [
+        'candidaturas',
+        'candidaturas.utenteCf',
+        'richiestaSoftSkills',
+        'richiestaSoftSkills.softSkill',
+        'richiestaSoftSkills.softSkill.risposteSoftSkills',
+        'richiestaSoftSkills.rispostaRichiestaSoftSkills',
+        'richiestaSoftSkills.rispostaRichiestaSoftSkills.rispostaId',
+      ],
     });
 
     return jobOffers;

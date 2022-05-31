@@ -24,8 +24,9 @@ const ManagerJobs = ({ jobs, userType, updateJobs }: ManagerJobsProps) => {
   const { fetchData } = useFetch();
   const { toggleConfirm } = useConfirm();
 
-  const toggleJobModal = () => {
+  const toggleJobModal = (job?: Job) => {
     setShowJobModal((prev) => !prev);
+    job && setSelectedJob(job);
   };
 
   const toggleParticipantsModal = (job?: Job) => {
@@ -65,6 +66,7 @@ const ManagerJobs = ({ jobs, userType, updateJobs }: ManagerJobsProps) => {
         isOpen={showJobModal}
         toggleModal={toggleJobModal}
         updateJobs={updateJobs}
+        job={selectedJob}
       />
       <JobParticipantsModal
         isOpen={showParticipantsModal}
@@ -98,7 +100,7 @@ const ManagerJobs = ({ jobs, userType, updateJobs }: ManagerJobsProps) => {
                 onDeleteOffer(job.id)
               )
             }
-            onEditJob={() => {}}
+            onEditJob={() => toggleJobModal(job)}
             onShowParticipants={() => toggleParticipantsModal(job)}
           />
         ))}

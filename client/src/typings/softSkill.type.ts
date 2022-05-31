@@ -5,7 +5,7 @@ export type SoftSkill = {
   risposteSoftSkills: RisposteSoftSkill[];
 };
 
-type RisposteSoftSkill = {
+export type RisposteSoftSkill = {
   idRisposta: number;
   descrizione: string | null;
 };
@@ -13,12 +13,14 @@ type RisposteSoftSkill = {
 export type SkillsOrder = {
   id: number;
   order: number;
-}[];
+};
 
 export type AnswersOrder = {
   softSkillId: number;
-  answers: {
-    answerId: number;
-    order: number;
-  }[];
-}[];
+  answers: Answer[];
+};
+
+export type Answer = {
+  answerId: number;
+  order: number;
+};

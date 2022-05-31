@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsBoolean, IsNumber, IsString, MaxLength, ValidateNested } from 'class-validator';
+import { IsBoolean, IsNumber, IsString, MaxLength, ValidateNested } from 'class-validator';
 
 export class JobOfferDto {
   @IsString()
@@ -10,7 +10,6 @@ export class JobOfferDto {
   @MaxLength(255)
   public expiryDate: string;
 
-  @IsArray()
   @ValidateNested({ each: true })
   @Type(() => SkillsOrder)
   public skillsOrder: SkillsOrder[];

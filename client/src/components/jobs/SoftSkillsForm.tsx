@@ -18,8 +18,8 @@ import {
 
 type SoftSkillsFormProps = {
   softSkillsTitle: string[];
-  skillsOrder: SkillsOrder;
-  answersOrder: AnswersOrder;
+  skillsOrder: SkillsOrder[];
+  answersOrder: AnswersOrder[];
   softSkills: SoftSkill[] | undefined;
   handleSkillsOrderChange: (order: number, skillIndex: number) => void;
   handleAnswersOrderChange: (

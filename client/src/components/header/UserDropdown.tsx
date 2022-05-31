@@ -33,6 +33,7 @@ const UserDropdown = ({ isOpen, toggleDropdown }: UserDropdownProps) => {
     await fetchData(`/auth/userType/${userType}`, "GET");
 
     toggleAuth(true, userType, user);
+    navigate("/");
   };
 
   return (

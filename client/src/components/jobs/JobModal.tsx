@@ -138,7 +138,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
     duplicateAnswers.length > 0 &&
       toggleAlert(
         `Risposte con stesso indice in ${duplicateAnswers.map(
-          (answer) => softSkillsTitle[answer]
+          (answer) => " " + softSkillsTitle[answer]
         )}`,
         "danger"
       );
@@ -169,8 +169,30 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
 
   const handleSkillsOrderChange = (order: number, skillIndex: number) => {
     const updatedSkillsOrder = skillsOrder.slice();
-    updatedSkillsOrder[skillIndex].order = order;
+    const updatedSkillOrder = updatedSkillsOrder[skillIndex];
+    updatedSkillOrder.order = order;
+    updatedSkillsOrder.splice(skillIndex, 1);
+    updatedSkillsOrder.splice(order - 1, 0, updatedSkillOrder);
+
+    let updatedSoftSkills = softSkills!.slice();
+    const updatedSkill = updatedSoftSkills[skillIndex];
+    updatedSoftSkills.splice(skillIndex, 1);
+    updatedSoftSkills.splice(order - 1, 0, updatedSkill);
+
+    let updatedAnswers = answersOrder!.slice();
+    const updatedAnswer = updatedAnswers[skillIndex];
+    updatedAnswers.splice(skillIndex, 1);
+    updatedAnswers.splice(order - 1, 0, updatedAnswer);
+
+    let updatedTitles = softSkillsTitle.slice();
+    const updatedTitle = softSkillsTitle[skillIndex];
+    updatedTitles.splice(skillIndex, 1);
+    updatedTitles.splice(order - 1, 0, updatedTitle);
+
     setSkillsOrder(updatedSkillsOrder);
+    setSoftSkills(updatedSoftSkills);
+    setSoftSkillsTitles(updatedTitles);
+    setAnswersOrder(updatedAnswers);
   };
 
   const handleAnswersOrderChange = (

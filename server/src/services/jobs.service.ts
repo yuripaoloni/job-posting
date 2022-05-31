@@ -97,7 +97,7 @@ class JobsService extends Repository<OffertaLavoroEntity> {
 
   public async getWorkerJobOffers(cf: string): Promise<OffertaLavoro[]> {
     const userAnswers: RisposteUtente[] = await RisposteUtenteEntity.getRepository().find({ where: { utenteCf: cf }, loadRelationIds: true });
-    if (!userAnswers) throw new HttpException(400, 'Completa la profilazione per visualizzare le offerte');
+    if (!userAnswers) throw new HttpException(400, 'Completa il tuo profilo per visualizzare le offerte');
     const coeffDomande: CoeffDomande[] = await CoeffDomandeEntity.getRepository().find();
     const coeffRisposte: CoeffRisposte[] = await CoeffRisposteEntity.getRepository().find();
     const applications: Candidatura[] = await CandidaturaEntity.getRepository().find({ where: { utenteCf: cf }, loadRelationIds: true });
@@ -151,6 +151,8 @@ class JobsService extends Repository<OffertaLavoroEntity> {
         'richiestaSoftSkills.rispostaRichiestaSoftSkills.rispostaId',
       ],
     });
+
+    jobOffers.forEach(jobOffer => (jobOffer.richiestaSoftSkills = jobOffer.richiestaSoftSkills.sort((a, b) => a.ordine - b.ordine)));
 
     return jobOffers;
   }

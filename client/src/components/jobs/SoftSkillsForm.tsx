@@ -66,7 +66,7 @@ const SoftSkillsForm = ({
           {softSkills?.map((softSkill, softSkillIndex) => (
             <TabPane
               key={softSkill.id - 1}
-              tabId={softSkill.id - 1}
+              tabId={softSkillIndex}
               className="p-2"
             >
               <Row className="justify-content-between mb-4 align-items-center">
@@ -82,12 +82,13 @@ const SoftSkillsForm = ({
                     min={1}
                     max={14}
                     value={skillsOrder[softSkillIndex].order}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      toggle(e.target.valueAsNumber - 1);
                       handleSkillsOrderChange(
                         e.target.valueAsNumber,
                         softSkillIndex
-                      )
-                    }
+                      );
+                    }}
                   />
                 </Col>
               </Row>

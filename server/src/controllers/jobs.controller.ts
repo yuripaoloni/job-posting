@@ -85,7 +85,7 @@ class JobsController {
     try {
       const determineJobData: DetermineJobDto = req.body;
 
-      await this.jobsService.determineJob(determineJobData);
+      await this.jobsService.determineJob(determineJobData, req.cf);
 
       res.status(200).json({ message: `Offerta di lavoro ${determineJobData.approved ? 'approvata' : 'non approvata'}`, success: true });
     } catch (error) {

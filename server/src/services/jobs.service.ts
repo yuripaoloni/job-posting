@@ -17,6 +17,7 @@ import { CoeffRisposte } from '@/interfaces/coeffRisposte.interface';
 import { CoeffRisposteEntity } from '@/entities/coeffRisposte.entity';
 import { CandidaturaEntity } from '@/entities/candidatura.entity';
 import { Candidatura } from '@/interfaces/candidatura.interface';
+import sendEmail from '@/utils/mail';
 
 @EntityRepository()
 class JobsService extends Repository<OffertaLavoroEntity> {
@@ -202,12 +203,21 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     await CandidaturaEntity.getRepository().delete({ id: applicationId });
   }
 
-  public async determineJob(determineJobData: DetermineJobDto): Promise<void> {
+  public async determineJob(determineJobData: DetermineJobDto, cf: string): Promise<void> {
     const jobOffer = await OffertaLavoroEntity.findOne({ where: { id: determineJobData.jobOfferId } });
+    const user = await UtenteEntity.getRepository().findOne({ where: { cf } });
 
     jobOffer.approvata = determineJobData.approved;
     jobOffer.attiva = determineJobData.approved;
     jobOffer.descEsito = determineJobData.message;
+
+    await sendEmail(
+      user.email,
+      `Esito offerta lavorativa - ${jobOffer.ruolo}`,
+      `L'offerta di lavoro "${jobOffer.ruolo}" per ${jobOffer.struttura} da lei creata in data ${new Date(jobOffer.dataCreazione).toLocaleDateString(
+        'it-IT',
+      )} è stata ${determineJobData.approved ? 'approvata' : 'rifiutata'} con il seguente messaggio: ${determineJobData.message}.\n\nCordiali saluti`,
+    );
 
     await jobOffer.save();
   }

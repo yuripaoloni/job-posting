@@ -45,7 +45,7 @@ POST {{ baseURL }}/offers
 Content-Type: application/json
 
 {
-    "role": "Software developer",
+    "role": "Frontend developer",
     "expiryDate": "2022-08-23",
     "skillsOrder": [
         {

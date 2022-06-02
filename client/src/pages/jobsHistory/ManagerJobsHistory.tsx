@@ -1,8 +1,11 @@
-import { Container, Row } from "design-react-kit";
 import { useState } from "react";
+import { Row } from "design-react-kit";
+
 import JobCard from "../../components/jobs/JobCard";
 import JobParticipantsModal from "../../components/jobs/JobParticipantsModal";
+
 import { Job } from "../../typings/jobs.type";
+import PageContainer from "../../components/layout/PageContainer";
 
 type ManagerJobsHistoryProps = {
   jobs: Job[] | undefined;
@@ -18,7 +21,7 @@ const ManagerJobsHistory = ({ jobs }: ManagerJobsHistoryProps) => {
   };
 
   return (
-    <Container fluid className="p-4">
+    <PageContainer>
       <JobParticipantsModal
         isOpen={showParticipantsModal}
         toggleModal={toggleParticipantsModal}
@@ -36,7 +39,7 @@ const ManagerJobsHistory = ({ jobs }: ManagerJobsHistoryProps) => {
           />
         ))}
       </Row>
-    </Container>
+    </PageContainer>
   );
 };
 

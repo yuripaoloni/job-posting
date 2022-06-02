@@ -1,7 +1,11 @@
-import { Container, Row } from "design-react-kit";
+import { Row } from "design-react-kit";
+
 import ApplicationCard from "../../components/jobs/ApplicationCard";
+import PageContainer from "../../components/layout/PageContainer";
+
 import { useConfirm } from "../../contexts/ConfirmContext";
 import { useFetch } from "../../contexts/FetchContext";
+
 import { Candidatura } from "../../typings/utente.type";
 
 type WorkerJobsHistoryProps = {
@@ -33,7 +37,7 @@ const WorkerJobsHistory = ({
   };
 
   return (
-    <Container fluid className="p-4">
+    <PageContainer>
       <Row className="justify-content-between align-items-center px-3 mb-4">
         <h2 className="align-middle">Candidature</h2>
       </Row>
@@ -46,7 +50,7 @@ const WorkerJobsHistory = ({
           />
         ))}
       </Row>
-    </Container>
+    </PageContainer>
   );
 };
 

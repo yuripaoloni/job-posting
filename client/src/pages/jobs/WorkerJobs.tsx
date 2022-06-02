@@ -1,6 +1,7 @@
-import { Container, Row } from "design-react-kit";
+import { Row } from "design-react-kit";
 
 import JobCard from "../../components/jobs/JobCard";
+import PageContainer from "../../components/layout/PageContainer";
 import { useConfirm } from "../../contexts/ConfirmContext";
 import { useFetch } from "../../contexts/FetchContext";
 
@@ -30,7 +31,7 @@ const WorkerJobs = ({ jobs, userType, updateJobs }: WorkerJobsProps) => {
   };
 
   return (
-    <Container fluid className="p-4">
+    <PageContainer>
       <Row className="justify-content-between align-items-center px-3 mb-4">
         <h2 className="align-middle">Offerte di lavoro</h2>
       </Row>
@@ -48,7 +49,7 @@ const WorkerJobs = ({ jobs, userType, updateJobs }: WorkerJobsProps) => {
           />
         ))}
       </Row>
-    </Container>
+    </PageContainer>
   );
 };
 

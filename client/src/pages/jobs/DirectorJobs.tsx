@@ -1,8 +1,9 @@
-import { Container, Row } from "design-react-kit";
+import { Row } from "design-react-kit";
 import { useState } from "react";
 import DetermineJobModal from "../../components/jobs/DetermineJobModal";
 
 import JobCard from "../../components/jobs/JobCard";
+import PageContainer from "../../components/layout/PageContainer";
 import { useFetch } from "../../contexts/FetchContext";
 
 import { Job } from "../../typings/jobs.type";
@@ -42,7 +43,7 @@ const DirectorJobs = ({ jobs, userType, updateJobs }: DirectorJobsProps) => {
   };
 
   return (
-    <Container fluid className="p-4">
+    <PageContainer>
       <DetermineJobModal
         isOpen={showDetermineJobModal}
         toggleModal={toggleDetermineJobModal}
@@ -64,7 +65,7 @@ const DirectorJobs = ({ jobs, userType, updateJobs }: DirectorJobsProps) => {
           />
         ))}
       </Row>
-    </Container>
+    </PageContainer>
   );
 };
 

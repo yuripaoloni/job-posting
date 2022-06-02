@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Container, Row, Button, Icon } from "design-react-kit";
+import { Row, Button, Icon } from "design-react-kit";
 
 import JobModal from "../../components/jobs/JobModal";
 import JobCard from "../../components/jobs/JobCard";
@@ -9,11 +9,12 @@ import { UserType } from "../../typings/utente.type";
 import { useFetch } from "../../contexts/FetchContext";
 import { useConfirm } from "../../contexts/ConfirmContext";
 import JobParticipantsModal from "../../components/jobs/JobParticipantsModal";
+import PageContainer from "../../components/layout/PageContainer";
 
 type ManagerJobsProps = {
   jobs: Job[] | undefined;
   userType: UserType;
-  updateJobs: (job: Job, update: boolean) => void;
+  updateJobs: (job: Job, update: boolean, jobId?: number) => void;
 };
 
 const ManagerJobs = ({ jobs, userType, updateJobs }: ManagerJobsProps) => {
@@ -31,17 +32,17 @@ const ManagerJobs = ({ jobs, userType, updateJobs }: ManagerJobsProps) => {
 
   const toggleParticipantsModal = (job?: Job) => {
     setShowParticipantsModal((prev) => !prev);
-    job && setSelectedJob(job);
+    setSelectedJob(job ? job : null);
   };
 
   const onDeleteOffer = async (jobId: number) => {
     const res = await fetchData<JobRes>(`/jobs/offers/${jobId}`, "DELETE");
 
-    res?.data.jobOffer && updateJobs(res.data.jobOffer, false);
+    res?.data.jobOffer && updateJobs(res.data.jobOffer, false, jobId);
   };
 
   return (
-    <Container fluid className="p-4">
+    <PageContainer>
       <JobModal
         isOpen={showJobModal}
         toggleModal={toggleJobModal}
@@ -84,7 +85,7 @@ const ManagerJobs = ({ jobs, userType, updateJobs }: ManagerJobsProps) => {
           />
         ))}
       </Row>
-    </Container>
+    </PageContainer>
   );
 };
 

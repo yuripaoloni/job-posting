@@ -25,13 +25,13 @@ const Jobs = () => {
     fetchJobs();
   }, [fetchData]);
 
-  const updateJobs = (job: Job, update: boolean) => {
+  const updateJobs = (job: Job, update: boolean, jobId?: number) => {
     let updatedJobs = jobs ? jobs?.slice() : [];
     if (update) {
       const index = updatedJobs.findIndex((item) => item.id === job.id);
       index > -1 ? (updatedJobs[index] = job) : updatedJobs.unshift(job);
     } else {
-      updatedJobs = updatedJobs.filter((item) => item.id !== job.id);
+      updatedJobs = updatedJobs.filter((item) => item.id !== jobId);
     }
     setJobs(updatedJobs);
   };

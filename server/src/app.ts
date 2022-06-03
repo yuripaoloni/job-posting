@@ -14,6 +14,7 @@ import { dbConnection } from '@databases';
 import { Routes } from '@interfaces/routes.interface';
 import errorMiddleware from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
+import startJobs from '@jobs/index';
 
 class App {
   public app: express.Application;
@@ -30,6 +31,7 @@ class App {
     this.initializeRoutes(routes);
     this.initializeSwagger();
     this.initializeErrorHandling();
+    this.initializeJobs();
   }
 
   public listen() {
@@ -83,6 +85,10 @@ class App {
 
   private initializeErrorHandling() {
     this.app.use(errorMiddleware);
+  }
+
+  private initializeJobs() {
+    startJobs();
   }
 }
 

@@ -116,6 +116,9 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
       setSoftSkills(softSkills);
       setSkillsOrder(skillsOrder);
       setAnswersOrder(answersOrder);
+    } else {
+      setRole("");
+      setExpiryData("");
     }
   }, [job]);
 

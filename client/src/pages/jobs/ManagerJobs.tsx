@@ -27,7 +27,7 @@ const ManagerJobs = ({ jobs, userType, updateJobs }: ManagerJobsProps) => {
 
   const toggleJobModal = (job?: Job) => {
     setShowJobModal((prev) => !prev);
-    job && setSelectedJob(job);
+    setSelectedJob(job ? job : null);
   };
 
   const toggleParticipantsModal = (job?: Job) => {

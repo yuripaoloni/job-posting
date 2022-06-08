@@ -70,6 +70,8 @@ paths:
 
   /auth/validate:
     get:
+      security:
+        - cookieAuth: []
       tags:
         - auth
       summary: Validate an auth cookie
@@ -94,6 +96,8 @@ paths:
 
   /auth/userType/{userType}:
     get:
+      security:
+        - cookieAuth: []
       tags:
         - auth
       summary: Change usertype
@@ -124,6 +128,41 @@ paths:
         500:
           description: 'Server Error'
 
+  /profile:
+    get:
+      security: 
+        - cookieAuth: []
+      tags:
+        - profile
+      summary: Get user profile data
+      responses:
+        200:
+          description: Profile data
+          schema:
+            $ref: '#/definitions/user'
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+          description: 'Server Error'
+
+    post:
+      security: 
+        - cookieAuth: []
+      tags:
+        - profile
+      summary: Update user profile data
+      parameters:
+        - name: body
+          in: body
+          description: profile data
+          required: true
+          schema:
+            $ref: '#/definitions/updateProfileDto'
+
+
+
 definitions:
   loginDto:
     type: object
@@ -137,6 +176,77 @@ definitions:
       password:
         type: string
         description: unicam password
+
+  user:
+    type: object
+    required:
+      - cf
+      - nome
+      - cognome
+      - username
+      - email
+      - annoPrimaOccupazione
+      - annoIngressoUnicam
+      - preparazione
+    properties:
+      cf: 
+        type: string
+        description: fiscal code
+      nome: 
+        type: string
+        description: name
+      cognome: 
+        type: string
+        description: surname
+      username: 
+        type: string
+        description: username
+      email: 
+        type: string
+        description: email address
+      annoPrimaOccupazione: 
+        type: integer
+        description: year of first work occupation
+      annoIngressoUnicam: 
+        type: integer
+        description: Unicam entry year
+      preparazione: 
+        type: string
+        description: degree
+
+  updateProfileDto:
+    type: object
+    required:
+      - firstOccupationYear
+      - preparation
+      - languages
+    properties:
+      firstOccupationYear:
+        type: integer
+        description: year of first work occupation
+      preparation:
+        type: string
+        description: degree
+      languages:
+        type: array
+        description: array of languages
+        items:
+          type: object
+          required:
+            - id
+            - lingua
+            - livello
+          properties:
+            id:
+              type: integer
+              description: id
+            lingua:
+              type: string
+              description: language name
+            livello:
+              type: string
+              description: level (e.g. A1, A2, B1, B2, ...)
+
 
 securityDefinitions:
   cookieAuth:

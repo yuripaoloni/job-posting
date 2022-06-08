@@ -1,123 +1,149 @@
 tags:
-- name: users
-  description: users API
+  - name: auth
+    description: auth API
+  - name: jobs
+    description: jobs API
+  - name: profile
+    description: profile API
+  - name: softSkill
+    description: softSkill API
 
 paths:
-# [GET] users
-  /users:
-    get:
-      tags:
-      - users
-      summary: Find All Users
-      responses:
-        200:
-          description: 'OK'
-        500:
-          description: 'Server Error'
-
-# [POST] users
+  /auth/login:
     post:
       tags:
-      - users
-      summary: Add User
+        - auth
+      summary: Authenticate a user and set auth cookie
       parameters:
-      - name: body
-        in: body
-        description: user Data
-        required: true
-        schema:
-          $ref: '#/definitions/users'
+        - name: body
+          in: body
+          description: login data
+          required: true
+          schema:
+            $ref: '#/definitions/loginDto'
       responses:
-        201:
-          description: 'Created'
-        400:
-          description: 'Bad Request'
-        409:
-          description: 'Conflict'
+        200:
+          description: Successful login
+          headers:
+            Set-Cookie:
+              type: string
+              description: Auth cookie
+          schema:
+            type: object
+            properties:
+              tipoUtenteId:
+                type: integer
+              message:
+                type: string
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
         500:
           description: 'Server Error'
 
-# [GET] users/id
-  /users/{id}:
+  /auth/logout:
+    get:
+      security:
+        - cookieAuth: []
+      tags:
+        - auth
+      summary: Perform logout and unset auth cookie
+      responses:
+        200:
+          description: Successful logout
+          headers:
+            Set-Cookie:
+              type: string
+              description: Emptied cookie
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+          description: 'Server Error'
+
+  /auth/validate:
     get:
       tags:
-      - users
-      summary: Find User By Id
-      parameters:
-      - name: id
-        in: path
-        description: User Id
-        required: true
-        type: integer
+        - auth
+      summary: Validate an auth cookie
       responses:
         200:
-          description: 'OK'
-        409:
-          description: 'Conflict'
+          description: Cookie validated
+          schema:
+            type: object
+            properties:
+              tipoUtenteId:
+                type: integer
+              username:
+                type: string
+              message:
+                type: string
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
         500:
           description: 'Server Error'
 
-# [PUT] users/id
-    put:
+  /auth/userType/{userType}:
+    get:
       tags:
-      - users
-      summary: Update User By Id
+        - auth
+      summary: Change usertype
       parameters:
-      - name: id
-        in: path
-        description: user Id
-        required: true
-        type: integer
-      - name: body
-        in: body
-        description: user Data
-        required: true
-        schema:
-          $ref: '#/definitions/users'
+        - name: userType
+          in: path
+          description: User type, can be 1, 2, or 3
+          required: true
+          type: integer
       responses:
         200:
-          description: 'OK'
-        400:
-          description: 'Bad Request'
-        409:
-          description: 'Conflict'
+          description: Changed user type
+          headers:
+            Set-Cookie:
+              type: string
+              description: Auth cookie
+          schema:
+            type: object
+            properties:
+              tipoUtenteId:
+                type: integer
+              message:
+                type: string
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
         500:
           description: 'Server Error'
 
-# [DELETE] users/id
-    delete:
-      tags:
-      - users
-      summary: Delete User By Id
-      parameters:
-      - name: id
-        in: path
-        description: user Id
-        required: true
-        type: integer
-      responses:
-        200:
-          description: 'OK'
-        409:
-          description: 'Conflict'
-        500:
-          description: 'Server Error'
-
-# definitions
 definitions:
-  users:
+  loginDto:
     type: object
     required:
-        - email
-        - password
+      - username
+      - password
     properties:
-      email:
+      username:
         type: string
-        description: user Email
+        description: unicam username
       password:
         type: string
-        description: user Password
+        description: unicam password
+
+securityDefinitions:
+  cookieAuth:
+    type: apiKey
+    in: cookie
+    name: Authorization
 
 schemes:
- - https
- - http
+  - https
+  - http

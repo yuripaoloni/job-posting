@@ -160,6 +160,109 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/updateProfileDto'
+  
+  /softSkills:
+    get:
+      security:
+        - cookieAuth: []
+      tags:
+        - softSkill
+      summary: Get list of soft skills questions and answers
+      responses:
+        200:
+          description: Soft skills
+          schema:
+            $ref: '#/definitions/softSkills'
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+          description: 'Server Error'
+  
+  /softSkills/user/answers:
+    get:
+      security:
+        - cookieAuth: []
+      tags:
+        - softSkill
+      summary: Get list of soft skills and user answers
+      esponses:
+        200:
+          description: Soft skills
+          schema:
+           type: object
+            required:
+             - softSkills
+             - userAnswers
+            properties:
+              softSkills:
+                $ref: '#/definitions/softSkills'
+              userAnswers:
+                $ref: '#/definitions/userAnswers'
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+          description: 'Server Error'
+
+    post: 
+      security:
+        - cookieAuth: []
+      tags:
+        - softSkill
+      summary: Update user answers
+      parameters:
+        - name: body
+          in: body
+          description: updated user answers
+          required: true
+          schema:
+            $ref: '#/definitions/softSkillAnswersDto'
+      responses:
+        200:
+          description: Changed user type
+          schema:
+            type: object
+            required:
+              - message
+              - updatedAnswers
+            properties:
+              message:
+                type: string
+              updatedAnswers:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - id
+                    - dataIns
+                    - utenteCf
+                    - softSkill
+                    - risposta
+                  properties:
+                    id:
+                      type: integer
+                      description: id
+                    dataIns:
+                      type: 
+                      description: entry date
+                    utenteCf:
+                      type: string
+                      description: user fiscal code
+                    softSkill:
+                      type: integer
+                      description: soft skill id
+                    risposta:
+                      type: integer
+                      description: answer id
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+          description: 'Server Error'
 
 
 
@@ -246,7 +349,76 @@ definitions:
             livello:
               type: string
               description: level (e.g. A1, A2, B1, B2, ...)
-
+  
+  softSkills:
+    type: array
+    items:
+      type: object
+      required:
+        - id
+        - titolo
+        - descrizione
+        - risposteSoftSkills
+      properties:
+        id:
+          type: integer
+          description: id
+        titolo: 
+          type: string
+          description: soft skill
+        descrizione:
+          type: string
+          description: soft skill description
+        risposteSoftSkills:
+          type: array
+          description: array of answers
+          items:
+            type: object
+            required:
+              - idRisposta
+              - descrizione
+            properties:
+              idRisposta:
+                type: integer
+                descrizione: id
+              descrizione: 
+                type: string
+                description: answer text
+  
+  userAnswers:
+    type: array
+    items:
+      type: object
+      required:
+      - skillId
+      - answerId
+      properties:
+        skillId:
+          type: integer
+          description: soft skill id
+        answerId:
+          type: integer
+          description: answer id
+  
+  softSkillAnswersDto:
+    type: object
+    required:
+     - answers
+     properties:
+      answers:
+        type: array
+        items:
+          type: object
+          required: 
+           - skillId
+           - answerId
+          properties:
+            skillId:
+              type: integer
+              description: soft skill id
+            answerId:
+              type: integer
+              description: answer id
 
 securityDefinitions:
   cookieAuth:

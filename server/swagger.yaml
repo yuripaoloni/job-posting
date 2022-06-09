@@ -130,7 +130,7 @@ paths:
 
   /profile:
     get:
-      security: 
+      security:
         - cookieAuth: []
       tags:
         - profile
@@ -148,7 +148,7 @@ paths:
           description: 'Server Error'
 
     post:
-      security: 
+      security:
         - cookieAuth: []
       tags:
         - profile
@@ -160,7 +160,7 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/updateProfileDto'
-  
+
   /softSkills:
     get:
       security:
@@ -179,7 +179,7 @@ paths:
           description: 'Missing auth token'
         500:
           description: 'Server Error'
-  
+
   /softSkills/user/answers:
     get:
       security:
@@ -187,14 +187,14 @@ paths:
       tags:
         - softSkill
       summary: Get list of soft skills and user answers
-      esponses:
+      responses:
         200:
           description: Soft skills
           schema:
-           type: object
+            type: object
             required:
-             - softSkills
-             - userAnswers
+              - softSkills
+              - userAnswers
             properties:
               softSkills:
                 $ref: '#/definitions/softSkills'
@@ -207,7 +207,7 @@ paths:
         500:
           description: 'Server Error'
 
-    post: 
+    post:
       security:
         - cookieAuth: []
       tags:
@@ -264,7 +264,264 @@ paths:
         500:
           description: 'Server Error'
 
+  /jobs/offers:
+    get:
+      security:
+        - cookieAuth: []
+      tags:
+        - jobs
+      summary: Get job offers. Results differs based on logged user type
+      responses:
+        200:
+          descripton: Job offers
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/jobOffer'
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+          description: 'Server Error'
 
+    post:
+      security:
+        - cookieAuth: []
+      tags:
+        - jobs
+      summary: create a new job offer
+      parameters:
+        - name: body
+          in: body
+          description: updated user answers
+          required: true
+          schema:
+            $ref: '#/definitions/jobOfferDto'
+      responses:
+        200:
+          description: Job offer created
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              jobOffer:
+                $ref: '#/definitions/jobOffer'
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+          description: 'Server Error'
+
+  /jobs/offers/{offerId}:
+    patch:
+      security:
+        - cookieAuth: []
+      tags:
+        - jobs
+      summary: updated job offer
+      parameters:
+        - name: body
+          in: body
+          description: updated user answers
+          required: true
+          schema:
+            $ref: '#/definitions/jobOfferDto'
+        - name: offerId
+          in: path
+          description: offer id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Job offer updated
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              jobOffer:
+                $ref: '#/definitions/jobOffer'
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+          description: 'Server Error'
+    delete:
+      security:
+        - cookieAuth: []
+      tags:
+        - jobs
+      summary: remove job offer
+      parameters:
+        - name: offerId
+          in: path
+          description: offer id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Job offer deleted
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              jobOffer:
+                $ref: '#/definitions/jobOffer'
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+          description: 'Server Error'
+
+  /jobs/history:
+    get:
+      security:
+        - cookieAuth: []
+      tags:
+        - jobs
+      summary: Get jobs history for a user
+      responses:
+        200:
+          description: Job offers history. For normal users returns the applications
+          schema:
+            type: object
+            properties:
+              jobOffer:
+                $ref: '#/definitions/jobOffer'
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+          description: 'Server Error'
+
+  /jobs/offers/apply:
+    post:
+      security:
+        - cookieAuth: []
+      tags:
+        - jobs
+      summary: apply for a job offer
+      parameters:
+        - name: body
+          in: body
+          description: apply job data
+          required: true
+          schema:
+            $ref: '#/definitions/applyJobDto'
+      responses:
+        200:
+          description: Applied to a job offer
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              success:
+                type: boolean
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+          description: 'Server Error'
+
+  /jobs/offers/withdraw/{applicationId}:
+    delete:
+      security:
+        - cookieAuth: []
+      tags:
+        - jobs
+      summary: withdraw application for a job offer
+      parameters:
+        - name: offerId
+          in: path
+          description: offer id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Withdrawn application
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              success:
+                type: boolean
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+          description: 'Server Error'
+
+  /jobs/offers/accept/{applicationId}:
+    get:
+      security:
+        - cookieAuth: []
+      tags:
+        - jobs
+      summary: accept a candidate for a job offer
+      parameters:
+        - name: offerId
+          in: path
+          description: offer id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Candidate accepted
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              success:
+                type: boolean
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+          description: 'Server Error'
+
+  /jobs/offers/determine:
+    post:
+      security:
+        - cookieAuth: []
+      tags:
+        - jobs
+      summary: approve or not a posted job offer
+      parameters:
+        - name: body
+          in: body
+          description: determine job offer data
+          required: true
+          schema:
+            $ref: '#/definitions/determineJobDto'
+      responses:
+        200:
+          description: job offer outcome
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              success:
+                type: boolean
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+          description: 'Server Error'
 
 definitions:
   loginDto:
@@ -292,28 +549,28 @@ definitions:
       - annoIngressoUnicam
       - preparazione
     properties:
-      cf: 
+      cf:
         type: string
         description: fiscal code
-      nome: 
+      nome:
         type: string
         description: name
-      cognome: 
+      cognome:
         type: string
         description: surname
-      username: 
+      username:
         type: string
         description: username
-      email: 
+      email:
         type: string
         description: email address
-      annoPrimaOccupazione: 
+      annoPrimaOccupazione:
         type: integer
         description: year of first work occupation
-      annoIngressoUnicam: 
+      annoIngressoUnicam:
         type: integer
         description: Unicam entry year
-      preparazione: 
+      preparazione:
         type: string
         description: degree
 
@@ -349,7 +606,7 @@ definitions:
             livello:
               type: string
               description: level (e.g. A1, A2, B1, B2, ...)
-  
+
   softSkills:
     type: array
     items:
@@ -363,7 +620,7 @@ definitions:
         id:
           type: integer
           description: id
-        titolo: 
+        titolo:
           type: string
           description: soft skill
         descrizione:
@@ -381,17 +638,17 @@ definitions:
               idRisposta:
                 type: integer
                 descrizione: id
-              descrizione: 
+              descrizione:
                 type: string
                 description: answer text
-  
+
   userAnswers:
     type: array
     items:
       type: object
       required:
-      - skillId
-      - answerId
+        - skillId
+        - answerId
       properties:
         skillId:
           type: integer
@@ -399,19 +656,19 @@ definitions:
         answerId:
           type: integer
           description: answer id
-  
+
   softSkillAnswersDto:
     type: object
     required:
-     - answers
-     properties:
+      - answers
+    properties:
       answers:
         type: array
         items:
           type: object
-          required: 
-           - skillId
-           - answerId
+          required:
+            - skillId
+            - answerId
           properties:
             skillId:
               type: integer
@@ -419,6 +676,118 @@ definitions:
             answerId:
               type: integer
               description: answer id
+
+  jobOffer:
+    type: object
+    required:
+      - id
+      - responsabileCf
+      - ruolo
+      - struttura
+      - dataCreazione
+      - dataScadenza
+      - approvata
+      - attiva
+    properties:
+      id:
+        type: integer
+        description: id
+      responsabileCf:
+        type: string
+        description: creator fiscal code
+      ruolo:
+        type: string
+        description: role
+      struttura:
+        type: string
+        description: structure
+      dataCreazione:
+        type: string
+        description: creation date
+      dataScadenza:
+        type: string
+        description: expiry date
+      approvata:
+        type: boolean
+        description: approved or not
+      attiva:
+        type: boolean
+        description: active or not
+      punteggio:
+        type: integer
+        description: user score
+
+  jobOfferDto:
+    type: object
+    required:
+      - role
+      - expiryDate
+      - skillsOrder
+      - answersOrder
+    properties:
+      role:
+        type: string
+      expiryDate:
+        type: string
+      skillsOrder:
+        type: array
+        items:
+          type: object
+          required:
+            - id
+            - order
+          properties:
+            id:
+              type: integer
+            order:
+              type: integer
+      answersOrder:
+        type: array
+        items:
+          type: object
+          required:
+            - softSkillId
+            - answers
+          properties:
+            softSkillId:
+              type: integer
+            answers:
+              type: array
+              items:
+                type: object
+                required:
+                  - answerId
+                  - order
+                properties:
+                  answerId:
+                    type: integer
+                  order:
+                    type: integer
+
+  applyJobDto:
+    type: object
+    required:
+      - jobOfferId
+      - score
+    properties:
+      jobOfferId:
+        type: integer
+      score:
+        type: integer
+
+  determineJobDto:
+    type: object
+    required:
+      - approved
+      - jobOfferId
+      - message
+    properties:
+      approved:
+        type: boolean
+      jobOfferId:
+        type: integer
+      message:
+        type: string
 
 securityDefinitions:
   cookieAuth:

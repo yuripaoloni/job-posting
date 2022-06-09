@@ -246,7 +246,7 @@ paths:
                       type: integer
                       description: id
                     dataIns:
-                      type: 
+                      type: string
                       description: entry date
                     utenteCf:
                       type: string

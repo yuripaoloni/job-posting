@@ -1,10 +1,10 @@
 import { OffertaLavoro } from './offertaLavoro.interface';
 import { Utente } from './utente.interface';
 
-export interface Candidatura {
+export interface PunteggioOfferta {
   id: number;
+  punteggio: number | null;
   data: Date | null;
-  approvata: boolean | null;
   utenteCf?: string | Utente;
   offerta?: number | OffertaLavoro;
 }

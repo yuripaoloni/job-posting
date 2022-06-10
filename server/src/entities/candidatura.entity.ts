@@ -15,9 +15,6 @@ export class CandidaturaEntity extends BaseEntity implements Candidatura {
   @Column('bit', { name: 'approvata', nullable: true })
   approvata: boolean | null;
 
-  @Column({ type: 'int', name: 'punteggio', nullable: true })
-  punteggio: number | null;
-
   @ManyToOne(() => UtenteEntity, utente => utente.candidaturas)
   @JoinColumn([{ name: 'utente_cf', referencedColumnName: 'cf' }])
   utenteCf: UtenteEntity;

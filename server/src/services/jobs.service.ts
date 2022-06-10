@@ -61,7 +61,17 @@ class JobsService extends Repository<OffertaLavoroEntity> {
       }
     }
 
-    const jobOffer: OffertaLavoro = await OffertaLavoroEntity.findOne(result.identifiers[0].id);
+    const jobOffer: OffertaLavoro = await OffertaLavoroEntity.findOne(result.identifiers[0].id, {
+      relations: [
+        'candidaturas',
+        'candidaturas.utenteCf',
+        'richiestaSoftSkills',
+        'richiestaSoftSkills.softSkill',
+        'richiestaSoftSkills.softSkill.risposteSoftSkills',
+        'richiestaSoftSkills.rispostaRichiestaSoftSkills',
+        'richiestaSoftSkills.rispostaRichiestaSoftSkills.rispostaId',
+      ],
+    });
 
     return jobOffer;
   }
@@ -91,7 +101,18 @@ class JobsService extends Repository<OffertaLavoroEntity> {
       await richiestaSoftSkill.save();
     }
 
-    const jobOffer: OffertaLavoro = await OffertaLavoroEntity.findOne({ where: { id: jobOfferId } });
+    const jobOffer: OffertaLavoro = await OffertaLavoroEntity.findOne({
+      where: { id: jobOfferId },
+      relations: [
+        'candidaturas',
+        'candidaturas.utenteCf',
+        'richiestaSoftSkills',
+        'richiestaSoftSkills.softSkill',
+        'richiestaSoftSkills.softSkill.risposteSoftSkills',
+        'richiestaSoftSkills.rispostaRichiestaSoftSkills',
+        'richiestaSoftSkills.rispostaRichiestaSoftSkills.rispostaId',
+      ],
+    });
 
     return jobOffer;
   }

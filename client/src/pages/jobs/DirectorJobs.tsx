@@ -12,7 +12,7 @@ import { UserType } from "../../typings/utente.type";
 type DirectorJobsProps = {
   jobs: Job[] | undefined;
   userType: UserType;
-  updateJobs: (job: Job, update: boolean) => void;
+  updateJobs: (job: Job, update: boolean, jobId?: number) => void;
 };
 
 const DirectorJobs = ({ jobs, userType, updateJobs }: DirectorJobsProps) => {
@@ -39,7 +39,7 @@ const DirectorJobs = ({ jobs, userType, updateJobs }: DirectorJobsProps) => {
       { approved, jobOfferId: selectedJob!.id, message }
     );
 
-    res?.data.success && updateJobs(selectedJob!, false);
+    res?.data.success && updateJobs(selectedJob!, false, selectedJob!.id);
   };
 
   return (

@@ -47,7 +47,7 @@ const DirectorJobsHistory = ({
       "GET"
     );
 
-    res?.data.success && updateJobs(selectedJob!, false);
+    res?.data.success && updateJobs({ ...selectedJob!, attiva: false }, true);
   };
 
   return (

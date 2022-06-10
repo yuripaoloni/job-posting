@@ -26,8 +26,21 @@ const ApplicationCard = ({
       <Card spacing className="card-bg">
         <CardBody>
           <CardTagsHeader className="align-items-center">
-            <Badge color={application.approvata ? "success" : "warning"} pill>
-              {application.approvata ? "Approvata" : "In attesa"}
+            <Badge
+              color={
+                application.offerta?.attiva === false
+                  ? "danger"
+                  : application.approvata
+                  ? "success"
+                  : "warning"
+              }
+              pill
+            >
+              {application.offerta?.attiva === false
+                ? "Non attiva"
+                : application.approvata
+                ? "Approvata"
+                : "In attesa"}
             </Badge>
             <Score score={application.punteggio} />
             <Icon

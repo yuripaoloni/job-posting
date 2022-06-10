@@ -2,6 +2,7 @@ import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn, BaseEntity } 
 import { CandidaturaEntity } from './candidatura.entity';
 import { RichiestaSoftSkillEntity } from './richiestaSoftSkill.entity';
 import { OffertaLavoro } from '@/interfaces/offertaLavoro.interface';
+import { PunteggioOffertaEntity } from './punteggioOfferta.entity';
 
 @Index('PK__offerta___3213E83F411E9D17', ['id'], { unique: true })
 @Entity('offerta_lavoro', { schema: 'dbo' })
@@ -34,6 +35,9 @@ export class OffertaLavoroEntity extends BaseEntity implements OffertaLavoro {
   @Column('bit', { name: 'attiva', nullable: true })
   attiva: boolean | null;
 
+  @Column('bit', { name: 'punteggi_aggiornati', nullable: true, default: 0 })
+  punteggiAggiornati: boolean | null;
+
   @Column('nvarchar', { name: 'desc_esito', nullable: true, length: 255 })
   descEsito: string | null;
 
@@ -42,4 +46,7 @@ export class OffertaLavoroEntity extends BaseEntity implements OffertaLavoro {
 
   @OneToMany(() => RichiestaSoftSkillEntity, richiestaSoftSkill => richiestaSoftSkill.offerta)
   richiestaSoftSkills: RichiestaSoftSkillEntity[];
+
+  @OneToMany(() => PunteggioOffertaEntity, punteggioOfferta => punteggioOfferta.offerta)
+  punteggi: PunteggioOffertaEntity[];
 }

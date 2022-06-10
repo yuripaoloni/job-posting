@@ -23,7 +23,12 @@ class SoftSkillController {
 
       const updatedAnswers = await this.softSkillsService.updateUserAnswers(req.cf, softSkillAnswers);
 
-      res.status(200).json({ message: `Risposte aggiornate con successo`, updatedAnswers });
+      res.status(200).json({
+        message: `Risposte aggiornate con successo. L'aggiornamento dei punteggi di affinità potrebbe richiedere alcuni minuti.`,
+        updatedAnswers,
+      });
+
+      await this.softSkillsService.updateUserJobScores(req.cf);
     } catch (error) {
       next(error);
     }

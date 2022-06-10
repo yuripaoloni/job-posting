@@ -3,7 +3,7 @@ import { UtenteEntity } from './utente.entity';
 import { OffertaLavoroEntity } from './offertaLavoro.entity';
 import { PunteggioOfferta } from '@/interfaces/punteggioOfferta.interface';
 
-@Index('PK_punteggio_offerta', ['id'], { unique: true }) //TO DO update
+@Index('PK_punteggio_offerta', ['id'], { unique: true })
 @Entity('punteggio_offerta', { schema: 'dbo' })
 export class PunteggioOffertaEntity extends BaseEntity implements PunteggioOfferta {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
@@ -16,7 +16,7 @@ export class PunteggioOffertaEntity extends BaseEntity implements PunteggioOffer
   data: Date | null;
 
   @ManyToOne(() => OffertaLavoroEntity, offertaLavoro => offertaLavoro.candidaturas, { onDelete: 'CASCADE' })
-  @JoinColumn([{ name: 'offerta_id', referencedColumnName: 'id' }])
+  @JoinColumn([{ name: 'offerta', referencedColumnName: 'id' }])
   offerta: OffertaLavoroEntity;
 
   @ManyToOne(() => UtenteEntity, utente => utente.candidaturas)

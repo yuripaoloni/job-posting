@@ -212,7 +212,7 @@ paths:
         - cookieAuth: []
       tags:
         - softSkill
-      summary: Update user answers
+      summary: Update user answers and consequently the job offers scores
       parameters:
         - name: body
           in: body

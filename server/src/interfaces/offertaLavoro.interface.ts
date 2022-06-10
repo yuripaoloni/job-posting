@@ -1,4 +1,5 @@
 import { Candidatura } from './candidatura.interface';
+import { PunteggioOfferta } from './punteggioOfferta.interface';
 import { RichiestaSoftSkill } from './richiestaSoftSkill.interface';
 
 export interface OffertaLavoro {
@@ -10,7 +11,9 @@ export interface OffertaLavoro {
   dataScadenza: Date | null;
   approvata: boolean | null;
   attiva: boolean | null;
+  punteggiAggiornati: boolean | null;
   punteggio?: number | null;
   candidaturas?: Candidatura[] | null;
   richiestaSoftSkills?: RichiestaSoftSkill[] | null;
+  punteggi?: PunteggioOfferta[] | null;
 }

@@ -1,5 +1,6 @@
 import { Candidatura } from './candidatura.interface';
 import { CompetenzeLinguistiche } from './competenzeLinguistiche.interface';
+import { PunteggioOfferta } from './punteggioOfferta.interface';
 import { RisposteUtente } from './risposteUtente.interface';
 
 export interface Utente {
@@ -13,6 +14,7 @@ export interface Utente {
   preparazione: string | null;
   candidaturas?: Candidatura[] | null;
   competenzeLinguistiches?: CompetenzeLinguistiche[] | null;
+  punteggi?: PunteggioOfferta[] | null;
   risposteUtentes?: RisposteUtente[] | null;
   struttura?: number | any;
 }

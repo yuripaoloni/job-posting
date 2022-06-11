@@ -15,10 +15,16 @@ export type Job = {
   dataScadenza: string | null;
   approvata: boolean | null;
   attiva: boolean | null;
-  punteggio?: number | null;
+  punteggio: PunteggioOfferta | null;
   descEsito?: string | null;
   candidaturas?: Candidatura[] | null;
   richiestaSoftSkills?: RichiestaSoftSkill[] | null;
+};
+
+export type PunteggioOfferta = {
+  id: number;
+  punteggio: number | null;
+  data: Date | null;
 };
 
 export type Candidatura = {

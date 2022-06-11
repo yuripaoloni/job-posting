@@ -16,8 +16,8 @@ class JobsRoute implements Routes {
   }
 
   private initializeRoutes() {
-    this.router.get(`${this.path}/offers`, authMiddleware, this.jobsController.getJobOffers);
-    this.router.get(`${this.path}/history`, authMiddleware, this.jobsController.getJobsHistory);
+    this.router.get(`${this.path}/offers/:skip`, authMiddleware, this.jobsController.getJobOffers);
+    this.router.get(`${this.path}/history/:skip`, authMiddleware, this.jobsController.getJobsHistory);
     this.router.post(
       `${this.path}/offers`,
       authMiddleware,

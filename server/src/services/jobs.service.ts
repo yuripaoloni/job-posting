@@ -12,7 +12,6 @@ import { RisposteSoftSkillEntity } from '@/entities/risposteSoftSkill.entity';
 import { RichiestaSoftSkillEntity } from '@/entities/richiestaSoftSkill.entity';
 import { RispostaRichiestaSoftSkillEntity } from '@/entities/rispostaRichiestaSoftSkill.entity';
 import { CandidaturaEntity } from '@/entities/candidatura.entity';
-import { PunteggioOffertaEntity } from '@/entities/punteggioOfferta.entity';
 import { Candidatura } from '@/interfaces/candidatura.interface';
 import sendEmail from '@/utils/mail';
 
@@ -96,33 +95,24 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     return jobOffer;
   }
 
-  public async getWorkerJobOffers(cf: string): Promise<OffertaLavoro[]> {
+  public async getWorkerJobOffers(cf: string, skip: number): Promise<OffertaLavoro[]> {
     const userAnswers: RisposteUtente[] = await RisposteUtenteEntity.getRepository().find({ where: { utenteCf: cf }, loadRelationIds: true });
     if (!userAnswers) throw new HttpException(400, 'Completa il tuo profilo per visualizzare le offerte');
 
-    const jobOffers: OffertaLavoro[] = await OffertaLavoroEntity.find({
-      where: { approvata: true, attiva: true, punteggiAggiornati: true },
-      order: { dataScadenza: 'DESC', dataCreazione: 'DESC' },
-      loadRelationIds: { relations: ['richiestaSoftSkills'] },
-    });
+    const jobOffers: OffertaLavoro[] = await OffertaLavoroEntity.createQueryBuilder('jobs')
+      .leftJoin('jobs.candidaturas', 'candidatura', 'candidatura.utenteCf = :cf', { cf })
+      .where('candidatura.id is null')
+      .leftJoin('jobs.punteggi', 'punteggio', 'punteggio.utenteCf = :cf', { cf })
+      .leftJoinAndMapOne('jobs.punteggio', 'jobs.punteggi', 'punteggioUtente')
+      .orderBy({ 'punteggioUtente.punteggio': 'DESC' })
+      .skip(skip)
+      .take(6)
+      .getMany();
 
-    for (const jobOffer of jobOffers) {
-      const userScore = await PunteggioOffertaEntity.getRepository().findOne({ where: { utenteCf: cf, offerta: jobOffer.id } });
-
-      if (
-        new Date(userAnswers[0].dataIns).setHours(0, 0, 0, 0) === new Date().setHours(0, 0, 0, 0) &&
-        new Date().setHours(0, 0, 0, 0) !== new Date(userScore.data).setHours(0, 0, 0, 0)
-      ) {
-        throw new HttpException(400, 'Punteggi di affinità in aggiornamento. Riprova più tardi.');
-      }
-
-      jobOffer.punteggio = userScore.punteggio;
-    }
-
-    return jobOffers.sort((a, b) => b.punteggio - a.punteggio);
+    return jobOffers;
   }
 
-  public async getStructureJobOffers(cf: string): Promise<OffertaLavoro[]> {
+  public async getStructureJobOffers(cf: string, skip: number): Promise<OffertaLavoro[]> {
     const user: Utente = await UtenteEntity.getRepository().findOne({ where: { cf }, relations: ['struttura'] });
 
     const jobOffers = await OffertaLavoroEntity.find({
@@ -137,6 +127,8 @@ class JobsService extends Repository<OffertaLavoroEntity> {
         'richiestaSoftSkills.rispostaRichiestaSoftSkills',
         'richiestaSoftSkills.rispostaRichiestaSoftSkills.rispostaId',
       ],
+      skip,
+      take: 6,
     });
 
     jobOffers.forEach(jobOffer => (jobOffer.richiestaSoftSkills = jobOffer.richiestaSoftSkills.sort((a, b) => a.ordine - b.ordine)));
@@ -144,10 +136,12 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     return jobOffers;
   }
 
-  public async getDirectorJobOffers(): Promise<OffertaLavoro[]> {
+  public async getDirectorJobOffers(skip: number): Promise<OffertaLavoro[]> {
     const jobOffers = await OffertaLavoroEntity.find({
       where: { approvata: IsNull(), attiva: true },
       order: { dataCreazione: 'ASC' },
+      skip,
+      take: 6,
     });
 
     return jobOffers;
@@ -211,33 +205,39 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     await jobOffer.save();
   }
 
-  public async getWorkerJobsHistory(cf: string): Promise<Candidatura[]> {
+  public async getWorkerJobsHistory(cf: string, skip: number): Promise<Candidatura[]> {
     const applications: Candidatura[] = await CandidaturaEntity.getRepository().find({
       where: { utenteCf: cf },
       loadRelationIds: { relations: ['utenteCf'] },
       relations: ['offerta'],
+      skip,
+      take: 6,
     });
 
     return applications;
   }
 
-  public async getStructureJobHistory(cf: string): Promise<OffertaLavoro[]> {
+  public async getStructureJobHistory(cf: string, skip: number): Promise<OffertaLavoro[]> {
     const user: Utente = await UtenteEntity.getRepository().findOne({ where: { cf }, relations: ['struttura'] });
 
     const jobOffers = await OffertaLavoroEntity.find({
       where: { struttura: user.struttura.descStruttura, attiva: false },
       order: { dataCreazione: 'ASC' },
       relations: ['candidaturas', 'candidaturas.utenteCf'],
+      skip,
+      take: 6,
     });
 
     return jobOffers;
   }
 
-  public async getDirectorJobsHistory(): Promise<OffertaLavoro[]> {
+  public async getDirectorJobsHistory(skip: number): Promise<OffertaLavoro[]> {
     const jobOffers = await OffertaLavoroEntity.find({
       where: { approvata: Not(IsNull()) },
       order: { attiva: 'DESC', dataCreazione: 'ASC' },
       relations: ['candidaturas', 'candidaturas.utenteCf'],
+      skip,
+      take: 6,
     });
 
     return jobOffers;

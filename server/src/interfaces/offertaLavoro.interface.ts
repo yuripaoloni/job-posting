@@ -12,7 +12,7 @@ export interface OffertaLavoro {
   approvata: boolean | null;
   attiva: boolean | null;
   punteggiAggiornati: boolean | null;
-  punteggio?: number | null;
+  punteggio?: PunteggioOfferta | null;
   candidaturas?: Candidatura[] | null;
   richiestaSoftSkills?: RichiestaSoftSkill[] | null;
   punteggi?: PunteggioOfferta[] | null;

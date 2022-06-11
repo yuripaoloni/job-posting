@@ -714,8 +714,19 @@ definitions:
         type: boolean
         description: active or not
       punteggio:
-        type: integer
+        type: object
         description: user score
+        required:
+          - id
+          - date
+          - punteggio
+        properties:
+          id:
+            type: integer
+          date:
+            type: string
+          punteggio:
+            type: integer
 
   jobOfferDto:
     type: object

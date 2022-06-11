@@ -6,12 +6,19 @@ import JobParticipantsModal from "../../components/jobs/JobParticipantsModal";
 
 import { Job } from "../../typings/jobs.type";
 import PageContainer from "../../components/layout/PageContainer";
+import LoadMoreButton from "../../components/layout/LoadMoreButton";
 
 type ManagerJobsHistoryProps = {
   jobs: Job[] | undefined;
+  onLoadMore: () => void;
+  endReached: boolean;
 };
 
-const ManagerJobsHistory = ({ jobs }: ManagerJobsHistoryProps) => {
+const ManagerJobsHistory = ({
+  jobs,
+  onLoadMore,
+  endReached,
+}: ManagerJobsHistoryProps) => {
   const [showParticipantsModal, setShowParticipantsModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
 
@@ -31,14 +38,17 @@ const ManagerJobsHistory = ({ jobs }: ManagerJobsHistoryProps) => {
         <h2 className="align-middle">Storico offerte create</h2>
       </Row>
       <Row>
-        {jobs?.map((job) => (
-          <JobCard
-            key={job.id}
-            job={job}
-            onShowParticipants={() => toggleParticipantsModal(job)}
-          />
-        ))}
+        {jobs && jobs?.length > 0
+          ? jobs?.map((job) => (
+              <JobCard
+                key={job.id}
+                job={job}
+                onShowParticipants={() => toggleParticipantsModal(job)}
+              />
+            ))
+          : "Nessuna offerta creata"}
       </Row>
+      <LoadMoreButton show={endReached} onClick={() => onLoadMore()} />
     </PageContainer>
   );
 };

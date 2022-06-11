@@ -8,22 +8,29 @@ import { useAuth } from "../../contexts/AuthContext";
 
 import { Job } from "../../typings/jobs.type";
 import { useFetch } from "../../contexts/FetchContext";
+import PageContainer from "../../components/layout/PageContainer";
 
 const Jobs = () => {
   const [jobs, setJobs] = useState<Job[] | undefined>(undefined);
+  const [skip, setSkip] = useState(0);
+  const [endReached, setEndReached] = useState(false);
 
   const { userType } = useAuth();
   const { fetchData } = useFetch();
 
   useEffect(() => {
     const fetchJobs = async () => {
-      const res = await fetchData<Job[]>("/jobs/offers", "GET");
+      const res = await fetchData<Job[]>(`/jobs/offers/${skip}`, "GET");
 
-      setJobs(res?.data);
+      if (res?.data) {
+        setJobs((prev) => (prev ? [...prev, ...res?.data] : [...res.data]));
+
+        res.data.length < 6 && setEndReached(true);
+      }
     };
 
     fetchJobs();
-  }, [fetchData]);
+  }, [fetchData, skip]);
 
   const updateJobs = (job: Job, update: boolean, jobId?: number) => {
     let updatedJobs = jobs ? jobs?.slice() : [];
@@ -36,14 +43,41 @@ const Jobs = () => {
     setJobs(updatedJobs);
   };
 
-  let page =
+  const onLoadMore = () => {
+    setSkip((skip) => skip + 6);
+  };
+
+  let page = jobs ? (
     userType === 0 ? (
-      <WorkerJobs jobs={jobs} userType={0} updateJobs={updateJobs} />
+      <WorkerJobs
+        jobs={jobs}
+        userType={0}
+        updateJobs={updateJobs}
+        onLoadMore={onLoadMore}
+        endReached={endReached}
+      />
     ) : userType === 1 ? (
-      <DirectorJobs jobs={jobs} userType={1} updateJobs={updateJobs} />
+      <DirectorJobs
+        jobs={jobs}
+        userType={1}
+        updateJobs={updateJobs}
+        onLoadMore={onLoadMore}
+        endReached={endReached}
+      />
     ) : (
-      <ManagerJobs jobs={jobs} userType={2} updateJobs={updateJobs} />
-    );
+      <ManagerJobs
+        jobs={jobs}
+        userType={2}
+        updateJobs={updateJobs}
+        onLoadMore={onLoadMore}
+        endReached={endReached}
+      />
+    )
+  ) : (
+    <PageContainer>
+      <></>
+    </PageContainer>
+  );
 
   return page;
 };

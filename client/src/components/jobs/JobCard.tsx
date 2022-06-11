@@ -109,7 +109,7 @@ const JobCard = ({
               </Badge>
               {userType === 0 ? (
                 <>
-                  <Score score={job.punteggio} />
+                  <Score score={job.punteggio?.punteggio} />
                   <Icon
                     icon="it-plus-circle"
                     className="ml-2"

@@ -3,6 +3,7 @@ import { useState } from "react";
 import DetermineJobModal from "../../components/jobs/DetermineJobModal";
 
 import JobCard from "../../components/jobs/JobCard";
+import LoadMoreButton from "../../components/layout/LoadMoreButton";
 import PageContainer from "../../components/layout/PageContainer";
 import { useFetch } from "../../contexts/FetchContext";
 
@@ -13,9 +14,17 @@ type DirectorJobsProps = {
   jobs: Job[] | undefined;
   userType: UserType;
   updateJobs: (job: Job, update: boolean, jobId?: number) => void;
+  onLoadMore: () => void;
+  endReached: boolean;
 };
 
-const DirectorJobs = ({ jobs, userType, updateJobs }: DirectorJobsProps) => {
+const DirectorJobs = ({
+  jobs,
+  userType,
+  updateJobs,
+  onLoadMore,
+  endReached,
+}: DirectorJobsProps) => {
   const [showDetermineJobModal, setShowDetermineJobModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [approved, setApproved] = useState(false);
@@ -55,16 +64,19 @@ const DirectorJobs = ({ jobs, userType, updateJobs }: DirectorJobsProps) => {
         <h2 className="align-middle">Nuove offerte di lavoro</h2>
       </Row>
       <Row>
-        {jobs?.map((job) => (
-          <JobCard
-            key={job.id}
-            job={job}
-            userType={userType}
-            onApproveJob={() => toggleDetermineJobModal(job, true)}
-            onRejectJob={() => toggleDetermineJobModal(job, false)}
-          />
-        ))}
+        {jobs && jobs?.length > 0
+          ? jobs?.map((job) => (
+              <JobCard
+                key={job.id}
+                job={job}
+                userType={userType}
+                onApproveJob={() => toggleDetermineJobModal(job, true)}
+                onRejectJob={() => toggleDetermineJobModal(job, false)}
+              />
+            ))
+          : "Nessuna nuova offerta"}
       </Row>
+      <LoadMoreButton show={endReached} onClick={() => onLoadMore()} />
     </PageContainer>
   );
 };

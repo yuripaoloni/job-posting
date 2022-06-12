@@ -135,11 +135,13 @@ const JobCard = ({
                 </div>
               ) : userType === 2 ? (
                 <div>
-                  <Icon
-                    icon="it-user"
-                    onClick={() => onShowParticipants!()}
-                    role="button"
-                  />
+                  {job.approvata === true && (
+                    <Icon
+                      icon="it-user"
+                      onClick={() => onShowParticipants!()}
+                      role="button"
+                    />
+                  )}
                   <Icon
                     icon="it-pencil"
                     className="ml-2"
@@ -156,11 +158,13 @@ const JobCard = ({
                 </div>
               ) : (
                 <div>
-                  <Icon
-                    icon="it-user"
-                    onClick={() => onShowParticipants!()}
-                    role="button"
-                  />
+                  {job.approvata && (
+                    <Icon
+                      icon="it-user"
+                      onClick={() => onShowParticipants!()}
+                      role="button"
+                    />
+                  )}
                 </div>
               )}
             </CardTagsHeader>

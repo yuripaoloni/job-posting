@@ -126,6 +126,9 @@ class JobsService extends Repository<OffertaLavoroEntity> {
       .leftJoin('jobs.punteggi', 'punteggio', 'punteggio.utenteCf = :cf', { cf })
       .leftJoinAndMapOne('jobs.punteggio', 'jobs.punteggi', 'punteggioUtente')
       .orderBy({ 'punteggioUtente.punteggio': 'DESC' })
+      .andWhere('jobs.approvata = 1')
+      .andWhere('jobs.attiva = 1')
+      .andWhere('jobs.punteggiAggiornati = 1')
       .skip(skip)
       .take(6)
       .getMany();

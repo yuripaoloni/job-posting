@@ -9,12 +9,15 @@ import { useFetch } from "../../contexts/FetchContext";
 
 import { Job } from "../../typings/jobs.type";
 import { Candidatura } from "../../typings/utente.type";
+import PageContainer from "../../components/layout/PageContainer";
 
 const JobsHistory = () => {
   const [jobs, setJobs] = useState<Job[] | undefined>(undefined);
   const [applications, setApplications] = useState<Candidatura[] | undefined>(
     undefined
   );
+  const [skip, setSkip] = useState(0);
+  const [endReached, setEndReached] = useState(false);
 
   const { userType } = useAuth();
   const { fetchData } = useFetch();
@@ -22,17 +25,29 @@ const JobsHistory = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       const res = await fetchData<Candidatura[] | Job[]>(
-        "/jobs/history",
+        `/jobs/history/${skip}`,
         "GET"
       );
 
-      userType === 0
-        ? setApplications(res?.data as Candidatura[])
-        : setJobs(res?.data as Job[]);
+      if (res?.data) {
+        userType === 0
+          ? setApplications((prev) =>
+              prev
+                ? [...prev, ...(res?.data as Candidatura[])]
+                : [...(res?.data as Candidatura[])]
+            )
+          : setJobs((prev) =>
+              prev
+                ? [...prev, ...(res?.data as Job[])]
+                : [...(res?.data as Job[])]
+            );
+
+        res.data.length < 6 && setEndReached(true);
+      }
     };
 
     fetchJobs();
-  }, [fetchData, userType]);
+  }, [fetchData, userType, skip]);
 
   const updateApplications = (application: Candidatura, update: boolean) => {
     let updatedApplications = applications ? applications?.slice() : [];
@@ -62,16 +77,37 @@ const JobsHistory = () => {
     setJobs(updatedJobs);
   };
 
+  const onLoadMore = () => {
+    setSkip((skip) => skip + 6);
+  };
+
   let page =
-    userType === 0 ? (
-      <WorkerJobsHistory
-        applications={applications}
-        updateApplications={updateApplications}
-      />
-    ) : userType === 1 ? (
-      <DirectorJobsHistory jobs={jobs} updateJobs={updateJobs} />
+    jobs || applications ? (
+      userType === 0 ? (
+        <WorkerJobsHistory
+          applications={applications}
+          updateApplications={updateApplications}
+          onLoadMore={onLoadMore}
+          endReached={endReached}
+        />
+      ) : userType === 1 ? (
+        <DirectorJobsHistory
+          jobs={jobs}
+          updateJobs={updateJobs}
+          onLoadMore={onLoadMore}
+          endReached={endReached}
+        />
+      ) : (
+        <ManagerJobsHistory
+          jobs={jobs}
+          onLoadMore={onLoadMore}
+          endReached={endReached}
+        />
+      )
     ) : (
-      <ManagerJobsHistory jobs={jobs} />
+      <PageContainer>
+        <></>
+      </PageContainer>
     );
 
   return page;

@@ -10,14 +10,23 @@ import { useFetch } from "../../contexts/FetchContext";
 import { useConfirm } from "../../contexts/ConfirmContext";
 import JobParticipantsModal from "../../components/jobs/JobParticipantsModal";
 import PageContainer from "../../components/layout/PageContainer";
+import LoadMoreButton from "../../components/layout/LoadMoreButton";
 
 type ManagerJobsProps = {
   jobs: Job[] | undefined;
   userType: UserType;
   updateJobs: (job: Job, update: boolean, jobId?: number) => void;
+  onLoadMore: () => void;
+  endReached: boolean;
 };
 
-const ManagerJobs = ({ jobs, userType, updateJobs }: ManagerJobsProps) => {
+const ManagerJobs = ({
+  jobs,
+  userType,
+  updateJobs,
+  onLoadMore,
+  endReached,
+}: ManagerJobsProps) => {
   const [showJobModal, setShowJobModal] = useState(false);
   const [showParticipantsModal, setShowParticipantsModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
@@ -70,21 +79,25 @@ const ManagerJobs = ({ jobs, userType, updateJobs }: ManagerJobsProps) => {
         </Button>
       </Row>
       <Row>
-        {jobs?.map((job) => (
-          <JobCard
-            key={job.id}
-            job={job}
-            userType={userType}
-            onDeleteJob={() =>
-              toggleConfirm(`Eliminare offerta di lavoro ${job.ruolo} ?`, () =>
-                onDeleteOffer(job.id)
-              )
-            }
-            onEditJob={() => toggleJobModal(job)}
-            onShowParticipants={() => toggleParticipantsModal(job)}
-          />
-        ))}
+        {jobs && jobs?.length > 0
+          ? jobs?.map((job) => (
+              <JobCard
+                key={job.id}
+                job={job}
+                userType={userType}
+                onDeleteJob={() =>
+                  toggleConfirm(
+                    `Eliminare offerta di lavoro ${job.ruolo} ?`,
+                    () => onDeleteOffer(job.id)
+                  )
+                }
+                onEditJob={() => toggleJobModal(job)}
+                onShowParticipants={() => toggleParticipantsModal(job)}
+              />
+            ))
+          : "Nessuna offerta disponibile"}
       </Row>
+      <LoadMoreButton show={endReached} onClick={() => onLoadMore()} />
     </PageContainer>
   );
 };

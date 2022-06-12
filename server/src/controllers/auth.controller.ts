@@ -46,6 +46,18 @@ class AuthController {
       next(error);
     }
   };
+
+  public changeRole = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userType = Number(req.params.userType);
+
+      await this.authService.changeRole(req.cf, userType);
+
+      res.status(200).json({ userType, message: 'Modificato carica' });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default AuthController;

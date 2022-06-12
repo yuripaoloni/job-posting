@@ -89,7 +89,9 @@ const JobCard = ({
               <Badge
                 id={`status-badge-${job.id}`}
                 color={
-                  job.approvata === true
+                  job.attiva === false
+                    ? "danger"
+                    : job.approvata === true
                     ? "success"
                     : job.approvata === null
                     ? "warning"
@@ -97,7 +99,9 @@ const JobCard = ({
                 }
                 pill
               >
-                {job.approvata === true
+                {job.attiva === false
+                  ? "Non attiva"
+                  : job.approvata === true
                   ? "Attiva"
                   : job.approvata === null
                   ? "In approvazione"
@@ -105,7 +109,7 @@ const JobCard = ({
               </Badge>
               {userType === 0 ? (
                 <>
-                  <Score score={job.punteggio} />
+                  <Score score={job.punteggio?.punteggio} />
                   <Icon
                     icon="it-plus-circle"
                     className="ml-2"

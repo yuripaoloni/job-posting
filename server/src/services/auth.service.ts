@@ -11,6 +11,7 @@ import { createClient, SearchOptions } from 'ldapjs-promise';
 import { CaricheUtentiEntity } from '@/entities/caricheUtenti.entity';
 import { CaricheUtenti } from '@/interfaces/caricheUtenti.interface';
 import { WORKER } from '@/utils/userTypes';
+import { TipiUtenteEntity } from '@/entities/tipiUtente.entity';
 
 @EntityRepository()
 class AuthService extends Repository<UtenteEntity> {
@@ -51,6 +52,11 @@ class AuthService extends Repository<UtenteEntity> {
     const cookie = this.createCookie(tokenData);
 
     return cookie;
+  }
+
+  public async changeRole(cf: string, userType: number): Promise<void> {
+    const tipoUtente = await TipiUtenteEntity.getRepository().findOne({ where: { idTipoutente: userType } });
+    await CaricheUtentiEntity.getRepository().update({ utenteCf: cf }, { idTipoutente: tipoUtente });
   }
 
   public createToken(user: Utente, tipoUtenteId: number): TokenData {

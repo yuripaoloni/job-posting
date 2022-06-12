@@ -34,12 +34,14 @@ class JobsController {
 
   public getJobOffers = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
+      const skip = Number(req.params.skip);
+
       const jobOffers =
         req.tipoUtenteId === WORKER
-          ? await this.jobsService.getWorkerJobOffers(req.cf)
+          ? await this.jobsService.getWorkerJobOffers(req.cf, skip)
           : req.tipoUtenteId === DIRECTOR
-          ? await this.jobsService.getDirectorJobOffers()
-          : await this.jobsService.getStructureJobOffers(req.cf);
+          ? await this.jobsService.getDirectorJobOffers(skip)
+          : await this.jobsService.getStructureJobOffers(req.cf, skip);
 
       res.status(200).json(jobOffers);
     } catch (error) {
@@ -95,12 +97,14 @@ class JobsController {
 
   public getJobsHistory = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
+      const skip = Number(req.params.skip);
+
       const jobsHistory =
         req.tipoUtenteId === WORKER
-          ? await this.jobsService.getWorkerJobsHistory(req.cf)
+          ? await this.jobsService.getWorkerJobsHistory(req.cf, skip)
           : req.tipoUtenteId === DIRECTOR
-          ? await this.jobsService.getDirectorJobsHistory()
-          : await this.jobsService.getStructureJobHistory(req.cf);
+          ? await this.jobsService.getDirectorJobsHistory(skip)
+          : await this.jobsService.getStructureJobHistory(req.cf, skip);
 
       res.status(200).json(jobsHistory);
     } catch (error) {

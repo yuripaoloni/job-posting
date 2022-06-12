@@ -3,11 +3,11 @@
 
 ###
 # Get job offers - based on userType in the cookie returns different results
-GET {{ baseURL }}/offers
+GET {{ baseURL }}/offers/0
 
 ###
 # Get job history - based on userType in the cookie returns different results
-GET {{ baseURL }}/history
+GET {{ baseURL }}/history/0
 
 
 ###

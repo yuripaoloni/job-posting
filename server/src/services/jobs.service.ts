@@ -11,10 +11,6 @@ import { SoftSkillEntity } from '@/entities/softSkill.entity';
 import { RisposteSoftSkillEntity } from '@/entities/risposteSoftSkill.entity';
 import { RichiestaSoftSkillEntity } from '@/entities/richiestaSoftSkill.entity';
 import { RispostaRichiestaSoftSkillEntity } from '@/entities/rispostaRichiestaSoftSkill.entity';
-import { CoeffDomande } from '@/interfaces/coeffDomande.interface';
-import { CoeffDomandeEntity } from '@/entities/coeffDomande.entity';
-import { CoeffRisposte } from '@/interfaces/coeffRisposte.interface';
-import { CoeffRisposteEntity } from '@/entities/coeffRisposte.entity';
 import { CandidaturaEntity } from '@/entities/candidatura.entity';
 import { Candidatura } from '@/interfaces/candidatura.interface';
 import sendEmail from '@/utils/mail';
@@ -77,7 +73,10 @@ class JobsService extends Repository<OffertaLavoroEntity> {
   }
 
   public async updateJobOffer(jobOfferData: JobOfferDto, jobOfferId: number): Promise<OffertaLavoro> {
-    await OffertaLavoroEntity.update({ id: jobOfferId }, { ruolo: jobOfferData.role, dataScadenza: jobOfferData.expiryDate });
+    await OffertaLavoroEntity.update(
+      { id: jobOfferId },
+      { ruolo: jobOfferData.role, dataScadenza: jobOfferData.expiryDate, punteggiAggiornati: false },
+    );
 
     for (const skillOrder of jobOfferData.skillsOrder) {
       const richiestaSoftSkill = await RichiestaSoftSkillEntity.getRepository().findOne({ where: { offerta: jobOfferId, softSkill: skillOrder.id } });
@@ -117,47 +116,24 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     return jobOffer;
   }
 
-  public async getWorkerJobOffers(cf: string): Promise<OffertaLavoro[]> {
+  public async getWorkerJobOffers(cf: string, skip: number): Promise<OffertaLavoro[]> {
     const userAnswers: RisposteUtente[] = await RisposteUtenteEntity.getRepository().find({ where: { utenteCf: cf }, loadRelationIds: true });
     if (!userAnswers) throw new HttpException(400, 'Completa il tuo profilo per visualizzare le offerte');
-    const coeffDomande: CoeffDomande[] = await CoeffDomandeEntity.getRepository().find();
-    const coeffRisposte: CoeffRisposte[] = await CoeffRisposteEntity.getRepository().find();
-    const applications: Candidatura[] = await CandidaturaEntity.getRepository().find({ where: { utenteCf: cf }, loadRelationIds: true });
-    let jobOffers: OffertaLavoro[] = await OffertaLavoroEntity.find({
-      where: { approvata: true, attiva: true },
-      order: { dataScadenza: 'DESC', dataCreazione: 'DESC' },
-      loadRelationIds: { relations: ['richiestaSoftSkills'] },
-    });
 
-    // remove jobs for which the user already applied
-    if (applications.length > 0) jobOffers = jobOffers.filter(jobOffer => applications.some(application => application.offerta !== jobOffer.id));
+    const jobOffers: OffertaLavoro[] = await OffertaLavoroEntity.createQueryBuilder('jobs')
+      .leftJoin('jobs.candidaturas', 'candidatura', 'candidatura.utenteCf = :cf', { cf })
+      .where('candidatura.id is null')
+      .leftJoin('jobs.punteggi', 'punteggio', 'punteggio.utenteCf = :cf', { cf })
+      .leftJoinAndMapOne('jobs.punteggio', 'jobs.punteggi', 'punteggioUtente')
+      .orderBy({ 'punteggioUtente.punteggio': 'DESC' })
+      .skip(skip)
+      .take(6)
+      .getMany();
 
-    for (const jobOffer of jobOffers) {
-      let punteggio = 0;
-      for (const richiestaSoftSkillId of jobOffer.richiestaSoftSkills) {
-        const richiestaSoftSkill = await RichiestaSoftSkillEntity.getRepository().findOne({
-          where: { id: richiestaSoftSkillId },
-          loadRelationIds: { relations: ['softSkill'] },
-          relations: ['rispostaRichiestaSoftSkills', 'rispostaRichiestaSoftSkills.rispostaId'],
-        });
-
-        const coeffDomanda = coeffDomande.find(item => item.ordine === richiestaSoftSkill.ordine);
-        const userAnswer = userAnswers.find(item => item.softSkill === richiestaSoftSkill.softSkill);
-        const rispostaRichiestaSoftSkill = richiestaSoftSkill.rispostaRichiestaSoftSkills.find(
-          item => item.rispostaId.idRisposta === userAnswer.risposta,
-        );
-        const coeffRisposta = coeffRisposte.find(item => item.ordine === rispostaRichiestaSoftSkill.ordine);
-
-        punteggio = punteggio + coeffDomanda.valore * coeffRisposta.valore;
-      }
-
-      jobOffer.punteggio = Math.ceil((punteggio * 100) / 525); //percentage
-    }
-
-    return jobOffers.sort((a, b) => b.punteggio - a.punteggio);
+    return jobOffers;
   }
 
-  public async getStructureJobOffers(cf: string): Promise<OffertaLavoro[]> {
+  public async getStructureJobOffers(cf: string, skip: number): Promise<OffertaLavoro[]> {
     const user: Utente = await UtenteEntity.getRepository().findOne({ where: { cf }, relations: ['struttura'] });
 
     const jobOffers = await OffertaLavoroEntity.find({
@@ -172,6 +148,8 @@ class JobsService extends Repository<OffertaLavoroEntity> {
         'richiestaSoftSkills.rispostaRichiestaSoftSkills',
         'richiestaSoftSkills.rispostaRichiestaSoftSkills.rispostaId',
       ],
+      skip,
+      take: 6,
     });
 
     jobOffers.forEach(jobOffer => (jobOffer.richiestaSoftSkills = jobOffer.richiestaSoftSkills.sort((a, b) => a.ordine - b.ordine)));
@@ -179,10 +157,12 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     return jobOffers;
   }
 
-  public async getDirectorJobOffers(): Promise<OffertaLavoro[]> {
+  public async getDirectorJobOffers(skip: number): Promise<OffertaLavoro[]> {
     const jobOffers = await OffertaLavoroEntity.find({
       where: { approvata: IsNull(), attiva: true },
       order: { dataCreazione: 'ASC' },
+      skip,
+      take: 6,
     });
 
     return jobOffers;
@@ -231,45 +211,54 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     jobOffer.approvata = determineJobData.approved;
     jobOffer.attiva = determineJobData.approved;
     jobOffer.descEsito = determineJobData.message;
+    jobOffer.punteggiAggiornati = false;
 
     await sendEmail(
       user.email,
       `Esito offerta lavorativa - ${jobOffer.ruolo}`,
       `L'offerta di lavoro "${jobOffer.ruolo}" per ${jobOffer.struttura} da lei creata in data ${new Date(jobOffer.dataCreazione).toLocaleDateString(
         'it-IT',
-      )} è stata ${determineJobData.approved ? 'approvata' : 'rifiutata'} con il seguente messaggio: ${determineJobData.message}.\n\nCordiali saluti`,
+      )} è stata ${determineJobData.approved ? 'approvata' : 'rifiutata'} con il seguente messaggio: "${determineJobData.message}".${
+        determineJobData.approved && `\n\nL'offerta sarà disponibile a partire da domani.`
+      }\n\nCordiali saluti`,
     );
 
     await jobOffer.save();
   }
 
-  public async getWorkerJobsHistory(cf: string): Promise<Candidatura[]> {
+  public async getWorkerJobsHistory(cf: string, skip: number): Promise<Candidatura[]> {
     const applications: Candidatura[] = await CandidaturaEntity.getRepository().find({
       where: { utenteCf: cf },
       loadRelationIds: { relations: ['utenteCf'] },
       relations: ['offerta'],
+      skip,
+      take: 6,
     });
 
     return applications;
   }
 
-  public async getStructureJobHistory(cf: string): Promise<OffertaLavoro[]> {
+  public async getStructureJobHistory(cf: string, skip: number): Promise<OffertaLavoro[]> {
     const user: Utente = await UtenteEntity.getRepository().findOne({ where: { cf }, relations: ['struttura'] });
 
     const jobOffers = await OffertaLavoroEntity.find({
       where: { struttura: user.struttura.descStruttura, attiva: false },
       order: { dataCreazione: 'ASC' },
       relations: ['candidaturas', 'candidaturas.utenteCf'],
+      skip,
+      take: 6,
     });
 
     return jobOffers;
   }
 
-  public async getDirectorJobsHistory(): Promise<OffertaLavoro[]> {
+  public async getDirectorJobsHistory(skip: number): Promise<OffertaLavoro[]> {
     const jobOffers = await OffertaLavoroEntity.find({
       where: { approvata: Not(IsNull()) },
       order: { attiva: 'DESC', dataCreazione: 'ASC' },
       relations: ['candidaturas', 'candidaturas.utenteCf'],
+      skip,
+      take: 6,
     });
 
     return jobOffers;

@@ -1,6 +1,7 @@
 import { Row } from "design-react-kit";
 
 import JobCard from "../../components/jobs/JobCard";
+import LoadMoreButton from "../../components/layout/LoadMoreButton";
 import PageContainer from "../../components/layout/PageContainer";
 import { useConfirm } from "../../contexts/ConfirmContext";
 import { useFetch } from "../../contexts/FetchContext";
@@ -8,15 +9,21 @@ import { useFetch } from "../../contexts/FetchContext";
 import { Job } from "../../typings/jobs.type";
 import { UserType } from "../../typings/utente.type";
 
-//TODO mostrare un Dimmer per dire di completare processo di Profilazione
-
 type WorkerJobsProps = {
   jobs: Job[] | undefined;
   userType: UserType;
-  updateJobs: (job: Job, update: boolean) => void;
+  updateJobs: (job: Job, update: boolean, jobId: number) => void;
+  onLoadMore: () => void;
+  endReached: boolean;
 };
 
-const WorkerJobs = ({ jobs, userType, updateJobs }: WorkerJobsProps) => {
+const WorkerJobs = ({
+  jobs,
+  userType,
+  updateJobs,
+  onLoadMore,
+  endReached,
+}: WorkerJobsProps) => {
   const { fetchData } = useFetch();
   const { toggleConfirm } = useConfirm();
 
@@ -24,10 +31,10 @@ const WorkerJobs = ({ jobs, userType, updateJobs }: WorkerJobsProps) => {
     const res = await fetchData<{ success: boolean }>(
       `/jobs/offers/apply`,
       "POST",
-      { jobOfferId: job.id, score: job.punteggio }
+      { jobOfferId: job.id, score: job.punteggio?.punteggio }
     );
 
-    res?.data.success && updateJobs(job, false);
+    res?.data.success && updateJobs(job, false, job.id);
   };
 
   return (
@@ -36,19 +43,23 @@ const WorkerJobs = ({ jobs, userType, updateJobs }: WorkerJobsProps) => {
         <h2 className="align-middle">Offerte di lavoro</h2>
       </Row>
       <Row>
-        {jobs?.map((job) => (
-          <JobCard
-            job={job}
-            userType={userType}
-            onApplyJob={() => {
-              toggleConfirm(
-                `Procedere con la candidatura a ${job.ruolo} per ${job.struttura} ?`,
-                () => onApplyJob(job)
-              );
-            }}
-          />
-        ))}
+        {jobs && jobs?.length > 0
+          ? jobs?.map((job) => (
+              <JobCard
+                key={job.id}
+                job={job}
+                userType={userType}
+                onApplyJob={() => {
+                  toggleConfirm(
+                    `Procedere con la candidatura a ${job.ruolo} per ${job.struttura} ?`,
+                    () => onApplyJob(job)
+                  );
+                }}
+              />
+            ))
+          : "Nessuna offerta disponibile"}
       </Row>
+      <LoadMoreButton show={endReached} onClick={() => onLoadMore()} />
     </PageContainer>
   );
 };

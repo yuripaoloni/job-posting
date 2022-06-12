@@ -231,7 +231,6 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             type="text"
             id="ruolo"
             value={role}
-            placeholder="Software developer"
             label="Ruolo"
             infoText="Posizione richiesta"
             onChange={(e) => setRole(e.target.value)}

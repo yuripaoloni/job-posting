@@ -4,6 +4,7 @@ import { CompetenzeLinguisticheEntity } from './competenzeLinguistiche.entity';
 import { Utente } from '@interfaces/utente.interface';
 import { RisposteUtenteEntity } from './risposteUtente.entity';
 import { StruttureEntity } from './strutture.entity';
+import { PunteggioOffertaEntity } from './punteggioOfferta.entity';
 
 @Index('PK__utente__32136660462A933F', ['cf'], { unique: true })
 @Entity('utente', { schema: 'dbo' })
@@ -34,6 +35,9 @@ export class UtenteEntity extends BaseEntity implements Utente {
 
   @OneToMany(() => CandidaturaEntity, candidatura => candidatura.utenteCf)
   candidaturas: CandidaturaEntity[];
+
+  @OneToMany(() => PunteggioOffertaEntity, punteggioOfferta => punteggioOfferta.utenteCf)
+  punteggi: PunteggioOffertaEntity[];
 
   @OneToMany(() => CompetenzeLinguisticheEntity, competenzeLinguistiche => competenzeLinguistiche.utenteCf)
   competenzeLinguistiches: CompetenzeLinguisticheEntity[];

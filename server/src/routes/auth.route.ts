@@ -20,6 +20,7 @@ class AuthRoute implements Routes {
     this.router.get(`${this.path}/logout`, authMiddleware, this.authController.logout);
     this.router.get(`${this.path}/validate`, authMiddleware, this.authController.validate);
     this.router.get(`${this.path}/userType/:userType`, authMiddleware, onlyManager, this.authController.changeUserType);
+    this.router.get(`${this.path}/changeRole/:userType`, authMiddleware, this.authController.changeRole);
   }
 }
 

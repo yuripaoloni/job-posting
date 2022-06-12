@@ -264,13 +264,19 @@ paths:
         500:
           description: 'Server Error'
 
-  /jobs/offers:
+  /jobs/offers/{skip}:
     get:
       security:
         - cookieAuth: []
       tags:
         - jobs
       summary: Get job offers. Results differs based on logged user type
+      parameters:
+        - name: skip
+          in: path
+          description: elements to skip (used for "load more" feature)
+          required: true
+          type: integer
       responses:
         200:
           descripton: Job offers
@@ -284,7 +290,8 @@ paths:
           description: 'Missing auth token'
         500:
           description: 'Server Error'
-
+  
+  /jobs/offers:
     post:
       security:
         - cookieAuth: []
@@ -379,13 +386,19 @@ paths:
         500:
           description: 'Server Error'
 
-  /jobs/history:
+  /jobs/history/{skip}:
     get:
       security:
         - cookieAuth: []
       tags:
         - jobs
       summary: Get jobs history for a user
+      parameters:
+        - name: skip
+          in: path
+          description: elements to skip (used for "load more" feature)
+          required: true
+          type: integer
       responses:
         200:
           description: Job offers history. For normal users returns the applications

@@ -11,7 +11,7 @@ services:
     volumes:
       - ./:/app
       - /app/node_modules
-    restart: "unless-stopped"
+    restart: always
   client:
     build:
       context: ./client
@@ -22,6 +22,6 @@ services:
     volumes:
       - ./:/app
       - /app/node_modules
-    restart: "unless-stopped"
+    restart: always
     depends_on:
       - server

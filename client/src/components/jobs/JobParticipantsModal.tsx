@@ -74,7 +74,7 @@ const JobParticipantsModal = ({
                         )
                       }
                     >
-                      Approva
+                      Seleziona candidato
                     </Button>
                   </Col>
                 )}

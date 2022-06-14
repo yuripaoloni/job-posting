@@ -249,12 +249,12 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
         </FormGroup>
         <FormGroup>
           <h6>
-            Ordina le soft skill da 1 a 14 e le relative risposte da 1 a 4
+            Ordina le competenze da 1 a 14 e le relative risposte da 1 a 4
             considerando la rilevanza che hanno per la posizione lavorativa.
           </h6>
           <p>
-            L'ordinamento delle skill e le relative risposte viene utilizzato
-            per calcolare un punteggio di affinità per i candidati.
+            L'ordinamento delle competenze e le relative risposte viene
+            utilizzato per calcolare un punteggio di affinità per i candidati.
           </p>
         </FormGroup>
         <SoftSkillsForm

@@ -39,7 +39,7 @@ const DirectorJobsHistory = ({
     applicationId: number,
     candidate: string
   ) => {
-    toggleConfirm(`Approva candidatura di ${candidate} ?`, () =>
+    toggleConfirm(`Selezionare il candidato ${candidate} ?`, () =>
       acceptApplication(applicationId)
     );
   };

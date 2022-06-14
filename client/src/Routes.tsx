@@ -38,7 +38,7 @@ const Routes = () => {
         }
       />
       <Route
-        path="softSkill"
+        path="competencies"
         element={
           <RequireAuth>
             <SoftSkills />

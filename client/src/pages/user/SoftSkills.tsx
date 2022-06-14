@@ -70,7 +70,7 @@ const SoftSkills = () => {
   return (
     <Container fluid className="py-4">
       <h4 className="text-center">
-        Rispondi alle domande per completare il tuo profilo
+        Individua la definizione che meglio si adatta al tuo profilo
       </h4>
       <Row className="justify-content-center">
         <Col xs={2}>
@@ -99,8 +99,6 @@ const SoftSkills = () => {
                 className="p-2"
               >
                 <Form className="m-3">
-                  <h5>{softSkill.titolo}</h5>
-                  <p>{softSkill.descrizione}</p>
                   <fieldset>
                     {softSkill.risposteSoftSkills.map((risposta) => (
                       <FormGroup check key={risposta.idRisposta}>

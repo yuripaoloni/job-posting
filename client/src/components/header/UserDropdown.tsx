@@ -76,10 +76,10 @@ const UserDropdown = ({ isOpen, toggleDropdown }: UserDropdownProps) => {
               <span>{userType === 0 ? "Candidature" : "Storico offerte"}</span>
             </LinkListItem>
           </Link>
-          {userType === 2 && (
+          {userType !== 0 && (
             <LinkListItem
               className="right-icon"
-              onClick={() => onChangeUserType(0)}
+              onClick={() => onChangeUserType(userType === 2 ? 0 : 2)}
               role="button"
             >
               <Icon
@@ -89,7 +89,9 @@ const UserDropdown = ({ isOpen, toggleDropdown }: UserDropdownProps) => {
                 aria-hidden
                 size="sm"
               />
-              <span>Cerca lavoro</span>
+              <span>
+                {userType === 2 ? "Cerca posizioni" : "Crea posizioni"}
+              </span>
             </LinkListItem>
           )}
           <LinkListItem

@@ -148,13 +148,15 @@ const JobCard = ({
                     onClick={() => onEditJob!()}
                     role="button"
                   />
-                  <Icon
-                    icon="it-delete"
-                    color="danger"
-                    className="ml-2"
-                    onClick={() => onDeleteJob!()}
-                    role="button"
-                  />
+                  {!job.approvata && (
+                    <Icon
+                      icon="it-delete"
+                      color="danger"
+                      className="ml-2"
+                      onClick={() => onDeleteJob!()}
+                      role="button"
+                    />
+                  )}
                 </div>
               ) : (
                 <div>

@@ -33,7 +33,7 @@ class AuthController {
       const cookie = await this.authService.changeUserType(req.cf, userType);
 
       res.setHeader('Set-Cookie', [cookie]);
-      res.status(200).json({ userType, message: 'Passato a profilo lavoratore' });
+      res.status(200).json({ userType, message: `Passato a profilo ${userType === 0 ? 'utente' : 'responsabile di struttura'}` });
     } catch (error) {
       next(error);
     }

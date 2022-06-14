@@ -14,6 +14,7 @@ export const {
   EMAIL,
   EMAIL_PWD,
   EMAIL_DOMAIN,
+  DG_EMAIL,
   SECRET_KEY,
   LOG_FORMAT,
   LOG_DIR,

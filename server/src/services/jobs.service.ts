@@ -14,6 +14,7 @@ import { RispostaRichiestaSoftSkillEntity } from '@/entities/rispostaRichiestaSo
 import { CandidaturaEntity } from '@/entities/candidatura.entity';
 import { Candidatura } from '@/interfaces/candidatura.interface';
 import sendEmail from '@/utils/mail';
+import { DG_EMAIL } from '@/config';
 
 @EntityRepository()
 class JobsService extends Repository<OffertaLavoroEntity> {
@@ -56,6 +57,14 @@ class JobsService extends Repository<OffertaLavoroEntity> {
         }
       }
     }
+
+    await sendEmail(
+      DG_EMAIL,
+      `Nuova offerta lavorativa - ${newJobOffer.ruolo}`,
+      `Una nuova offerta di lavoro "${newJobOffer.ruolo}" per ${newJobOffer.struttura} è stata creata in data ${new Date(
+        newJobOffer.dataCreazione,
+      ).toLocaleDateString('it-IT')} da ${user.cognome} ${user.nome} (${user.email}).\n\nCordiali saluti`,
+    );
 
     const jobOffer: OffertaLavoro = await OffertaLavoroEntity.findOne(result.identifiers[0].id, {
       relations: [

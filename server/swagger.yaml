@@ -290,7 +290,7 @@ paths:
           description: 'Missing auth token'
         500:
           description: 'Server Error'
-  
+
   /jobs/offers:
     post:
       security:
@@ -385,6 +385,33 @@ paths:
           description: 'Missing auth token'
         500:
           description: 'Server Error'
+
+  /jobs/active/{skip}:
+    get:
+      security:
+        - cookieAuth: []
+      tags:
+        - jobs
+      summary: Get active jobs offers
+      parameters:
+        - name: skip
+          in: path
+          description: elements to skip (used for "load more" feature)
+          required: true
+          type: integer
+      responses:
+        200:
+          description: active job offers
+          schema:
+            type: object
+            properties:
+              jobOffer:
+                $ref: '#/definitions/jobOffer'
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
 
   /jobs/history/{skip}:
     get:

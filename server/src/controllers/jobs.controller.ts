@@ -49,6 +49,18 @@ class JobsController {
     }
   };
 
+  public getActiveJobs = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const skip = Number(req.params.skip);
+
+      const jobOffers = await this.jobsService.getDirectorActiveJobs(skip);
+
+      res.status(200).json(jobOffers);
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public removeJobOffer = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const jobOfferId = Number(req.params.offerId);

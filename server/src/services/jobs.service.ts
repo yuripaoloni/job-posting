@@ -1,4 +1,4 @@
-import { EntityRepository, IsNull, Not, Repository } from 'typeorm';
+import { EntityRepository, IsNull, Repository } from 'typeorm';
 import { OffertaLavoroEntity } from '@/entities/offertaLavoro.entity';
 import { ApplyJobDto, DetermineJobDto, JobOfferDto } from '@/dtos/jobs.dto';
 import { UtenteEntity } from '@/entities/utente.entity';
@@ -180,6 +180,18 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     return jobOffers;
   }
 
+  public async getDirectorActiveJobs(skip: number): Promise<OffertaLavoro[]> {
+    const jobOffers = await OffertaLavoroEntity.find({
+      where: { approvata: true, attiva: true },
+      order: { dataCreazione: 'ASC' },
+      relations: ['candidaturas', 'candidaturas.utenteCf'],
+      skip,
+      take: 6,
+    });
+
+    return jobOffers;
+  }
+
   public async removeJobOffer(cf: string, jobOfferId: number): Promise<OffertaLavoro> {
     const jobOfferToDelete = await OffertaLavoroEntity.findOne({ where: { id: jobOfferId } });
 
@@ -266,7 +278,7 @@ class JobsService extends Repository<OffertaLavoroEntity> {
 
   public async getDirectorJobsHistory(skip: number): Promise<OffertaLavoro[]> {
     const jobOffers = await OffertaLavoroEntity.find({
-      where: { approvata: Not(IsNull()) },
+      where: { attiva: false },
       order: { attiva: 'DESC', dataCreazione: 'ASC' },
       relations: ['candidaturas', 'candidaturas.utenteCf'],
       skip,

@@ -13,6 +13,7 @@ import {
   Popover,
   PopoverHeader,
   PopoverBody,
+  Button,
 } from "design-react-kit";
 import { useRef, useState } from "react";
 import { Job } from "../../typings/jobs.type";
@@ -79,13 +80,14 @@ const JobCard = ({
   const targetRef = useRef(null);
 
   const infoIcon = (
-    <Icon
-      icon="it-info-circle"
-      className="ml-2"
-      role="button"
-      onClick={() => setPopoverOpen((prev) => !prev)}
-      ref={targetRef}
-    />
+    <Button innerRef={targetRef} className="m-0 ml-2 p-0 border-0">
+      <Icon
+        icon="it-info-circle"
+        role="button"
+        onClick={() => setPopoverOpen((prev) => !prev)}
+        ref={targetRef}
+      />
+    </Button>
   );
 
   const participantIcon = (
@@ -136,66 +138,66 @@ const JobCard = ({
                   ? "In approvazione"
                   : "Non attiva"}
               </Badge>
-              <div ref={targetRef}>
-                {userType === 0 ? (
-                  <>
-                    <Score score={job.punteggio?.punteggio} />
+              {userType === 0 ? (
+                <>
+                  <Score score={job.punteggio?.punteggio} />
+                  <Icon
+                    icon="it-plus-circle"
+                    className="ml-2"
+                    onClick={() => onApplyJob!()}
+                    role="button"
+                  />
+                  {infoIcon}
+                </>
+              ) : userType === 1 ? (
+                <div>
+                  <Icon
+                    color="success"
+                    icon="it-check-circle"
+                    onClick={() => onApproveJob!()}
+                    role="button"
+                  />
+                  <Icon
+                    icon="it-close-circle"
+                    color="danger"
+                    className="ml-2"
+                    onClick={() => onRejectJob!()}
+                    role="button"
+                  />
+                  {infoIcon}
+                </div>
+              ) : userType === 2 ? (
+                <div>
+                  {job.approvata === true && participantIcon}
+                  <Icon
+                    icon="it-pencil"
+                    className="ml-2"
+                    onClick={() => onEditJob!()}
+                    role="button"
+                  />
+                  {!job.approvata && (
                     <Icon
-                      icon="it-plus-circle"
-                      className="ml-2"
-                      onClick={() => onApplyJob!()}
-                      role="button"
-                    />
-                    {infoIcon}
-                  </>
-                ) : userType === 1 ? (
-                  <div>
-                    <Icon
-                      color="success"
-                      icon="it-check-circle"
-                      onClick={() => onApproveJob!()}
-                      role="button"
-                    />
-                    <Icon
-                      icon="it-close-circle"
+                      icon="it-delete"
                       color="danger"
                       className="ml-2"
-                      onClick={() => onRejectJob!()}
+                      onClick={() => onDeleteJob!()}
                       role="button"
                     />
-                    {infoIcon}
-                  </div>
-                ) : userType === 2 ? (
-                  <div>
-                    {job.approvata === true && participantIcon}
-                    <Icon
-                      icon="it-pencil"
-                      className="ml-2"
-                      onClick={() => onEditJob!()}
-                      role="button"
-                    />
-                    {!job.approvata && (
-                      <Icon
-                        icon="it-delete"
-                        color="danger"
-                        className="ml-2"
-                        onClick={() => onDeleteJob!()}
-                        role="button"
-                      />
-                    )}
-                    {infoIcon}
-                  </div>
-                ) : (
-                  <div>
-                    {job.approvata && participantIcon}
-                    {infoIcon}
-                  </div>
-                )}
-              </div>
+                  )}
+                  {infoIcon}
+                </div>
+              ) : (
+                <div>
+                  {job.approvata && participantIcon}
+                  {infoIcon}
+                </div>
+              )}
             </CardTagsHeader>
             <CardTitle tag="h4">{job.ruolo}</CardTitle>
             <CardSignature>{job.struttura}</CardSignature>
-            <CardFooterCTA>{`Valida fino al ${job.dataScadenza}`}</CardFooterCTA>
+            <CardFooterCTA>
+              {`Valida fino al ${job.dataScadenza}`}
+            </CardFooterCTA>
           </CardBody>
         </Card>
       </Fade>

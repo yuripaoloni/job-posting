@@ -24,6 +24,7 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     const newJobOffer = new OffertaLavoroEntity();
     newJobOffer.dataScadenza = new Date(jobOfferData.expiryDate);
     newJobOffer.ruolo = jobOfferData.role;
+    newJobOffer.descrizione = jobOfferData.description;
     newJobOffer.responsabileCf = cf;
     newJobOffer.struttura = user.struttura.descStruttura;
     newJobOffer.attiva = true;
@@ -84,7 +85,7 @@ class JobsService extends Repository<OffertaLavoroEntity> {
   public async updateJobOffer(jobOfferData: JobOfferDto, jobOfferId: number): Promise<OffertaLavoro> {
     await OffertaLavoroEntity.update(
       { id: jobOfferId },
-      { ruolo: jobOfferData.role, dataScadenza: jobOfferData.expiryDate, punteggiAggiornati: false },
+      { ruolo: jobOfferData.role, descrizione: jobOfferData.description, dataScadenza: jobOfferData.expiryDate, punteggiAggiornati: false },
     );
 
     for (const skillOrder of jobOfferData.skillsOrder) {

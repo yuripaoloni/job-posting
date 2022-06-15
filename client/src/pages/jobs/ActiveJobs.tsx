@@ -1,14 +1,14 @@
 import { Row } from "design-react-kit";
 import { useState, useEffect } from "react";
 
-import JobCard from "../components/jobs/JobCard";
-import JobParticipantsModal from "../components/jobs/JobParticipantsModal";
-import LoadMoreButton from "../components/layout/LoadMoreButton";
-import PageContainer from "../components/layout/PageContainer";
+import JobCard from "../../components/jobs/JobCard";
+import JobParticipantsModal from "../../components/jobs/JobParticipantsModal";
+import LoadMoreButton from "../../components/layout/LoadMoreButton";
+import PageContainer from "../../components/layout/PageContainer";
 
-import { useFetch } from "../contexts/FetchContext";
+import { useFetch } from "../../contexts/FetchContext";
 
-import { Job } from "../typings/jobs.type";
+import { Job } from "../../typings/jobs.type";
 
 const ActiveJobs = () => {
   const [jobs, setJobs] = useState<Job[] | undefined>(undefined);
@@ -49,8 +49,8 @@ const ActiveJobs = () => {
         toggleModal={toggleParticipantsModal}
         job={selectedJob}
       />
-      <Row className="justify-content-between align-items-center px-3 mb-4">
-        <h2 className="align-middle">Offerte da approvare</h2>
+      <Row className="justify-content-between align-items-center  mb-4">
+        <h2 className="align-middle">Offerte attive</h2>
       </Row>
       <Row>
         {jobs && jobs?.length > 0
@@ -61,7 +61,7 @@ const ActiveJobs = () => {
                 onShowParticipants={() => toggleParticipantsModal(job)}
               />
             ))
-          : "Nessuna nuova offerta"}
+          : "Nessuna offerta attiva"}
       </Row>
       <LoadMoreButton show={endReached} onClick={() => onLoadMore()} />
     </PageContainer>

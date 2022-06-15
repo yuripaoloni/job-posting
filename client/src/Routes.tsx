@@ -8,7 +8,7 @@ import Profile from "./pages/user/Profile";
 import SoftSkills from "./pages/user/SoftSkills";
 
 import RequireAuth from "./components/auth/RequireAuth";
-import ActiveJobs from "./pages/ActiveJobs";
+import ActiveJobs from "./pages/jobs/ActiveJobs";
 
 const Routes = () => {
   return (

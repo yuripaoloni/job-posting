@@ -75,7 +75,7 @@ const DirectorJobsHistory = ({
                 onShowParticipants={() => toggleParticipantsModal(job)}
               />
             ))
-          : "Nessuna offerta disponibile"}
+          : "Nessuna offerta nello storico"}
       </Row>
       <LoadMoreButton show={endReached} onClick={() => onLoadMore()} />
     </PageContainer>

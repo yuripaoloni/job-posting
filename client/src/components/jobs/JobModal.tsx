@@ -7,6 +7,7 @@ import {
   Button,
   FormGroup,
   Input,
+  TextArea,
 } from "design-react-kit";
 import SoftSkillsForm from "./SoftSkillsForm";
 
@@ -29,6 +30,7 @@ type JobModalProps = {
 
 const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
   const [role, setRole] = useState("");
+  const [description, setDescription] = useState("");
   const [expiryDate, setExpiryData] = useState("");
 
   const [softSkillsTitle, setSoftSkillsTitles] = useState([""]);
@@ -160,6 +162,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
         job ? "PATCH" : "POST",
         {
           role,
+          description,
           expiryDate,
           skillsOrder,
           answersOrder,
@@ -234,6 +237,16 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             label="Ruolo"
             infoText="Posizione richiesta"
             onChange={(e) => setRole(e.target.value)}
+          />
+        </FormGroup>
+        <FormGroup>
+          <TextArea
+            rows={3}
+            id="descrizione"
+            value={description}
+            infoText={`Max 500 caratteri - ${description.length}`}
+            label="Descrizione"
+            onChange={(e) => setDescription(e.target.value)}
           />
         </FormGroup>
         <FormGroup>

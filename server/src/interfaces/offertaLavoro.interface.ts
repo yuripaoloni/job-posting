@@ -6,6 +6,7 @@ export interface OffertaLavoro {
   id: number;
   responsabileCf: string | null;
   ruolo: string | null;
+  descrizione: string | null;
   struttura: string | null;
   dataCreazione: Date | null;
   dataScadenza: Date | null;

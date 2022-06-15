@@ -10,6 +10,7 @@ export type Job = {
   id: number;
   responsabileCf: string | null;
   ruolo: string | null;
+  descrizione: string | null;
   struttura: string | null;
   dataCreazione: string | null;
   dataScadenza: string | null;

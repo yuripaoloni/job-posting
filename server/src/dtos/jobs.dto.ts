@@ -7,6 +7,10 @@ export class JobOfferDto {
   public role: string;
 
   @IsString()
+  @MaxLength(500)
+  public description: string;
+
+  @IsString()
   @MaxLength(255)
   public expiryDate: string;
 

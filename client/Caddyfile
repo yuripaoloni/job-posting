@@ -1,0 +1,9 @@
+0.0.0.0:443 {
+	gzip
+	log / stdout "{method} {path} {status}"
+	root /usr/share/caddy/html
+	rewrite {
+		regexp .*
+		to {path} /
+	}
+}

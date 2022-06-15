@@ -9,6 +9,8 @@ COPY . ./app
 
 WORKDIR /app
 
+COPY package.json .
+COPY yarn.lock .
 RUN yarn install
 
 COPY . .
@@ -20,5 +22,5 @@ RUN yarn build
 # caddy serve
 FROM abiosoft/caddy:1.0.3 as caddy-stage
 
-COPY conf/Caddyfile /etc/Caddyfile
-COPY --from=builder /app/build /usr/share/caddy/html
+COPY Caddyfile /etc/Caddyfile
+COPY --from=common-build-stage /app/build /usr/share/caddy/html

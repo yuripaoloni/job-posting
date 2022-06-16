@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
 import { AuthRequest } from '@/interfaces/routes.interface';
-import { ApplyJobDto, DetermineJobDto, JobOfferDto } from '@/dtos/jobs.dto';
+import { ApplyJobDto, DetermineJobDto, InterviewDto, JobOfferDto } from '@/dtos/jobs.dto';
 import JobsService from '@/services/jobs.service';
 import { DIRECTOR, WORKER } from '@/utils/userTypes';
 
@@ -83,13 +83,14 @@ class JobsController {
     }
   };
 
-  public acceptApplication = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+  public closeOffer = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const applicationId = Number(req.params.applicationId);
+      const jobOfferId = Number(req.params.offerId);
+      const applicationId = req.params?.applicationId ? Number(req.params.applicationId) : null;
 
-      await this.jobsService.acceptApplication(applicationId);
+      await this.jobsService.closeOffer(jobOfferId, applicationId && applicationId);
 
-      res.status(200).json({ message: 'Candidatura accettata. Offerta lavorativa chiusa', success: true });
+      res.status(200).json({ message: `${applicationId ? 'Candidatura accettata.' : ''} Offerta lavorativa chiusa`, success: true });
     } catch (error) {
       next(error);
     }
@@ -131,6 +132,19 @@ class JobsController {
       await this.jobsService.withdrawApplication(applicationId);
 
       res.status(200).json({ message: 'Candidatura annullata', success: true });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  };
+
+  public sendInterviewInvite = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const interviewData: InterviewDto = req.body;
+
+      const candidaturas = await this.jobsService.sendInterviewInvite(interviewData);
+
+      res.status(200).json({ message: 'Inviti al colloquio inviati', candidaturas });
     } catch (error) {
       console.log(error);
       next(error);

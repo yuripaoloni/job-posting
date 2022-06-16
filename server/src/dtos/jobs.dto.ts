@@ -67,3 +67,26 @@ export class DetermineJobDto {
   @MaxLength(255)
   public message: string;
 }
+
+export class InterviewDto {
+  @ValidateNested({ each: true })
+  @Type(() => Invite)
+  public invites: Invite[];
+
+  @IsBoolean({ each: true })
+  public selected: boolean[];
+}
+
+class Invite {
+  @IsNumber()
+  public candidaturaId: number;
+
+  @IsString()
+  public time: string;
+
+  @IsString()
+  public date: string;
+
+  @IsString()
+  public place: string;
+}

@@ -3,7 +3,7 @@ import { Routes } from '@interfaces/routes.interface';
 import authMiddleware from '@/middlewares/auth.middleware';
 import JobsController from '@/controllers/jobs.controller';
 import validationMiddleware from '@/middlewares/validation.middleware';
-import { ApplyJobDto, DetermineJobDto, JobOfferDto } from '@/dtos/jobs.dto';
+import { ApplyJobDto, DetermineJobDto, InterviewDto, JobOfferDto } from '@/dtos/jobs.dto';
 import { onlyDirector, onlyManager } from '@/middlewares/permission.middleware';
 
 class JobsRoute implements Routes {
@@ -36,13 +36,20 @@ class JobsRoute implements Routes {
     this.router.delete(`${this.path}/offers/:offerId`, authMiddleware, onlyManager, this.jobsController.removeJobOffer);
     this.router.post(`${this.path}/offers/apply`, authMiddleware, validationMiddleware(ApplyJobDto, 'body'), this.jobsController.applyToJobOffer);
     this.router.delete(`${this.path}/offers/withdraw/:applicationId`, authMiddleware, this.jobsController.withdrawApplication);
-    this.router.get(`${this.path}/offers/accept/:applicationId`, authMiddleware, onlyManager, this.jobsController.acceptApplication);
+    this.router.get(`${this.path}/offers/close/:offerId/:applicationId*?`, authMiddleware, onlyDirector, this.jobsController.closeOffer);
     this.router.post(
       `${this.path}/offers/determine`,
       authMiddleware,
       onlyDirector,
       validationMiddleware(DetermineJobDto, 'body'),
       this.jobsController.determineJob,
+    );
+    this.router.post(
+      `${this.path}/interview`,
+      authMiddleware,
+      onlyManager,
+      validationMiddleware(InterviewDto, 'body'),
+      this.jobsController.sendInterviewInvite,
     );
   }
 }

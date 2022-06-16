@@ -15,12 +15,22 @@ GET {{ baseURL }}/history/0
 DELETE  {{baseURL}}/offers/5
 
 ###
+# Send invite for interviews
+POST {{baseURL}}/interview
+Content-Type: application/json
+
+{
+    "invites": [{"candidaturaId": 1, "time": "", "date": "", "place": "" }],
+    "selected": [true]
+}
+
+###
 # Apply for job offer
 POST {{baseURL}}/offers/apply
 Content-Type: application/json
 
 {
-    "jobOfferId": 0,
+    "jobOfferId": 1,
     "score": 85
 }
 
@@ -36,8 +46,8 @@ Content-Type: application/json
 }
 
 ###
-# Accept a candidate on a job offer
-GET {{baseURL}}/offers/accept/1
+# Close job offer and select a candidate
+GET {{baseURL}}/offers/close/1
 
 ###
 # Create new job offer

@@ -1,6 +1,6 @@
 import { EntityRepository, IsNull, Repository } from 'typeorm';
 import { OffertaLavoroEntity } from '@/entities/offertaLavoro.entity';
-import { ApplyJobDto, DetermineJobDto, JobOfferDto } from '@/dtos/jobs.dto';
+import { ApplyJobDto, DetermineJobDto, InterviewDto, JobOfferDto } from '@/dtos/jobs.dto';
 import { UtenteEntity } from '@/entities/utente.entity';
 import { Utente } from '@/interfaces/utente.interface';
 import { OffertaLavoro } from '@/interfaces/offertaLavoro.interface';
@@ -123,6 +123,8 @@ class JobsService extends Repository<OffertaLavoroEntity> {
       ],
     });
 
+    jobOffer.candidaturas = jobOffer.candidaturas.sort((a, b) => a.punteggio - b.punteggio);
+
     return jobOffer;
   }
 
@@ -165,7 +167,10 @@ class JobsService extends Repository<OffertaLavoroEntity> {
       take: 6,
     });
 
-    jobOffers.forEach(jobOffer => (jobOffer.richiestaSoftSkills = jobOffer.richiestaSoftSkills.sort((a, b) => a.ordine - b.ordine)));
+    jobOffers.forEach(jobOffer => {
+      jobOffer.richiestaSoftSkills = jobOffer.richiestaSoftSkills.sort((a, b) => a.ordine - b.ordine);
+      jobOffer.candidaturas = jobOffer.candidaturas.sort((a, b) => a.punteggio - b.punteggio);
+    });
 
     return jobOffers;
   }
@@ -188,6 +193,10 @@ class JobsService extends Repository<OffertaLavoroEntity> {
       relations: ['candidaturas', 'candidaturas.utenteCf'],
       skip,
       take: 6,
+    });
+
+    jobOffers.forEach(jobOffer => {
+      jobOffer.candidaturas = jobOffer.candidaturas.sort((a, b) => a.punteggio - b.punteggio);
     });
 
     return jobOffers;
@@ -214,14 +223,16 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     await newApplication.save();
   }
 
-  public async acceptApplication(applicationId: number): Promise<void> {
-    const application = await CandidaturaEntity.getRepository().findOne({ where: { id: applicationId }, loadRelationIds: true });
-    application.approvata = true;
+  public async closeOffer(jobOfferId: number, applicationId?: number): Promise<void> {
+    if (applicationId) {
+      const application = await CandidaturaEntity.getRepository().findOne({ where: { id: applicationId }, loadRelationIds: true });
+      application.approvata = true;
+      await application.save();
+    }
 
-    const jobOffer = await OffertaLavoroEntity.findOne({ where: { id: application.offerta } });
+    const jobOffer = await OffertaLavoroEntity.findOne({ where: { id: jobOfferId } });
     jobOffer.attiva = false;
 
-    await application.save();
     await jobOffer.save();
   }
 
@@ -274,6 +285,10 @@ class JobsService extends Repository<OffertaLavoroEntity> {
       take: 6,
     });
 
+    jobOffers.forEach(jobOffer => {
+      jobOffer.candidaturas = jobOffer.candidaturas.sort((a, b) => a.punteggio - b.punteggio);
+    });
+
     return jobOffers;
   }
 
@@ -286,7 +301,37 @@ class JobsService extends Repository<OffertaLavoroEntity> {
       take: 6,
     });
 
+    jobOffers.forEach(jobOffer => {
+      jobOffer.candidaturas = jobOffer.candidaturas.sort((a, b) => a.punteggio - b.punteggio);
+    });
+
     return jobOffers;
+  }
+
+  public async sendInterviewInvite(interviewData: InterviewDto): Promise<Candidatura[]> {
+    const ids = interviewData.invites.map((item, index) => interviewData.selected[index] && item.candidaturaId);
+    const candidaturas = await CandidaturaEntity.getRepository().findByIds(ids, { relations: ['utenteCf', 'offerta'] });
+    const user = await UtenteEntity.getRepository().findOne({ where: { cf: candidaturas[0].offerta.responsabileCf }, select: ['email'] });
+
+    for (const candidatura of candidaturas) {
+      candidatura.colloquio = true;
+
+      const invite = interviewData.invites.find(item => item.candidaturaId === candidatura.id);
+
+      await sendEmail(
+        candidatura.utenteCf.email,
+        `Invito colloquio - ${candidatura.offerta.ruolo}`,
+        `Il responsabile della struttura "${candidatura.offerta.struttura}" la invita ad un colloquio per il ruolo "${
+          candidatura.offerta.ruolo
+        }" che si svolgerà il ${new Date(invite.date).toLocaleDateString('it-IT')} alle ${invite.time} nel seguente luogo: "${
+          invite.place
+        }".\n\nSe necessario, può contattare il responsabile al seguente indirizzo email: ${user.email}.\n\nCordiali saluti`,
+      );
+
+      await candidatura.save();
+    }
+
+    return candidaturas;
   }
 }
 

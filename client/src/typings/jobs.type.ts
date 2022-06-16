@@ -33,6 +33,7 @@ export type Candidatura = {
   data: Date | null;
   approvata: boolean | null;
   punteggio: number | null;
+  colloquio: boolean | null;
   utenteCf?: Utente | null;
   offerta?: number | any;
 };
@@ -50,4 +51,11 @@ export type RispostaRichiestaSoftSkill = {
   ordine: number;
   richiestaId: number | any;
   rispostaId: RisposteSoftSkill;
+};
+
+export type Invite = {
+  candidaturaId: number;
+  time: string;
+  date: string;
+  place: string;
 };

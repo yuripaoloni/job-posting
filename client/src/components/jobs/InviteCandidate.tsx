@@ -1,6 +1,7 @@
-import { Row, Col, FormGroup, Input, Label } from "design-react-kit";
+import { Row, Col, FormGroup, Input, Label, Button } from "design-react-kit";
 
 import { Invite, Job } from "../../typings/jobs.type";
+import { formatNameSurname } from "../../utils/formatNameSurname";
 
 import Candidate from "./Candidate";
 
@@ -10,6 +11,7 @@ type InviteCandidateProps = {
   updateInviteData: (index: number, updatedInvite: Invite) => void;
   selected: boolean[];
   updateSelected: (index: number) => void;
+  onSuggestCandidate: (candidaturaId: number, user: string) => void;
 };
 
 const InviteCandidate = ({
@@ -18,6 +20,7 @@ const InviteCandidate = ({
   updateInviteData,
   selected,
   updateSelected,
+  onSuggestCandidate,
 }: InviteCandidateProps) => {
   return (
     <>
@@ -35,7 +38,22 @@ const InviteCandidate = ({
             >
               <Candidate candidatura={candidatura} />
               {candidatura.colloquio ? (
-                "Già invitato al colloquio"
+                <Button
+                  color="primary"
+                  disabled={candidatura.proposto!}
+                  size="sm"
+                  onClick={() =>
+                    onSuggestCandidate(
+                      candidatura.id,
+                      formatNameSurname(
+                        candidatura.utenteCf!.nome!,
+                        candidatura.utenteCf!.cognome!
+                      )
+                    )
+                  }
+                >
+                  Proponi candidato
+                </Button>
               ) : (
                 <>
                   <Col lg={6} xs={11} className="mt-lg-0 mt-5">

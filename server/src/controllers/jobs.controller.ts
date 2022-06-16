@@ -150,6 +150,18 @@ class JobsController {
       next(error);
     }
   };
+
+  public suggestCandidate = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const applicationId = Number(req.params.applicationId);
+
+      await this.jobsService.suggestCandidate(applicationId);
+
+      res.status(200).json({ message: `Candidato proposto`, success: true });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default JobsController;

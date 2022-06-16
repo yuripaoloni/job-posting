@@ -114,8 +114,31 @@ const JobParticipantsModal = ({
     );
 
     res?.data.success &&
-      updateJobs &&
-      updateJobs({ ...job!, attiva: false }, false, job!.id);
+      updateJobs!({ ...job!, attiva: false }, false, job!.id);
+  };
+
+  const onSuggestCandidate = async (candidaturaId: number, user: string) => {
+    toggleConfirm(`Proporre al direttore generale ${user} ?`, () =>
+      suggestCandidate(candidaturaId)
+    );
+  };
+
+  const suggestCandidate = async (candidaturaId: number) => {
+    toggleModal();
+
+    const res = await fetchData<{ success: boolean }>(
+      `/jobs/offers/suggest/${candidaturaId}`,
+      "GET"
+    );
+
+    if (res?.data.success) {
+      let candidaturas = job?.candidaturas!.slice();
+      candidaturas = candidaturas?.map((item) =>
+        item.id === candidaturaId ? { ...item, proposto: true } : item
+      );
+
+      updateJobs!({ ...job!, candidaturas }, true);
+    }
   };
 
   return (
@@ -127,7 +150,7 @@ const JobParticipantsModal = ({
     >
       <ModalHeader>Lista candidature - {job?.ruolo}</ModalHeader>
       <ModalBody>
-        {job?.attiva ? (
+        {!job?.attiva ? (
           job?.candidaturas && job?.candidaturas?.length > 0 ? (
             job?.candidaturas.map((candidatura) => (
               <Row
@@ -149,6 +172,7 @@ const JobParticipantsModal = ({
             updateInviteData={updateInviteData}
             selected={selected}
             updateSelected={updateSelected}
+            onSuggestCandidate={onSuggestCandidate}
           />
         )}
       </ModalBody>

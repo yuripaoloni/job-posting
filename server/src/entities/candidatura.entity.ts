@@ -18,6 +18,9 @@ export class CandidaturaEntity extends BaseEntity implements Candidatura {
   @Column('bit', { name: 'colloquio', nullable: true, default: 0 })
   colloquio: boolean | null;
 
+  @Column('bit', { name: 'proposto', nullable: true, default: 0 })
+  proposto: boolean | null;
+
   @Column({ type: 'int', name: 'punteggio', nullable: true })
   punteggio: number | null;
 

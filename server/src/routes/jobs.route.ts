@@ -51,6 +51,7 @@ class JobsRoute implements Routes {
       validationMiddleware(InterviewDto, 'body'),
       this.jobsController.sendInterviewInvite,
     );
+    this.router.get(`${this.path}/offers/suggest/:applicationId`, authMiddleware, onlyManager, this.jobsController.suggestCandidate);
   }
 }
 

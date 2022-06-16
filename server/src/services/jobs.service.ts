@@ -326,12 +326,19 @@ class JobsService extends Repository<OffertaLavoroEntity> {
         }" che si svolgerà il ${new Date(invite.date).toLocaleDateString('it-IT')} alle ${invite.time} nel seguente luogo: "${
           invite.place
         }".\n\nSe necessario, può contattare il responsabile al seguente indirizzo email: ${user.email}.\n\nCordiali saluti`,
+        user.email,
       );
 
       await candidatura.save();
     }
 
     return candidaturas;
+  }
+
+  public async suggestCandidate(applicationId: number): Promise<void> {
+    const application = await CandidaturaEntity.getRepository().findOne({ where: { id: applicationId }, loadRelationIds: true });
+    application.proposto = true;
+    await application.save();
   }
 }
 

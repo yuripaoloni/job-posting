@@ -7,6 +7,7 @@ export interface Candidatura {
   approvata: boolean | null;
   punteggio: number | null;
   colloquio: boolean | null;
+  proposto: boolean | null;
   utenteCf?: string | Utente;
   offerta?: number | OffertaLavoro;
 }

@@ -628,6 +628,37 @@ paths:
           description: 'Missing auth token'
         500:
           description: 'Server Error'
+
+  /jobs/offers/suggest/{applicationId}:
+    get:
+      security:
+        - cookieAuth: []
+      tags:
+        - jobs
+      summary: Suggest a candidate to the DG
+      parameters:
+        - name: applicationId
+          in: path
+          description: offer id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Candidate suggested
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              success:
+                type: boolean
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+          description: 'Server Error'
+
 definitions:
   loginDto:
     type: object

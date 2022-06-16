@@ -16,7 +16,11 @@ const SelectCandidate = ({ job, onCloseOffer }: SelectCandidateProps) => {
   return (
     <>
       <Row className="px-2 mb-2 pb-2">
-        <h6>Seleziona candidato</h6>
+        <h6>
+          Seleziona candidato tra quelli che hanno effettuato il colloquio. Il
+          candidato proposto dal responsabile di struttura si trova in
+          corrispondenza del bottone blu.
+        </h6>
       </Row>
       {job?.candidaturas && job?.candidaturas?.length > 0
         ? job?.candidaturas?.map(
@@ -30,6 +34,7 @@ const SelectCandidate = ({ job, onCloseOffer }: SelectCandidateProps) => {
                   <Col xs={2}>
                     <Button
                       size="sm"
+                      outline={!candidatura.proposto}
                       color="primary"
                       onClick={() =>
                         onCloseOffer(

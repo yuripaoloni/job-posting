@@ -33,6 +33,7 @@ export type Candidatura = {
   data: Date | null;
   approvata: boolean | null;
   punteggio: number | null;
+  proposto: boolean | null;
   colloquio: boolean | null;
   utenteCf?: Utente | null;
   offerta?: number | any;

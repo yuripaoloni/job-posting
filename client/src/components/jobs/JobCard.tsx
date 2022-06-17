@@ -140,14 +140,20 @@ const JobCard = ({
               </Badge>
               {userType === 0 ? (
                 <>
-                  <Score score={job.punteggio?.punteggio} />
-                  <Icon
-                    icon="it-plus-circle"
-                    className="ml-2"
-                    onClick={() => onApplyJob!()}
-                    role="button"
+                  <Score
+                    score={
+                      job.punteggio?.punteggio ? job.punteggio?.punteggio : 0
+                    }
                   />
-                  {infoIcon}
+                  <div>
+                    <Icon
+                      icon="it-plus-circle"
+                      className="ml-2"
+                      onClick={() => onApplyJob!()}
+                      role="button"
+                    />
+                    {infoIcon}
+                  </div>
                 </>
               ) : userType === 1 ? (
                 <div>

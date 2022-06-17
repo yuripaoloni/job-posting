@@ -31,7 +31,10 @@ const WorkerJobs = ({
     const res = await fetchData<{ success: boolean }>(
       `/jobs/offers/apply`,
       "POST",
-      { jobOfferId: job.id, score: job.punteggio?.punteggio }
+      {
+        jobOfferId: job.id,
+        score: job.punteggio?.punteggio ? job.punteggio?.punteggio : 0,
+      }
     );
 
     res?.data.success && updateJobs(job, false, job.id);

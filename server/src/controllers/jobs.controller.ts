@@ -133,7 +133,6 @@ class JobsController {
 
       res.status(200).json({ message: 'Candidatura annullata', success: true });
     } catch (error) {
-      console.log(error);
       next(error);
     }
   };
@@ -146,7 +145,6 @@ class JobsController {
 
       res.status(200).json({ message: 'Inviti al colloquio inviati', candidaturas });
     } catch (error) {
-      console.log(error);
       next(error);
     }
   };

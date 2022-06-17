@@ -16,6 +16,7 @@ import {
 } from "design-react-kit";
 import { useFetch } from "../../contexts/FetchContext";
 import { SoftSkill } from "../../typings/softSkill.type";
+import { useConfirm } from "../../contexts/ConfirmContext";
 
 type UserAnswers = { skillId: number; answerId: number };
 
@@ -29,6 +30,7 @@ const SoftSkills = () => {
   ]);
 
   const { fetchData } = useFetch();
+  const { toggleConfirm } = useConfirm();
 
   useEffect(() => {
     const fetchSoftSkillsAndUserAnswers = async () => {
@@ -37,14 +39,15 @@ const SoftSkills = () => {
         userAnswers: UserAnswers[];
       }>("/softSkills/user/answers", "GET");
 
-      let userAnswers = res?.data.userAnswers
-        ? res.data.userAnswers
-        : res?.data.softSkills.map((skill, index) => {
-            return {
-              skillId: skill.id,
-              answerId: skill.risposteSoftSkills[0].idRisposta,
-            };
-          });
+      let userAnswers =
+        res?.data.userAnswers.length! > 0
+          ? res!.data.userAnswers
+          : res?.data.softSkills.map((skill, index) => {
+              return {
+                skillId: skill.id,
+                answerId: skill.risposteSoftSkills[0].idRisposta,
+              };
+            });
 
       setAnswers(userAnswers!);
       setSoftSkills(res?.data.softSkills);
@@ -72,6 +75,10 @@ const SoftSkills = () => {
       <h4 className="text-center">
         Individua la definizione che meglio si adatta al tuo profilo
       </h4>
+      <h6 className="text-center">
+        Le risposte possono essere aggiornate solo una volta all'anno. Rispondi
+        con attenzione.
+      </h6>
       <Row className="justify-content-center">
         <Col xs={2}>
           <Nav pills vertical>
@@ -122,7 +129,15 @@ const SoftSkills = () => {
               </TabPane>
             ))}
             <Row className="justify-content-end m-1">
-              <Button color="primary" onClick={() => onSubmit()}>
+              <Button
+                color="primary"
+                onClick={() =>
+                  toggleConfirm(
+                    "Attenzione, le risposte possono essere aggiornate solo una volta all'anno. Procedere comunque ?",
+                    () => onSubmit()
+                  )
+                }
+              >
                 INVIA
               </Button>
             </Row>

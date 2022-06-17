@@ -13,6 +13,7 @@ import { CoeffRisposteEntity } from '@/entities/coeffRisposte.entity';
 import { CoeffRisposte } from '@/interfaces/coeffRisposte.interface';
 import { RichiestaSoftSkillEntity } from '@/entities/richiestaSoftSkill.entity';
 import { PunteggioOffertaEntity } from '@/entities/punteggioOfferta.entity';
+import { HttpException } from '@/exceptions/HttpException';
 
 @EntityRepository()
 class SoftSkillService extends Repository<SoftSkillEntity> {
@@ -54,6 +55,11 @@ class SoftSkillService extends Repository<SoftSkillEntity> {
 
         await RisposteUtenteEntity.getRepository().insert(newUserAnswers);
       } else {
+        const todayDate = new Date();
+
+        if (new Date(userAnswers.dataIns) <= new Date(todayDate.getFullYear() + 1, todayDate.getMonth(), todayDate.getDate())) {
+          throw new HttpException(403, `Risposte modificabili solo dopo un'anno. Ultimo aggiornamento ${userAnswers.dataIns}`);
+        }
         if (userAnswers.risposta.idRisposta !== rispostaSoftSkill.idRisposta) {
           await RisposteUtenteEntity.getRepository().update(
             { utenteCf: user, softSkill: softSkill },

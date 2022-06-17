@@ -6,7 +6,6 @@ import { Utente } from '@/interfaces/utente.interface';
 import { OffertaLavoro } from '@/interfaces/offertaLavoro.interface';
 import { RisposteUtenteEntity } from '@/entities/risposteUtente.entity';
 import { RisposteUtente } from '@/interfaces/risposteUtente.interface';
-import { HttpException } from '@/exceptions/HttpException';
 import { SoftSkillEntity } from '@/entities/softSkill.entity';
 import { RisposteSoftSkillEntity } from '@/entities/risposteSoftSkill.entity';
 import { RichiestaSoftSkillEntity } from '@/entities/richiestaSoftSkill.entity';
@@ -130,20 +129,22 @@ class JobsService extends Repository<OffertaLavoroEntity> {
 
   public async getWorkerJobOffers(cf: string, skip: number): Promise<OffertaLavoro[]> {
     const userAnswers: RisposteUtente[] = await RisposteUtenteEntity.getRepository().find({ where: { utenteCf: cf }, loadRelationIds: true });
-    if (!userAnswers) throw new HttpException(400, 'Completa il tuo profilo per visualizzare le offerte');
 
-    const jobOffers: OffertaLavoro[] = await OffertaLavoroEntity.createQueryBuilder('jobs')
-      .leftJoin('jobs.candidaturas', 'candidatura', 'candidatura.utenteCf = :cf', { cf })
-      .where('candidatura.id is null')
-      .leftJoin('jobs.punteggi', 'punteggio', 'punteggio.utenteCf = :cf', { cf })
-      .leftJoinAndMapOne('jobs.punteggio', 'jobs.punteggi', 'punteggioUtente')
-      .orderBy({ 'punteggioUtente.punteggio': 'DESC' })
-      .andWhere('jobs.approvata = 1')
-      .andWhere('jobs.attiva = 1')
-      .andWhere('jobs.punteggiAggiornati = 1')
-      .skip(skip)
-      .take(6)
-      .getMany();
+    const jobOffers: OffertaLavoro[] =
+      userAnswers.length === 0
+        ? await OffertaLavoroEntity.find({ where: { approvata: true, attiva: true }, skip: skip, take: 6 })
+        : await OffertaLavoroEntity.createQueryBuilder('jobs')
+            .leftJoin('jobs.candidaturas', 'candidatura', 'candidatura.utenteCf = :cf', { cf })
+            .where('candidatura.id is null')
+            .leftJoin('jobs.punteggi', 'punteggio', 'punteggio.utenteCf = :cf', { cf })
+            .leftJoinAndMapOne('jobs.punteggio', 'jobs.punteggi', 'punteggioUtente')
+            .orderBy({ 'punteggioUtente.punteggio': 'DESC' })
+            .andWhere('jobs.approvata = 1')
+            .andWhere('jobs.attiva = 1')
+            .andWhere('jobs.punteggiAggiornati = 1')
+            .skip(skip)
+            .take(6)
+            .getMany();
 
     return jobOffers;
   }

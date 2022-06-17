@@ -9,7 +9,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./:/app
+      - ./server/:/app
       - /app/node_modules
     restart: always
   client:
@@ -20,7 +20,7 @@ services:
     ports:
       - "443:3000"
     volumes:
-      - ./:/app
+      - ./client/:/app
       - /app/node_modules
     restart: always
     depends_on:

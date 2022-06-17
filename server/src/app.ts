@@ -3,6 +3,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
+import https from 'https';
 import hpp from 'hpp';
 import morgan from 'morgan';
 import compression from 'compression';
@@ -15,6 +16,7 @@ import { Routes } from '@interfaces/routes.interface';
 import errorMiddleware from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
 import startJobs from '@jobs/index';
+import httpsConf from '@/config/https';
 
 class App {
   public app: express.Application;
@@ -35,11 +37,20 @@ class App {
   }
 
   public listen() {
-    this.app.listen(this.port, () => {
-      logger.info(`======= ENV: ${this.env} =======`);
-      logger.info(`App listening on the port ${this.port}`);
-      logger.info(`=================================`);
-    });
+    if (this.env !== 'production') {
+      this.app.listen(this.port, () => {
+        logger.info(`======= ENV: ${this.env} =======`);
+        logger.info(`App listening on the port ${this.port}`);
+        logger.info(`=================================`);
+      });
+    } else {
+      const httpsServer = https.createServer(httpsConf, this.app);
+      httpsServer.listen(this.port, () => {
+        logger.info(`======= ENV: ${this.env} =======`);
+        logger.info(`App listening on the port ${this.port}`);
+        logger.info(`=================================`);
+      });
+    }
   }
 
   public getServer() {

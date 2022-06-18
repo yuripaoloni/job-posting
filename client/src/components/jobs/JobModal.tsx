@@ -8,6 +8,7 @@ import {
   FormGroup,
   Input,
   TextArea,
+  Label,
 } from "design-react-kit";
 import SoftSkillsForm from "./SoftSkillsForm";
 
@@ -260,6 +261,74 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             onChange={(e) => setExpiryData(e.target.value)}
           />
         </FormGroup>
+        <FormGroup>
+          <h6>
+            Per le voci "Preparazione", "Esperienza lavorativa 10+" ed
+            "Esperienza in Unicam 5+" è necessario specificare un peso totale di
+            50 punti.
+          </h6>
+          <p>
+            I 50 punti devono essere distributi tra le tre voci (es 15, 15, 20).
+            Se non si raggiunge un valore totale di 50, i punti macanti verranno
+            automaticamente assegnati alle competenze (in basso).
+            <strong>
+              {" "}
+              I pesi selezionati influiranno nel calcolo dei punteggi di
+              affinità per i candidati.
+            </strong>
+          </p>
+        </FormGroup>
+        <div className="form-row">
+          <div className="select-wrapper col col-8">
+            <label htmlFor="defaultSelect">Preparazione richiesta</label>
+            <select
+              id="defaultSelect"
+              // value={item.lingua}
+              // onChange={(e) => handleLanguageChange(index, e.target.value)}
+            >
+              <option value="Inglese">Inglese</option>
+              <option value="Francese">Francese</option>
+              <option value="Spagnolo">Spagnolo</option>
+              <option value="Tedesco">Tedesco</option>
+              <option value="Cinese">Cinese</option>
+            </select>
+          </div>
+          <Input
+            type="number"
+            label="Peso"
+            placeholder="Peso"
+            wrapperClass="col col-2"
+            max={50}
+          />
+        </div>
+        <div className="form-row">
+          <FormGroup check>
+            <Input id="checkbox1" type="checkbox" />
+            <Label for="checkbox1" check>
+              Esperienza Unicam 10+
+            </Label>
+          </FormGroup>
+          <Input
+            type="number"
+            label="Peso"
+            placeholder="Peso"
+            wrapperClass="col col-1"
+            max={50}
+          />
+          <FormGroup check>
+            <Input id="checkbox2" type="checkbox" />
+            <Label for="checkbox2" check>
+              Esperienza Unicam 5+
+            </Label>
+          </FormGroup>
+          <Input
+            type="number"
+            label="Peso"
+            placeholder="Peso"
+            wrapperClass="col col-1"
+            max={50}
+          />
+        </div>
         <FormGroup>
           <h6>
             Ordina le competenze da 1 a 14 e le relative risposte da 1 a 4

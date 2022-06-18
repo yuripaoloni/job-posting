@@ -21,6 +21,8 @@ import {
   SoftSkill,
 } from "../../typings/softSkill.type";
 import { JobRes, Job } from "../../typings/jobs.type";
+import { CategoriaPreparazione, Options } from "../../typings/utils.type";
+import Select from "../layout/Select";
 
 type JobModalProps = {
   isOpen: boolean;
@@ -38,6 +40,19 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
   const [softSkills, setSoftSkills] = useState<SoftSkill[] | undefined>(
     undefined
   );
+
+  const [categories, setCategories] = useState<Options[]>([
+    { value: "", text: "" },
+  ]);
+  const [preparation, setPreparation] = useState({ value: "", points: 0 });
+  const [unicamExperience, setUnicamExperience] = useState({
+    value: false,
+    points: 0,
+  });
+  const [workExperience, setWorkExperience] = useState({
+    value: false,
+    points: 0,
+  });
 
   const [skillsOrder, setSkillsOrder] = useState<SkillsOrder[]>([
     { id: 1, order: 1 },
@@ -83,13 +98,33 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
       setAnswersOrder(newAnswersOrder);
     };
 
+    const fetchCategories = async () => {
+      const categories = await fetchData<CategoriaPreparazione[]>(
+        "/utils/categories",
+        "GET"
+      );
+
+      categories?.data &&
+        setCategories(
+          categories.data
+            .map((item) => {
+              return { value: item.descrizione!, text: item.descrizione! };
+            })
+            .concat({ value: "Nessuna preferenza", text: "Nessuna preferenza" })
+        );
+    };
+
     fetchSoftSkills();
+    fetchCategories();
   }, [fetchData]);
 
   useEffect(() => {
     if (job) {
       setRole(job.ruolo!);
       setExpiryData(job.dataScadenza!);
+      // TODO setPreparation(job.richiestaOfferta.preparazione);
+      // TODO setUnicamExperience(job.richiestaOfferta.esperienzaUnicam);
+      // TODO setWorkExperience(job.richiestaOfferta.esperienzaLavoro);
 
       const titles = job.richiestaSoftSkills!.map(
         (item) => item.softSkill!.titolo
@@ -126,10 +161,22 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
   }, [job]);
 
   const validateInputs = (): boolean => {
+    const invalidPoints =
+      preparation.points + workExperience.points + unicamExperience.points > 50;
+
+    invalidPoints &&
+      toggleAlert(
+        'I pesi per "Preparazione", "Esperienza lavorativa" ed "Esperienza Unicam" sono superiori a 50.',
+        "danger"
+      );
+
     const valueArr = skillsOrder.map((item) => item.order);
     const hasDuplicateSkills = valueArr.some(
       (item, index) => valueArr.indexOf(item) !== index
     );
+
+    hasDuplicateSkills &&
+      toggleAlert("2 o più skill hanno lo stesso ordinamento.", "danger");
 
     const duplicateAnswers = answersOrder.flatMap((item, index) => {
       const valueArr = item.answers.map((item) => item.order);
@@ -137,9 +184,6 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
         ? [index]
         : [];
     });
-
-    hasDuplicateSkills &&
-      toggleAlert("2 o più skill hanno lo stesso ordinamento.", "danger");
 
     duplicateAnswers.length > 0 &&
       toggleAlert(
@@ -149,7 +193,9 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
         "danger"
       );
 
-    return !hasDuplicateSkills && duplicateAnswers.length === 0;
+    return (
+      !invalidPoints && !hasDuplicateSkills && duplicateAnswers.length === 0
+    );
   };
 
   const createOrUpdateJobOffer = async () => {
@@ -165,6 +211,9 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
           role,
           description,
           expiryDate,
+          preparation,
+          unicamExperience,
+          workExperience,
           skillsOrder,
           answersOrder,
         }
@@ -279,45 +328,75 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
           </p>
         </FormGroup>
         <div className="form-row">
-          <div className="select-wrapper col col-8">
-            <label htmlFor="defaultSelect">Preparazione richiesta</label>
-            <select
-              id="defaultSelect"
-              // value={item.lingua}
-              // onChange={(e) => handleLanguageChange(index, e.target.value)}
-            >
-              <option value="Inglese">Inglese</option>
-              <option value="Francese">Francese</option>
-              <option value="Spagnolo">Spagnolo</option>
-              <option value="Tedesco">Tedesco</option>
-              <option value="Cinese">Cinese</option>
-            </select>
-          </div>
+          <Select
+            label="Preparazione richiesta"
+            options={categories}
+            value={preparation.value}
+            onChange={(e) =>
+              setPreparation({ ...preparation, value: e.target.vale })
+            }
+          />
           <Input
             type="number"
             label="Peso"
             placeholder="Peso"
+            disabled={preparation.value === "Nessuna preferenza"}
+            value={
+              preparation.value === "Nessuna preferenza"
+                ? 0
+                : preparation.points
+            }
+            onChange={(e) =>
+              setPreparation({ ...preparation, points: e.target.valueAsNumber })
+            }
             wrapperClass="col col-2"
             max={50}
           />
         </div>
         <div className="form-row">
           <FormGroup check>
-            <Input id="checkbox1" type="checkbox" />
-            <Label for="checkbox1" check>
-              Esperienza Unicam 10+
+            <Input
+              id="checkbox2"
+              type="checkbox"
+              checked={workExperience.value}
+              onChange={(e) =>
+                setWorkExperience({
+                  ...workExperience,
+                  points: e.target.valueAsNumber,
+                })
+              }
+            />
+            <Label for="checkbox2" check>
+              Esperienza lavorativa 10+
             </Label>
           </FormGroup>
           <Input
             type="number"
             label="Peso"
             placeholder="Peso"
+            disabled={!workExperience}
+            value={!workExperience ? 0 : workExperience.points}
+            onChange={(e) =>
+              setWorkExperience({
+                ...workExperience,
+                points: e.target.valueAsNumber,
+              })
+            }
             wrapperClass="col col-1"
             max={50}
           />
           <FormGroup check>
-            <Input id="checkbox2" type="checkbox" />
-            <Label for="checkbox2" check>
+            <Input
+              id="checkbox1"
+              type="checkbox"
+              checked={unicamExperience.value}
+              onChange={() =>
+                setUnicamExperience((prev) => {
+                  return { ...prev, value: !prev.value };
+                })
+              }
+            />
+            <Label for="checkbox1" check>
               Esperienza Unicam 5+
             </Label>
           </FormGroup>
@@ -325,6 +404,14 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             type="number"
             label="Peso"
             placeholder="Peso"
+            disabled={!unicamExperience}
+            value={!unicamExperience ? 0 : unicamExperience.points}
+            onChange={(e) =>
+              setUnicamExperience({
+                ...unicamExperience,
+                points: e.target.valueAsNumber,
+              })
+            }
             wrapperClass="col col-1"
             max={50}
           />

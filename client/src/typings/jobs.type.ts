@@ -17,9 +17,20 @@ export type Job = {
   approvata: boolean | null;
   attiva: boolean | null;
   punteggio: PunteggioOfferta | null;
+  richiestaOfferta: RichiestaOfferta;
   descEsito?: string | null;
   candidaturas?: Candidatura[] | null;
   richiestaSoftSkills?: RichiestaSoftSkill[] | null;
+};
+
+export type RichiestaOfferta = {
+  id: number;
+  preparazione: string | null;
+  puntiPreparazione: number | null;
+  esperienzaLavorativa: boolean | null;
+  puntiEsperienzaLavorativa: number | null;
+  esperienzaUnicam: boolean | null;
+  puntiEsperienzaUnicam: number | null;
 };
 
 export type PunteggioOfferta = {

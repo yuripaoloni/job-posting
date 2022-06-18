@@ -117,7 +117,8 @@ const Profile = (props: ProfileProps) => {
                     </dd>
                     <dt className="col-sm-6">Competenze linguistiche: </dt>
                     <dd className="col-sm-6">
-                      {user?.competenzeLinguistiches
+                      {user?.competenzeLinguistiches &&
+                      user.competenzeLinguistiches.length > 0
                         ? user.competenzeLinguistiches.map((item, index) => (
                             <Chip
                               key={index}

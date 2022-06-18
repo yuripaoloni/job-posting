@@ -7,6 +7,8 @@ tags:
     description: profile API
   - name: softSkill
     description: softSkill API
+  - name: utils
+    description: utility data API
 
 paths:
   /auth/login:
@@ -652,6 +654,38 @@ paths:
                 type: string
               success:
                 type: boolean
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+          description: 'Server Error'
+
+  /utils/categories:
+    get:
+      security:
+        - cookieAuth: []
+      tags:
+        - utils
+      summary: Get preparation categories
+      responses:
+        200:
+          description: Preparation categories
+          schema:
+            type: array
+            items:
+              type: object
+              required:
+                - id
+                - descrizione
+                - dataIns
+              properties:
+                id:
+                  type: integer
+                descrizione:
+                  type: string
+                dataIns:
+                  type: string
         401:
           description: 'Wrong auth token'
         404:

@@ -49,7 +49,7 @@ const CenterHeader = () => {
                     href="mailto:cinfo@unicam.it"
                     className="text-white text-decoration-none"
                   >
-                    cinfo@unicam.it
+                    apo@unicam.it
                   </a>
                 </li>
               </ul>

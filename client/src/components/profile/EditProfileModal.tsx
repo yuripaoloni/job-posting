@@ -17,23 +17,7 @@ import { CompetenzeLinguistiche, Utente } from "../../typings/utente.type";
 import { useFetch } from "../../contexts/FetchContext";
 import Select from "../layout/Select";
 import { CategoriaPreparazione, Options } from "../../typings/utils.type";
-
-const languagesOptions = [
-  { value: "Inglese", text: "Inglese" },
-  { value: "Francese", text: "Francese" },
-  { value: "Spagnolo", text: "Spagnolo" },
-  { value: "Tedesco", text: "Tedesco" },
-  { value: "Cinese", text: "Cinese" },
-];
-
-const levelsOptions = [
-  { value: "A1", text: "A1" },
-  { value: "A2", text: "A2" },
-  { value: "B1", text: "B1" },
-  { value: "B2", text: "B2" },
-  { value: "C1", text: "C1" },
-  { value: "C2", text: "C2" },
-];
+import { languagesOptions, levelsOptions } from "../../utils/selectOptions";
 
 type EditProfileModalProps = {
   isOpen: boolean;

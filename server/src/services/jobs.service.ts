@@ -11,6 +11,8 @@ import { RisposteSoftSkillEntity } from '@/entities/risposteSoftSkill.entity';
 import { RichiestaSoftSkillEntity } from '@/entities/richiestaSoftSkill.entity';
 import { RispostaRichiestaSoftSkillEntity } from '@/entities/rispostaRichiestaSoftSkill.entity';
 import { CandidaturaEntity } from '@/entities/candidatura.entity';
+import { RichiestaOffertaEntity } from '@/entities/richiestaOfferta.entity';
+import { RichiestaCompetenzeLinguisticheEntity } from '@/entities/richiestaCompetenzeLinguistiche';
 import { Candidatura } from '@/interfaces/candidatura.interface';
 import sendEmail from '@/utils/mail';
 import { DG_EMAIL } from '@/config';
@@ -29,6 +31,29 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     newJobOffer.attiva = true;
 
     const result = await OffertaLavoroEntity.insert(newJobOffer);
+
+    const richiestaOfferta = new RichiestaOffertaEntity();
+    richiestaOfferta.preparazione = jobOfferData.preparation.value;
+    richiestaOfferta.puntiPreparazione = jobOfferData.preparation.points;
+    richiestaOfferta.esperienzaLavorativa = jobOfferData.workExperince.value;
+    richiestaOfferta.puntiEsperienzaLavorativa = jobOfferData.workExperince.points;
+    richiestaOfferta.esperienzaUnicam = jobOfferData.unicamExperience.value;
+    richiestaOfferta.puntiEsperienzaUnicam = jobOfferData.unicamExperience.points;
+    richiestaOfferta.offerta = newJobOffer;
+
+    await richiestaOfferta.save();
+
+    if (jobOfferData.languages.length > 0) {
+      for (const language of jobOfferData.languages) {
+        const richiestaCompetenzeLinguistiche = new RichiestaCompetenzeLinguisticheEntity();
+        richiestaCompetenzeLinguistiche.lingua = language.lingua;
+        richiestaCompetenzeLinguistiche.livello = language.livello;
+        richiestaCompetenzeLinguistiche.punti = language.points;
+        richiestaCompetenzeLinguistiche.richiestaOfferta = richiestaOfferta;
+
+        await richiestaCompetenzeLinguistiche.save();
+      }
+    }
 
     for (const skillOrder of jobOfferData.skillsOrder) {
       const softSkill = await SoftSkillEntity.getRepository().findOne({ where: { id: skillOrder.id } });
@@ -86,6 +111,28 @@ class JobsService extends Repository<OffertaLavoroEntity> {
       { id: jobOfferId },
       { ruolo: jobOfferData.role, descrizione: jobOfferData.description, dataScadenza: jobOfferData.expiryDate, punteggiAggiornati: false },
     );
+
+    const richiestaOfferta = await RichiestaOffertaEntity.getRepository().findOne({
+      where: { offerta: jobOfferId },
+      loadRelationIds: true,
+      relations: ['richiestaCompetenzeLinguistiches'],
+    });
+
+    richiestaOfferta.preparazione = jobOfferData.preparation.value;
+    richiestaOfferta.puntiPreparazione = jobOfferData.preparation.points;
+    richiestaOfferta.esperienzaLavorativa = jobOfferData.workExperince.value;
+    richiestaOfferta.puntiEsperienzaLavorativa = jobOfferData.workExperince.points;
+    richiestaOfferta.esperienzaUnicam = jobOfferData.unicamExperience.value;
+    richiestaOfferta.puntiEsperienzaUnicam = jobOfferData.unicamExperience.points;
+
+    if (jobOfferData.languages.length > 0) {
+      for (const language of jobOfferData.languages) {
+        await RichiestaCompetenzeLinguisticheEntity.getRepository().update(
+          { id: language.id },
+          { lingua: language.lingua, livello: language.livello, punti: language.points },
+        );
+      }
+    }
 
     for (const skillOrder of jobOfferData.skillsOrder) {
       const richiestaSoftSkill = await RichiestaSoftSkillEntity.getRepository().findOne({ where: { offerta: jobOfferId, softSkill: skillOrder.id } });

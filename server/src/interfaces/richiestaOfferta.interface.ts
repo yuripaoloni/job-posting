@@ -1,4 +1,5 @@
 import { OffertaLavoro } from './offertaLavoro.interface';
+import { RichiestaCompetenzeLinguistiche } from './richiestaCompetenzeLinguistiche.interface';
 
 export interface RichiestaOfferta {
   id: number;
@@ -8,5 +9,6 @@ export interface RichiestaOfferta {
   puntiEsperienzaLavorativa: number | null;
   esperienzaUnicam: boolean | null;
   puntiEsperienzaUnicam: number | null;
+  richiestaCompetenzeLinguistiches?: RichiestaCompetenzeLinguistiche[];
   offerta?: OffertaLavoro;
 }

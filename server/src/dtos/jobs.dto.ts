@@ -24,12 +24,31 @@ export class JobOfferDto {
   public workExperince: WorkExperience;
 
   @ValidateNested({ each: true })
+  @Type(() => LanguagesPoints)
+  public languages: LanguagesPoints[];
+
+  @ValidateNested({ each: true })
   @Type(() => SkillsOrder)
   public skillsOrder: SkillsOrder[];
 
   @ValidateNested({ each: true })
   @Type(() => AnswersOrder)
   public answersOrder: AnswersOrder[];
+}
+
+class LanguagesPoints {
+  @IsNumber()
+  public id: number;
+
+  @IsString()
+  public lingua: string;
+
+  @IsString()
+  public livello: string;
+
+  @IsNumber()
+  @Max(50)
+  public points: number;
 }
 
 class Preparation {

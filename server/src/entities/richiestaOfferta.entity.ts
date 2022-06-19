@@ -1,6 +1,7 @@
-import { Column, Entity, Index, JoinColumn, PrimaryGeneratedColumn, BaseEntity, OneToOne } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, PrimaryGeneratedColumn, BaseEntity, OneToOne, OneToMany } from 'typeorm';
 import { OffertaLavoroEntity } from './offertaLavoro.entity';
 import { RichiestaOfferta } from '@/interfaces/richiestaOfferta.interface';
+import { RichiestaCompetenzeLinguisticheEntity } from './richiestaCompetenzeLinguistiche';
 
 @Index('PK__richiest__3213E83F865269E9', ['id'], { unique: true })
 @Entity('richiesta_soft_skill', { schema: 'dbo' })
@@ -25,6 +26,9 @@ export class RichiestaOffertaEntity extends BaseEntity implements RichiestaOffer
 
   @Column('int', { name: 'punti_esperienza_unicam', nullable: true })
   puntiEsperienzaUnicam: number | null;
+
+  @OneToMany(() => RichiestaCompetenzeLinguisticheEntity, richiestaCompetenzeLinguistiche => richiestaCompetenzeLinguistiche.richiestaOfferta)
+  richiestaCompetenzeLinguistiches: RichiestaCompetenzeLinguisticheEntity[];
 
   @OneToOne(() => OffertaLavoroEntity, { onDelete: 'CASCADE' })
   @JoinColumn([{ name: 'offerta_id', referencedColumnName: 'id' }])

@@ -9,6 +9,11 @@ import {
   Input,
   TextArea,
   Label,
+  Row,
+  Col,
+  Icon,
+  Chip,
+  ChipLabel,
 } from "design-react-kit";
 import SoftSkillsForm from "./SoftSkillsForm";
 
@@ -23,6 +28,10 @@ import {
 import { JobRes, Job } from "../../typings/jobs.type";
 import { CategoriaPreparazione, Options } from "../../typings/utils.type";
 import Select from "../layout/Select";
+import { CompetenzeLinguistiche } from "../../typings/utente.type";
+import { languagesOptions, levelsOptions } from "../../utils/selectOptions";
+
+type LanguagesPoints = CompetenzeLinguistiche & { points: number };
 
 type JobModalProps = {
   isOpen: boolean;
@@ -53,6 +62,9 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
     value: false,
     points: 0,
   });
+  const [languages, setLanguages] = useState<LanguagesPoints[]>([
+    { id: 1, lingua: "Inglese", livello: "A1", points: 0 },
+  ]);
 
   const [skillsOrder, setSkillsOrder] = useState<SkillsOrder[]>([
     { id: 1, order: 1 },
@@ -122,9 +134,10 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
     if (job) {
       setRole(job.ruolo!);
       setExpiryData(job.dataScadenza!);
-      // TODO setPreparation(job.richiestaOfferta.preparazione);
-      // TODO setUnicamExperience(job.richiestaOfferta.esperienzaUnicam);
-      // TODO setWorkExperience(job.richiestaOfferta.esperienzaLavoro);
+      // TODO setPreparation({value: job.richiestaOfferta.preparazione, points: ...});
+      // TODO setUnicamExperience({value: job.richiestaOfferta.esperienzaUnicam, points: ...});
+      // TODO setWorkExperience({value: job.richiestaOfferta.esperienzaLavoro, points: ...});
+      // TODO setLanguages({id:})
 
       const titles = job.richiestaSoftSkills!.map(
         (item) => item.softSkill!.titolo
@@ -214,6 +227,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
           preparation,
           unicamExperience,
           workExperience,
+          languages,
           skillsOrder,
           answersOrder,
         }
@@ -261,6 +275,30 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
     });
     updatedAnswersOrder[skillIndex].answers[answerIndex].order = order;
     setAnswersOrder(updatedAnswersOrder);
+  };
+
+  const removeLanguage = (index: number) => {
+    let updatedLanguages = languages.slice();
+    updatedLanguages.splice(index, 1);
+    setLanguages(updatedLanguages);
+  };
+
+  const handleLanguageChange = (index: number, lingua: string) => {
+    let updatedLanguages = languages.slice();
+    updatedLanguages[index].lingua = lingua;
+    setLanguages(updatedLanguages);
+  };
+
+  const handleLevelChange = (index: number, livello: string) => {
+    let updatedLanguages = languages.slice();
+    updatedLanguages[index].livello = livello;
+    setLanguages(updatedLanguages);
+  };
+
+  const handleLanguagePointsChange = (index: number, points: number) => {
+    let updatedLanguages = languages.slice();
+    updatedLanguages[index].points = points;
+    setLanguages(updatedLanguages);
   };
 
   return (
@@ -312,14 +350,14 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
         </FormGroup>
         <FormGroup>
           <h6>
-            Per le voci "Preparazione", "Esperienza lavorativa 10+" ed
-            "Esperienza in Unicam 5+" è necessario specificare un peso totale di
+            Per le voci "Preparazione", "Esperienza lavorativa 10+", "Esperienza
+            in Unicam 5+" e "Lingue" è necessario specificare un peso totale di
             50 punti.
           </h6>
           <p>
-            I 50 punti devono essere distributi tra le tre voci (es 15, 15, 20).
-            Se non si raggiunge un valore totale di 50, i punti macanti verranno
-            automaticamente assegnati alle competenze (in basso).
+            I 50 punti devono essere distributi tra le quattro voci (es 15, 15,
+            10, 10). Se non si raggiunge un valore totale di 50, i punti macanti
+            verranno automaticamente assegnati alle competenze (in basso).
             <strong>
               {" "}
               I pesi selezionati influiranno nel calcolo dei punteggi di
@@ -416,6 +454,70 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             max={50}
           />
         </div>
+
+        <div>
+          {languages.map((item, index) => (
+            <FormGroup key={index} tag={Row} className="align-items-center">
+              <Col xs={6}>
+                <Select
+                  label="Lingua"
+                  value={item.lingua}
+                  options={languagesOptions}
+                  onChange={(e) => handleLanguageChange(index, e.target.value)}
+                />
+              </Col>
+              <Col xs={4}>
+                <Select
+                  label="Livello"
+                  value={item.livello}
+                  options={levelsOptions}
+                  onChange={(e) => handleLevelChange(index, e.target.value)}
+                />
+              </Col>
+              <Col xs={1}>
+                <Input
+                  type="number"
+                  label="Peso"
+                  placeholder="Peso"
+                  disabled={!item.points}
+                  value={!item.points ? 0 : item.points}
+                  onChange={(e) =>
+                    handleLanguagePointsChange(index, e.target.valueAsNumber)
+                  }
+                  max={50}
+                />
+              </Col>
+              <Col xs={1}>
+                <Icon
+                  icon="it-minus-circle"
+                  color="danger"
+                  role="button"
+                  onClick={() => removeLanguage(index)}
+                />
+              </Col>
+            </FormGroup>
+          ))}
+          <Chip
+            simple
+            color="primary"
+            role="button"
+            onClick={() =>
+              setLanguages((prev) => [
+                ...prev,
+                {
+                  id: prev.length + 1,
+                  lingua: "Inglese",
+                  livello: "A1",
+                  points: 0,
+                },
+              ])
+            }
+          >
+            <Icon icon="it-plus" size="xs" />
+            <ChipLabel>Aggiungi lingua </ChipLabel>
+          </Chip>
+        </div>
+
         <FormGroup>
           <h6>
             Ordina le competenze da 1 a 14 e le relative risposte da 1 a 4

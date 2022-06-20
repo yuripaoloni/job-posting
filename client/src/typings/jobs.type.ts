@@ -17,7 +17,7 @@ export type Job = {
   approvata: boolean | null;
   attiva: boolean | null;
   punteggio: PunteggioOfferta | null;
-  richiestaOfferta: RichiestaOfferta;
+  richiestaOffertas: RichiestaOfferta;
   descEsito?: string | null;
   candidaturas?: Candidatura[] | null;
   richiestaSoftSkills?: RichiestaSoftSkill[] | null;
@@ -31,6 +31,14 @@ export type RichiestaOfferta = {
   puntiEsperienzaLavorativa: number | null;
   esperienzaUnicam: boolean | null;
   puntiEsperienzaUnicam: number | null;
+  richiestaCompetenzeLinguistiches?: RichiestaCompetenzeLinguistiche[];
+};
+
+export type RichiestaCompetenzeLinguistiche = {
+  id: number;
+  lingua: string;
+  livello: string;
+  punti: number;
 };
 
 export type PunteggioOfferta = {

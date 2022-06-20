@@ -51,8 +51,8 @@ export class OffertaLavoroEntity extends BaseEntity implements OffertaLavoro {
   @OneToMany(() => RichiestaSoftSkillEntity, richiestaSoftSkill => richiestaSoftSkill.offerta)
   richiestaSoftSkills: RichiestaSoftSkillEntity[];
 
-  @OneToOne(() => RichiestaOffertaEntity)
-  richiestaOfferta: RichiestaOffertaEntity;
+  @OneToOne(() => RichiestaOffertaEntity, richiestaOfferta => richiestaOfferta.offerta)
+  richiestaOffertas: RichiestaOffertaEntity;
 
   @OneToMany(() => PunteggioOffertaEntity, punteggioOfferta => punteggioOfferta.offerta)
   punteggi: PunteggioOffertaEntity[];

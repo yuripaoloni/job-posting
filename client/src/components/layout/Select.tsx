@@ -12,8 +12,10 @@ const Select = ({ label, value, options, onChange }: SelectProps) => {
     <div className="select-wrapper">
       <label htmlFor="defaultSelect">{label}</label>
       <select id="defaultSelect" value={value} onChange={onChange}>
-        {options.map((option) => (
-          <option value={option.value}>{option.text}</option>
+        {options.map((option, index) => (
+          <option key={index} value={option.value}>
+            {option.text}
+          </option>
         ))}
       </select>
     </div>

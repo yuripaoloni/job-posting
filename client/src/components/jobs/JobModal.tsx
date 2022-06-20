@@ -16,6 +16,7 @@ import {
   ChipLabel,
 } from "design-react-kit";
 import SoftSkillsForm from "./SoftSkillsForm";
+import Select from "../layout/Select";
 
 import { useFetch } from "../../contexts/FetchContext";
 import { useAlert } from "../../contexts/AlertContext";
@@ -25,13 +26,14 @@ import {
   SkillsOrder,
   SoftSkill,
 } from "../../typings/softSkill.type";
-import { JobRes, Job } from "../../typings/jobs.type";
+import {
+  JobRes,
+  Job,
+  RichiestaCompetenzeLinguistiche,
+} from "../../typings/jobs.type";
 import { CategoriaPreparazione, Options } from "../../typings/utils.type";
-import Select from "../layout/Select";
-import { CompetenzeLinguistiche } from "../../typings/utente.type";
-import { languagesOptions, levelsOptions } from "../../utils/selectOptions";
 
-type LanguagesPoints = CompetenzeLinguistiche & { points: number };
+import { languagesOptions, levelsOptions } from "../../utils/selectOptions";
 
 type JobModalProps = {
   isOpen: boolean;
@@ -62,9 +64,9 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
     value: false,
     points: 0,
   });
-  const [languages, setLanguages] = useState<LanguagesPoints[]>([
-    { id: 1, lingua: "Inglese", livello: "A1", points: 0 },
-  ]);
+  const [languages, setLanguages] = useState<RichiestaCompetenzeLinguistiche[]>(
+    [{ id: 1, lingua: "Inglese", livello: "A1", punti: 0 }]
+  );
 
   const [skillsOrder, setSkillsOrder] = useState<SkillsOrder[]>([
     { id: 1, order: 1 },
@@ -134,10 +136,19 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
     if (job) {
       setRole(job.ruolo!);
       setExpiryData(job.dataScadenza!);
-      // TODO setPreparation({value: job.richiestaOfferta.preparazione, points: ...});
-      // TODO setUnicamExperience({value: job.richiestaOfferta.esperienzaUnicam, points: ...});
-      // TODO setWorkExperience({value: job.richiestaOfferta.esperienzaLavoro, points: ...});
-      // TODO setLanguages({id:})
+      setPreparation({
+        value: job.richiestaOffertas.preparazione!,
+        points: job.richiestaOffertas.puntiPreparazione!,
+      });
+      setUnicamExperience({
+        value: job.richiestaOffertas.esperienzaUnicam!,
+        points: job.richiestaOffertas.puntiEsperienzaUnicam!,
+      });
+      setWorkExperience({
+        value: job.richiestaOffertas.esperienzaLavorativa!,
+        points: job.richiestaOffertas.puntiEsperienzaLavorativa!,
+      });
+      setLanguages(job.richiestaOffertas.richiestaCompetenzeLinguistiches!);
 
       const titles = job.richiestaSoftSkills!.map(
         (item) => item.softSkill!.titolo
@@ -175,11 +186,15 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
 
   const validateInputs = (): boolean => {
     const invalidPoints =
-      preparation.points + workExperience.points + unicamExperience.points > 50;
+      preparation.points +
+        workExperience.points +
+        unicamExperience.points +
+        languages.reduce((sum, { punti }) => sum + punti, 0) >
+      50;
 
     invalidPoints &&
       toggleAlert(
-        'I pesi per "Preparazione", "Esperienza lavorativa" ed "Esperienza Unicam" sono superiori a 50.',
+        'I pesi per "Preparazione", "Esperienza lavorativa", "Esperienza Unicam" e "Lingue" sono superiori a 50.',
         "danger"
       );
 
@@ -297,7 +312,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
 
   const handleLanguagePointsChange = (index: number, points: number) => {
     let updatedLanguages = languages.slice();
-    updatedLanguages[index].points = points;
+    updatedLanguages[index].punti = points;
     setLanguages(updatedLanguages);
   };
 
@@ -364,6 +379,15 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
               affinità per i candidati.
             </strong>
           </p>
+          <h6 className="mt-2 text-decoration-underline">
+            <u>
+              Punti assegnati:{" "}
+              {preparation.points +
+                workExperience.points +
+                unicamExperience.points +
+                languages.reduce((sum, { punti }) => sum + punti, 0)}
+            </u>
+          </h6>
         </FormGroup>
         <div className="form-row">
           <Select
@@ -371,7 +395,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             options={categories}
             value={preparation.value}
             onChange={(e) =>
-              setPreparation({ ...preparation, value: e.target.vale })
+              setPreparation({ ...preparation, value: e.target.value })
             }
           />
           <Input
@@ -391,20 +415,22 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             max={50}
           />
         </div>
-        <div className="form-row">
+        <Row>
           <FormGroup check>
             <Input
-              id="checkbox2"
+              id="work-checkbox"
               type="checkbox"
               checked={workExperience.value}
               onChange={(e) =>
-                setWorkExperience({
-                  ...workExperience,
-                  points: e.target.valueAsNumber,
+                setWorkExperience((prev) => {
+                  return {
+                    value: !prev.value,
+                    points: !prev.value === false ? 0 : prev.points,
+                  };
                 })
               }
             />
-            <Label for="checkbox2" check>
+            <Label for="work-checkbox" check>
               Esperienza lavorativa 10+
             </Label>
           </FormGroup>
@@ -412,8 +438,8 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             type="number"
             label="Peso"
             placeholder="Peso"
-            disabled={!workExperience}
-            value={!workExperience ? 0 : workExperience.points}
+            disabled={!workExperience.value}
+            value={!workExperience.value ? 0 : workExperience.points}
             onChange={(e) =>
               setWorkExperience({
                 ...workExperience,
@@ -423,18 +449,23 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             wrapperClass="col col-1"
             max={50}
           />
+        </Row>
+        <Row>
           <FormGroup check>
             <Input
-              id="checkbox1"
+              id="unicam-checkbox"
               type="checkbox"
               checked={unicamExperience.value}
               onChange={() =>
                 setUnicamExperience((prev) => {
-                  return { ...prev, value: !prev.value };
+                  return {
+                    value: !prev.value,
+                    points: !prev.value === false ? 0 : prev.points,
+                  };
                 })
               }
             />
-            <Label for="checkbox1" check>
+            <Label for="unicam-checkbox" check>
               Esperienza Unicam 5+
             </Label>
           </FormGroup>
@@ -442,8 +473,8 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             type="number"
             label="Peso"
             placeholder="Peso"
-            disabled={!unicamExperience}
-            value={!unicamExperience ? 0 : unicamExperience.points}
+            disabled={!unicamExperience.value}
+            value={!unicamExperience.value ? 0 : unicamExperience.points}
             onChange={(e) =>
               setUnicamExperience({
                 ...unicamExperience,
@@ -453,12 +484,11 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             wrapperClass="col col-1"
             max={50}
           />
-        </div>
-
-        <div>
+        </Row>
+        <Row>
           {languages.map((item, index) => (
-            <FormGroup key={index} tag={Row} className="align-items-center">
-              <Col xs={6}>
+            <>
+              <Col xs={5}>
                 <Select
                   label="Lingua"
                   value={item.lingua}
@@ -466,7 +496,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
                   onChange={(e) => handleLanguageChange(index, e.target.value)}
                 />
               </Col>
-              <Col xs={4}>
+              <Col xs={3}>
                 <Select
                   label="Livello"
                   value={item.livello}
@@ -474,20 +504,19 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
                   onChange={(e) => handleLevelChange(index, e.target.value)}
                 />
               </Col>
-              <Col xs={1}>
+              <Col xs={2}>
                 <Input
                   type="number"
                   label="Peso"
+                  value={item.punti}
                   placeholder="Peso"
-                  disabled={!item.points}
-                  value={!item.points ? 0 : item.points}
                   onChange={(e) =>
                     handleLanguagePointsChange(index, e.target.valueAsNumber)
                   }
                   max={50}
                 />
               </Col>
-              <Col xs={1}>
+              <Col xs={2}>
                 <Icon
                   icon="it-minus-circle"
                   color="danger"
@@ -495,10 +524,11 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
                   onClick={() => removeLanguage(index)}
                 />
               </Col>
-            </FormGroup>
+            </>
           ))}
           <Chip
             simple
+            className="mx-0 mb-4"
             color="primary"
             role="button"
             onClick={() =>
@@ -508,7 +538,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
                   id: prev.length + 1,
                   lingua: "Inglese",
                   livello: "A1",
-                  points: 0,
+                  punti: 0,
                 },
               ])
             }
@@ -516,8 +546,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             <Icon icon="it-plus" size="xs" />
             <ChipLabel>Aggiungi lingua </ChipLabel>
           </Chip>
-        </div>
-
+        </Row>
         <FormGroup>
           <h6>
             Ordina le competenze da 1 a 14 e le relative risposte da 1 a 4

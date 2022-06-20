@@ -1,7 +1,7 @@
-import { Column, Entity, Index, JoinColumn, PrimaryGeneratedColumn, BaseEntity, OneToOne, OneToMany } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, PrimaryGeneratedColumn, BaseEntity, OneToMany, OneToOne } from 'typeorm';
 import { OffertaLavoroEntity } from './offertaLavoro.entity';
 import { RichiestaOfferta } from '@/interfaces/richiestaOfferta.interface';
-import { RichiestaCompetenzeLinguisticheEntity } from './richiestaCompetenzeLinguistiche';
+import { RichiestaCompetenzeLinguisticheEntity } from './richiestaCompetenzeLinguistiche.entity';
 
 @Index('PK_richiesta_offerta', ['id'], { unique: true })
 @Entity('richiesta_offerta', { schema: 'dbo' })
@@ -27,10 +27,10 @@ export class RichiestaOffertaEntity extends BaseEntity implements RichiestaOffer
   @Column('int', { name: 'punti_esperienza_unicam', nullable: true })
   puntiEsperienzaUnicam: number | null;
 
-  @OneToMany(() => RichiestaCompetenzeLinguisticheEntity, richiestaCompetenzeLinguistiche => richiestaCompetenzeLinguistiche.richiestaOfferta)
-  richiestaCompetenzeLinguistiches: RichiestaCompetenzeLinguisticheEntity[];
-
-  @OneToOne(() => OffertaLavoroEntity, { onDelete: 'CASCADE' })
+  @OneToOne(() => OffertaLavoroEntity, offertaLavoro => offertaLavoro.richiestaOffertas, { onDelete: 'CASCADE' })
   @JoinColumn([{ name: 'offerta_id', referencedColumnName: 'id' }])
   offerta: OffertaLavoroEntity;
+
+  @OneToMany(() => RichiestaCompetenzeLinguisticheEntity, richiestaCompetenzeLinguistiche => richiestaCompetenzeLinguistiche.richiestaOfferta)
+  richiestaCompetenzeLinguistiches: RichiestaCompetenzeLinguisticheEntity[];
 }

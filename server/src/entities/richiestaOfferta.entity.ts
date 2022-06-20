@@ -3,8 +3,8 @@ import { OffertaLavoroEntity } from './offertaLavoro.entity';
 import { RichiestaOfferta } from '@/interfaces/richiestaOfferta.interface';
 import { RichiestaCompetenzeLinguisticheEntity } from './richiestaCompetenzeLinguistiche';
 
-@Index('PK__richiest__3213E83F865269E9', ['id'], { unique: true })
-@Entity('richiesta_soft_skill', { schema: 'dbo' })
+@Index('PK_richiesta_offerta', ['id'], { unique: true })
+@Entity('richiesta_offerta', { schema: 'dbo' })
 export class RichiestaOffertaEntity extends BaseEntity implements RichiestaOfferta {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;

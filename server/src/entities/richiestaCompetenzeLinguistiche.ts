@@ -2,7 +2,7 @@ import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, B
 import { RichiestaCompetenzeLinguistiche } from '@/interfaces/richiestaCompetenzeLinguistiche.interface';
 import { RichiestaOffertaEntity } from './richiestaOfferta.entity';
 
-//TODO @Index('PK__competen__3213E83F76E9509B', ['id'], { unique: true })
+@Index('PK_richiesta_competenze_linguistiche', ['id'], { unique: true })
 @Entity('richiesta_competenze_linguistiche', { schema: 'dbo' })
 export class RichiestaCompetenzeLinguisticheEntity extends BaseEntity implements RichiestaCompetenzeLinguistiche {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })

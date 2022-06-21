@@ -117,7 +117,8 @@ const Profile = (props: ProfileProps) => {
                     </dd>
                     <dt className="col-sm-6">Competenze linguistiche: </dt>
                     <dd className="col-sm-6">
-                      {user?.competenzeLinguistiches
+                      {user?.competenzeLinguistiches &&
+                      user.competenzeLinguistiches.length > 0
                         ? user.competenzeLinguistiches.map((item, index) => (
                             <Chip
                               key={index}
@@ -137,8 +138,9 @@ const Profile = (props: ProfileProps) => {
                 <Col className="border-top mt-2 pt-2">
                   <h4>Competenze traversali</h4>
                   <p className="text-muted mb-2">
-                    Risponde alle domande per completare il tuo profile e
-                    candidarti per le posizione aperte
+                    Risponde alle domande per completare il tuo profilo e
+                    visualizzare il punteggio di affinità nelle offerte
+                    lavorative.
                   </p>
                   <Link to="/competencies">
                     Vai alla pagina delle competenze

@@ -6,13 +6,9 @@ import { RisposteUtenteEntity } from '@/entities/risposteUtente.entity';
 import { RisposteSoftSkillEntity } from '@/entities/risposteSoftSkill.entity';
 import { UtenteEntity } from '@/entities/utente.entity';
 import { RisposteUtente } from '@/interfaces/risposteUtente.interface';
-import { CoeffDomande } from '@/interfaces/coeffDomande.interface';
-import { CoeffDomandeEntity } from '@/entities/coeffDomande.entity';
 import { OffertaLavoroEntity } from '@/entities/offertaLavoro.entity';
-import { CoeffRisposteEntity } from '@/entities/coeffRisposte.entity';
-import { CoeffRisposte } from '@/interfaces/coeffRisposte.interface';
-import { RichiestaSoftSkillEntity } from '@/entities/richiestaSoftSkill.entity';
-import { PunteggioOffertaEntity } from '@/entities/punteggioOfferta.entity';
+import { HttpException } from '@/exceptions/HttpException';
+import { updateUserScores } from '@/utils/updateUserScores';
 
 @EntityRepository()
 class SoftSkillService extends Repository<SoftSkillEntity> {
@@ -54,6 +50,11 @@ class SoftSkillService extends Repository<SoftSkillEntity> {
 
         await RisposteUtenteEntity.getRepository().insert(newUserAnswers);
       } else {
+        const todayDate = new Date();
+
+        if (new Date(userAnswers.dataIns) <= new Date(todayDate.getFullYear() + 1, todayDate.getMonth(), todayDate.getDate())) {
+          throw new HttpException(403, `Risposte modificabili solo dopo un'anno. Ultimo aggiornamento ${userAnswers.dataIns}`);
+        }
         if (userAnswers.risposta.idRisposta !== rispostaSoftSkill.idRisposta) {
           await RisposteUtenteEntity.getRepository().update(
             { utenteCf: user, softSkill: softSkill },
@@ -69,50 +70,18 @@ class SoftSkillService extends Repository<SoftSkillEntity> {
   }
 
   public async updateUserJobScores(cf: string): Promise<void> {
-    const userAnswers: RisposteUtente[] = await RisposteUtenteEntity.getRepository().find({ where: { utenteCf: cf }, loadRelationIds: true });
-    const coeffDomande: CoeffDomande[] = await CoeffDomandeEntity.getRepository().find();
-    const coeffRisposte: CoeffRisposte[] = await CoeffRisposteEntity.getRepository().find();
+    const user = await UtenteEntity.getRepository().findOne({
+      where: { cf },
+      relations: ['competenzeLinguistiches', 'risposteUtentes', 'risposteUtentes.softSkill', 'risposteUtentes.risposta'],
+    });
     const jobOffers = await OffertaLavoroEntity.find({
       where: { approvata: true, attiva: true },
       order: { dataScadenza: 'DESC', dataCreazione: 'DESC' },
+      relations: ['richiestaOfferta', 'richiestaOfferta.richiestaCompetenzeLinguistiches'],
       loadRelationIds: { relations: ['richiestaSoftSkills'] },
     });
 
-    for (const jobOffer of jobOffers) {
-      let punteggio = 0;
-      for (const richiestaSoftSkillId of jobOffer.richiestaSoftSkills) {
-        const richiestaSoftSkill = await RichiestaSoftSkillEntity.getRepository().findOne({
-          where: { id: richiestaSoftSkillId },
-          loadRelationIds: { relations: ['softSkill'] },
-          relations: ['rispostaRichiestaSoftSkills', 'rispostaRichiestaSoftSkills.rispostaId'],
-        });
-
-        const coeffDomanda = coeffDomande.find(item => item.ordine === richiestaSoftSkill.ordine);
-        const userAnswer = userAnswers.find(item => item.softSkill === richiestaSoftSkill.softSkill);
-        const rispostaRichiestaSoftSkill = richiestaSoftSkill.rispostaRichiestaSoftSkills.find(
-          item => item.rispostaId.idRisposta === userAnswer.risposta,
-        );
-        const coeffRisposta = coeffRisposte.find(item => item.ordine === rispostaRichiestaSoftSkill.ordine);
-
-        punteggio = punteggio + coeffDomanda.valore * coeffRisposta.valore;
-      }
-
-      let jobScore = await PunteggioOffertaEntity.getRepository().findOne({ where: { utenteCf: cf, offerta: jobOffer.id }, loadRelationIds: true });
-
-      if (!jobScore) {
-        jobScore = new PunteggioOffertaEntity();
-
-        const utente = await UtenteEntity.getRepository().findOne({ where: { cf } });
-
-        jobScore.offerta = jobOffer;
-        jobScore.utenteCf = utente;
-      }
-
-      jobScore.punteggio = Math.ceil((punteggio * 100) / 525);
-      jobScore.data = new Date();
-
-      await jobScore.save();
-    }
+    await updateUserScores(user, jobOffers);
   }
 }
 

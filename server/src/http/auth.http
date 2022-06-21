@@ -21,7 +21,7 @@ GET {{ baseURL }}/validate
 
 ###
 # Change user type
-GET {{baseURL}}/userType/
+GET {{baseURL}}/userType/0
 
 ###
 #

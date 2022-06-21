@@ -7,6 +7,8 @@ tags:
     description: profile API
   - name: softSkill
     description: softSkill API
+  - name: utils
+    description: utility data API
 
 paths:
   /auth/login:
@@ -290,7 +292,7 @@ paths:
           description: 'Missing auth token'
         500:
           description: 'Server Error'
-  
+
   /jobs/offers:
     post:
       security:
@@ -386,6 +388,33 @@ paths:
         500:
           description: 'Server Error'
 
+  /jobs/active/{skip}:
+    get:
+      security:
+        - cookieAuth: []
+      tags:
+        - jobs
+      summary: Get active jobs offers
+      parameters:
+        - name: skip
+          in: path
+          description: elements to skip (used for "load more" feature)
+          required: true
+          type: integer
+      responses:
+        200:
+          description: active job offers
+          schema:
+            type: object
+            properties:
+              jobOffer:
+                $ref: '#/definitions/jobOffer'
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+
   /jobs/history/{skip}:
     get:
       security:
@@ -475,15 +504,50 @@ paths:
         500:
           description: 'Server Error'
 
-  /jobs/offers/accept/{applicationId}:
+  /jobs/offers/close/{offerId}:
     get:
       security:
         - cookieAuth: []
       tags:
         - jobs
-      summary: accept a candidate for a job offer
+      summary: close a job offer without selecting a candidate
       parameters:
         - name: offerId
+          in: path
+          description: offer id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Offer closed
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              success:
+                type: boolean
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+          description: 'Server Error'
+
+  /jobs/offers/close/{offerId}/{applicationId}:
+    get:
+      security:
+        - cookieAuth: []
+      tags:
+        - jobs
+      summary: close a job offer and accept a candidate
+      parameters:
+        - name: offerId
+          in: path
+          description: offer id
+          required: true
+          type: integer
+        - name: applicationId
           in: path
           description: offer id
           required: true
@@ -529,6 +593,99 @@ paths:
                 type: string
               success:
                 type: boolean
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+          description: 'Server Error'
+
+  /jobs/interview:
+    post:
+      security:
+        - cookieAuth: []
+      tags:
+        - jobs
+      summary: invite to interview the specified candidated
+      parameters:
+        - name: body
+          in: body
+          description: interview candidates data
+          required: true
+          schema:
+            $ref: '#/definitions/interviewDto'
+      responses:
+        200:
+          description: candidate invited
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              candidaturas:
+                $ref: '#/definitions/candidaturas'
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+          description: 'Server Error'
+
+  /jobs/offers/suggest/{applicationId}:
+    get:
+      security:
+        - cookieAuth: []
+      tags:
+        - jobs
+      summary: Suggest a candidate to the DG
+      parameters:
+        - name: applicationId
+          in: path
+          description: offer id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Candidate suggested
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              success:
+                type: boolean
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+          description: 'Server Error'
+
+  /utils/categories:
+    get:
+      security:
+        - cookieAuth: []
+      tags:
+        - utils
+      summary: Get preparation categories
+      responses:
+        200:
+          description: Preparation categories
+          schema:
+            type: array
+            items:
+              type: object
+              required:
+                - id
+                - descrizione
+                - dataIns
+              properties:
+                id:
+                  type: integer
+                descrizione:
+                  type: string
+                dataIns:
+                  type: string
         401:
           description: 'Wrong auth token'
         404:
@@ -812,6 +969,57 @@ definitions:
         type: integer
       message:
         type: string
+
+  interviewDto:
+    type: object
+    required:
+      - invites
+      - selected
+    properties:
+      invites:
+        type: array
+        items:
+          type: object
+          required:
+            - candidaturaId
+            - time
+            - date
+            - place
+          properties:
+            candidaturaId:
+              type: integer
+            time:
+              type: string
+            date:
+              type: string
+            place:
+              type: string
+      selected:
+        type: array
+        items:
+          type: boolean
+
+  candidaturas:
+    type: array
+    items:
+      type: object
+      required:
+        - id
+        - data
+        - approvata
+        - punteggio
+        - colloquio
+      properties:
+        id:
+          type: integer
+        data:
+          type: string
+        approvata:
+          type: boolean
+        punteggio:
+          type: integer
+        colloquio:
+          type: boolean
 
 securityDefinitions:
   cookieAuth:

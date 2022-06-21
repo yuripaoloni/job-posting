@@ -10,8 +10,12 @@ import {
   CardFooterCTA,
   Tooltip,
   Fade,
+  Popover,
+  PopoverHeader,
+  PopoverBody,
+  Button,
 } from "design-react-kit";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Job } from "../../typings/jobs.type";
 import { UserType } from "../../typings/utente.type";
 
@@ -71,9 +75,36 @@ const JobCard = ({
   onShowParticipants,
 }: JobCardProps) => {
   const [showTooltip, setShowTooltip] = useState(false);
+  const [popoverOpen, setPopoverOpen] = useState(false);
+
+  const targetRef = useRef(null);
+
+  const infoIcon = (
+    <Button innerRef={targetRef} className="m-0 ml-2 p-0 border-0">
+      <Icon
+        icon="it-info-circle"
+        role="button"
+        onClick={() => setPopoverOpen((prev) => !prev)}
+        ref={targetRef}
+      />
+    </Button>
+  );
+
+  const participantIcon = (
+    <Icon icon="it-user" onClick={() => onShowParticipants!()} role="button" />
+  );
 
   return (
     <Col lg={4} md={6} sm={12}>
+      <Popover
+        placement="bottom"
+        target={targetRef}
+        isOpen={popoverOpen}
+        toggle={() => setPopoverOpen((prev) => !prev)}
+      >
+        <PopoverHeader>Descrizione</PopoverHeader>
+        <PopoverBody>{job.descrizione}</PopoverBody>
+      </Popover>
       <Fade>
         <Card spacing className="card-bg">
           <CardBody>
@@ -109,13 +140,20 @@ const JobCard = ({
               </Badge>
               {userType === 0 ? (
                 <>
-                  <Score score={job.punteggio?.punteggio} />
-                  <Icon
-                    icon="it-plus-circle"
-                    className="ml-2"
-                    onClick={() => onApplyJob!()}
-                    role="button"
+                  <Score
+                    score={
+                      job.punteggio?.punteggio ? job.punteggio?.punteggio : 0
+                    }
                   />
+                  <div>
+                    <Icon
+                      icon="it-plus-circle"
+                      className="ml-2"
+                      onClick={() => onApplyJob!()}
+                      role="button"
+                    />
+                    {infoIcon}
+                  </div>
                 </>
               ) : userType === 1 ? (
                 <div>
@@ -132,16 +170,11 @@ const JobCard = ({
                     onClick={() => onRejectJob!()}
                     role="button"
                   />
+                  {infoIcon}
                 </div>
               ) : userType === 2 ? (
                 <div>
-                  {job.approvata === true && (
-                    <Icon
-                      icon="it-user"
-                      onClick={() => onShowParticipants!()}
-                      role="button"
-                    />
-                  )}
+                  {job.approvata === true && participantIcon}
                   <Icon
                     icon="it-pencil"
                     className="ml-2"
@@ -157,22 +190,20 @@ const JobCard = ({
                       role="button"
                     />
                   )}
+                  {infoIcon}
                 </div>
               ) : (
                 <div>
-                  {job.approvata && (
-                    <Icon
-                      icon="it-user"
-                      onClick={() => onShowParticipants!()}
-                      role="button"
-                    />
-                  )}
+                  {job.approvata && participantIcon}
+                  {infoIcon}
                 </div>
               )}
             </CardTagsHeader>
             <CardTitle tag="h4">{job.ruolo}</CardTitle>
             <CardSignature>{job.struttura}</CardSignature>
-            <CardFooterCTA>{`Valida fino al ${job.dataScadenza}`}</CardFooterCTA>
+            <CardFooterCTA>
+              {`Valida fino al ${job.dataScadenza}`}
+            </CardFooterCTA>
           </CardBody>
         </Card>
       </Fade>

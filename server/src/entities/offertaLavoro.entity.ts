@@ -1,8 +1,9 @@
-import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
+import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn, BaseEntity, OneToOne } from 'typeorm';
 import { CandidaturaEntity } from './candidatura.entity';
 import { RichiestaSoftSkillEntity } from './richiestaSoftSkill.entity';
 import { OffertaLavoro } from '@/interfaces/offertaLavoro.interface';
 import { PunteggioOffertaEntity } from './punteggioOfferta.entity';
+import { RichiestaOffertaEntity } from './richiestaOfferta.entity';
 
 @Index('PK__offerta___3213E83F411E9D17', ['id'], { unique: true })
 @Entity('offerta_lavoro', { schema: 'dbo' })
@@ -15,6 +16,9 @@ export class OffertaLavoroEntity extends BaseEntity implements OffertaLavoro {
 
   @Column('nvarchar', { name: 'ruolo', nullable: true, length: 255 })
   ruolo: string | null;
+
+  @Column('nvarchar', { name: 'descrizione', nullable: true, length: 500 })
+  descrizione: string | null;
 
   @Column('nvarchar', { name: 'struttura', nullable: true, length: 255 })
   struttura: string | null;
@@ -46,6 +50,9 @@ export class OffertaLavoroEntity extends BaseEntity implements OffertaLavoro {
 
   @OneToMany(() => RichiestaSoftSkillEntity, richiestaSoftSkill => richiestaSoftSkill.offerta)
   richiestaSoftSkills: RichiestaSoftSkillEntity[];
+
+  @OneToOne(() => RichiestaOffertaEntity, richiestaOfferta => richiestaOfferta.offerta)
+  richiestaOfferta: RichiestaOffertaEntity;
 
   @OneToMany(() => PunteggioOffertaEntity, punteggioOfferta => punteggioOfferta.offerta)
   punteggi: PunteggioOffertaEntity[];

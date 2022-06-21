@@ -23,8 +23,8 @@ class ProfileService extends Repository<UtenteEntity> {
       loadRelationIds: true,
     });
 
-    const removedLanguages = languages.filter(x => !updateProfileData.languages.find(y => y.id === x.id && y.lingua === x.lingua));
-    const addedLanguages = updateProfileData.languages.filter(x => !languages.find(y => y.id === x.id && y.lingua === x.lingua));
+    const removedLanguages = languages.filter(x => !updateProfileData.languages.find(y => y.lingua === x.lingua && y.livello === x.livello));
+    const addedLanguages = updateProfileData.languages.filter(x => !languages.find(y => y.lingua === x.lingua && y.livello === x.livello));
 
     for (const addedLanguage of addedLanguages) {
       const newLanguage = new CompetenzeLinguisticheEntity();
@@ -34,8 +34,6 @@ class ProfileService extends Repository<UtenteEntity> {
       newLanguage.utenteCf = user;
 
       await newLanguage.save();
-
-      updateProfileData.languages.forEach(item => item.lingua === newLanguage.lingua && item.id === newLanguage.id);
     }
 
     for (const removedLanguage of removedLanguages) {

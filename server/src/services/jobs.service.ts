@@ -1,20 +1,33 @@
-import { EntityRepository, IsNull, Not, Repository } from 'typeorm';
+import { EntityRepository, IsNull, Repository } from 'typeorm';
 import { OffertaLavoroEntity } from '@/entities/offertaLavoro.entity';
-import { ApplyJobDto, DetermineJobDto, JobOfferDto } from '@/dtos/jobs.dto';
+import { ApplyJobDto, DetermineJobDto, InterviewDto, JobOfferDto } from '@/dtos/jobs.dto';
 import { UtenteEntity } from '@/entities/utente.entity';
 import { Utente } from '@/interfaces/utente.interface';
 import { OffertaLavoro } from '@/interfaces/offertaLavoro.interface';
 import { RisposteUtenteEntity } from '@/entities/risposteUtente.entity';
 import { RisposteUtente } from '@/interfaces/risposteUtente.interface';
-import { HttpException } from '@/exceptions/HttpException';
 import { SoftSkillEntity } from '@/entities/softSkill.entity';
 import { RisposteSoftSkillEntity } from '@/entities/risposteSoftSkill.entity';
 import { RichiestaSoftSkillEntity } from '@/entities/richiestaSoftSkill.entity';
 import { RispostaRichiestaSoftSkillEntity } from '@/entities/rispostaRichiestaSoftSkill.entity';
 import { CandidaturaEntity } from '@/entities/candidatura.entity';
+import { RichiestaOffertaEntity } from '@/entities/richiestaOfferta.entity';
+import { RichiestaCompetenzeLinguisticheEntity } from '@/entities/richiestaCompetenzeLinguistiche.entity';
 import { Candidatura } from '@/interfaces/candidatura.interface';
 import sendEmail from '@/utils/mail';
 import { DG_EMAIL } from '@/config';
+
+const handleOfferRelations = [
+  'candidaturas',
+  'candidaturas.utenteCf',
+  'richiestaSoftSkills',
+  'richiestaSoftSkills.softSkill',
+  'richiestaSoftSkills.softSkill.risposteSoftSkills',
+  'richiestaSoftSkills.rispostaRichiestaSoftSkills',
+  'richiestaSoftSkills.rispostaRichiestaSoftSkills.rispostaId',
+  'richiestaOfferta',
+  'richiestaOfferta.richiestaCompetenzeLinguistiches',
+];
 
 @EntityRepository()
 class JobsService extends Repository<OffertaLavoroEntity> {
@@ -24,11 +37,35 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     const newJobOffer = new OffertaLavoroEntity();
     newJobOffer.dataScadenza = new Date(jobOfferData.expiryDate);
     newJobOffer.ruolo = jobOfferData.role;
+    newJobOffer.descrizione = jobOfferData.description;
     newJobOffer.responsabileCf = cf;
     newJobOffer.struttura = user.struttura.descStruttura;
     newJobOffer.attiva = true;
 
     const result = await OffertaLavoroEntity.insert(newJobOffer);
+
+    const richiestaOfferta = new RichiestaOffertaEntity();
+    richiestaOfferta.preparazione = jobOfferData.preparation.value;
+    richiestaOfferta.puntiPreparazione = jobOfferData.preparation.points;
+    richiestaOfferta.esperienzaLavorativa = jobOfferData.workExperience.value;
+    richiestaOfferta.puntiEsperienzaLavorativa = jobOfferData.workExperience.points;
+    richiestaOfferta.esperienzaUnicam = jobOfferData.unicamExperience.value;
+    richiestaOfferta.puntiEsperienzaUnicam = jobOfferData.unicamExperience.points;
+    richiestaOfferta.offerta = newJobOffer;
+
+    await richiestaOfferta.save();
+
+    if (jobOfferData.languages.length > 0) {
+      for (const language of jobOfferData.languages) {
+        const richiestaCompetenzeLinguistiche = new RichiestaCompetenzeLinguisticheEntity();
+        richiestaCompetenzeLinguistiche.lingua = language.lingua;
+        richiestaCompetenzeLinguistiche.livello = language.livello;
+        richiestaCompetenzeLinguistiche.punti = language.punti;
+        richiestaCompetenzeLinguistiche.richiestaOfferta = richiestaOfferta;
+
+        await richiestaCompetenzeLinguistiche.save();
+      }
+    }
 
     for (const skillOrder of jobOfferData.skillsOrder) {
       const softSkill = await SoftSkillEntity.getRepository().findOne({ where: { id: skillOrder.id } });
@@ -67,15 +104,7 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     );
 
     const jobOffer: OffertaLavoro = await OffertaLavoroEntity.findOne(result.identifiers[0].id, {
-      relations: [
-        'candidaturas',
-        'candidaturas.utenteCf',
-        'richiestaSoftSkills',
-        'richiestaSoftSkills.softSkill',
-        'richiestaSoftSkills.softSkill.risposteSoftSkills',
-        'richiestaSoftSkills.rispostaRichiestaSoftSkills',
-        'richiestaSoftSkills.rispostaRichiestaSoftSkills.rispostaId',
-      ],
+      relations: handleOfferRelations,
     });
 
     return jobOffer;
@@ -84,8 +113,44 @@ class JobsService extends Repository<OffertaLavoroEntity> {
   public async updateJobOffer(jobOfferData: JobOfferDto, jobOfferId: number): Promise<OffertaLavoro> {
     await OffertaLavoroEntity.update(
       { id: jobOfferId },
-      { ruolo: jobOfferData.role, dataScadenza: jobOfferData.expiryDate, punteggiAggiornati: false },
+      { ruolo: jobOfferData.role, descrizione: jobOfferData.description, dataScadenza: jobOfferData.expiryDate, punteggiAggiornati: false },
     );
+
+    const richiestaOfferta = await RichiestaOffertaEntity.getRepository().findOne({
+      where: { offerta: jobOfferId },
+    });
+
+    richiestaOfferta.preparazione = jobOfferData.preparation.value;
+    richiestaOfferta.puntiPreparazione = jobOfferData.preparation.points;
+    richiestaOfferta.esperienzaLavorativa = jobOfferData.workExperience.value;
+    richiestaOfferta.puntiEsperienzaLavorativa = jobOfferData.workExperience.points;
+    richiestaOfferta.esperienzaUnicam = jobOfferData.unicamExperience.value;
+    richiestaOfferta.puntiEsperienzaUnicam = jobOfferData.unicamExperience.points;
+
+    await richiestaOfferta.save();
+
+    const languages = await RichiestaCompetenzeLinguisticheEntity.getRepository().find({
+      where: { richiestaOfferta: richiestaOfferta },
+      loadRelationIds: true,
+    });
+
+    const removedLanguages = languages.filter(x => !jobOfferData.languages.find(y => y.lingua === x.lingua && y.livello === x.livello));
+    const addedLanguages = jobOfferData.languages.filter(x => !languages.find(y => y.lingua === x.lingua && y.livello === x.livello));
+
+    for (const addedLanguage of addedLanguages) {
+      const newLanguage = new RichiestaCompetenzeLinguisticheEntity();
+
+      newLanguage.lingua = addedLanguage.lingua;
+      newLanguage.livello = addedLanguage.livello;
+      newLanguage.punti = addedLanguage.punti;
+      newLanguage.richiestaOfferta = richiestaOfferta;
+
+      await newLanguage.save();
+    }
+
+    for (const removedLanguage of removedLanguages) {
+      await RichiestaCompetenzeLinguisticheEntity.getRepository().delete({ id: removedLanguage.id });
+    }
 
     for (const skillOrder of jobOfferData.skillsOrder) {
       const richiestaSoftSkill = await RichiestaSoftSkillEntity.getRepository().findOne({ where: { offerta: jobOfferId, softSkill: skillOrder.id } });
@@ -111,36 +176,32 @@ class JobsService extends Repository<OffertaLavoroEntity> {
 
     const jobOffer: OffertaLavoro = await OffertaLavoroEntity.findOne({
       where: { id: jobOfferId },
-      relations: [
-        'candidaturas',
-        'candidaturas.utenteCf',
-        'richiestaSoftSkills',
-        'richiestaSoftSkills.softSkill',
-        'richiestaSoftSkills.softSkill.risposteSoftSkills',
-        'richiestaSoftSkills.rispostaRichiestaSoftSkills',
-        'richiestaSoftSkills.rispostaRichiestaSoftSkills.rispostaId',
-      ],
+      relations: handleOfferRelations,
     });
+
+    jobOffer.candidaturas = jobOffer.candidaturas.sort((a, b) => a.punteggio - b.punteggio);
 
     return jobOffer;
   }
 
   public async getWorkerJobOffers(cf: string, skip: number): Promise<OffertaLavoro[]> {
     const userAnswers: RisposteUtente[] = await RisposteUtenteEntity.getRepository().find({ where: { utenteCf: cf }, loadRelationIds: true });
-    if (!userAnswers) throw new HttpException(400, 'Completa il tuo profilo per visualizzare le offerte');
 
-    const jobOffers: OffertaLavoro[] = await OffertaLavoroEntity.createQueryBuilder('jobs')
-      .leftJoin('jobs.candidaturas', 'candidatura', 'candidatura.utenteCf = :cf', { cf })
-      .where('candidatura.id is null')
-      .leftJoin('jobs.punteggi', 'punteggio', 'punteggio.utenteCf = :cf', { cf })
-      .leftJoinAndMapOne('jobs.punteggio', 'jobs.punteggi', 'punteggioUtente')
-      .orderBy({ 'punteggioUtente.punteggio': 'DESC' })
-      .andWhere('jobs.approvata = 1')
-      .andWhere('jobs.attiva = 1')
-      .andWhere('jobs.punteggiAggiornati = 1')
-      .skip(skip)
-      .take(6)
-      .getMany();
+    const jobOffers: OffertaLavoro[] =
+      userAnswers.length === 0
+        ? await OffertaLavoroEntity.find({ where: { approvata: true, attiva: true }, skip: skip, take: 6 })
+        : await OffertaLavoroEntity.createQueryBuilder('jobs')
+            .leftJoin('jobs.candidaturas', 'candidatura', 'candidatura.utenteCf = :cf', { cf })
+            .where('candidatura.id is null')
+            .leftJoin('jobs.punteggi', 'punteggio', 'punteggio.utenteCf = :cf', { cf })
+            .leftJoinAndMapOne('jobs.punteggio', 'jobs.punteggi', 'punteggioUtente')
+            .orderBy({ 'punteggioUtente.punteggio': 'DESC' })
+            .andWhere('jobs.approvata = 1')
+            .andWhere('jobs.attiva = 1')
+            .andWhere('jobs.punteggiAggiornati = 1')
+            .skip(skip)
+            .take(6)
+            .getMany();
 
     return jobOffers;
   }
@@ -151,20 +212,15 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     const jobOffers = await OffertaLavoroEntity.find({
       where: { struttura: user.struttura.descStruttura, attiva: true },
       order: { approvata: 'ASC', dataCreazione: 'ASC' },
-      relations: [
-        'candidaturas',
-        'candidaturas.utenteCf',
-        'richiestaSoftSkills',
-        'richiestaSoftSkills.softSkill',
-        'richiestaSoftSkills.softSkill.risposteSoftSkills',
-        'richiestaSoftSkills.rispostaRichiestaSoftSkills',
-        'richiestaSoftSkills.rispostaRichiestaSoftSkills.rispostaId',
-      ],
+      relations: handleOfferRelations,
       skip,
       take: 6,
     });
 
-    jobOffers.forEach(jobOffer => (jobOffer.richiestaSoftSkills = jobOffer.richiestaSoftSkills.sort((a, b) => a.ordine - b.ordine)));
+    jobOffers.forEach(jobOffer => {
+      jobOffer.richiestaSoftSkills = jobOffer.richiestaSoftSkills.sort((a, b) => a.ordine - b.ordine);
+      jobOffer.candidaturas = jobOffer.candidaturas.sort((a, b) => a.punteggio - b.punteggio);
+    });
 
     return jobOffers;
   }
@@ -175,6 +231,22 @@ class JobsService extends Repository<OffertaLavoroEntity> {
       order: { dataCreazione: 'ASC' },
       skip,
       take: 6,
+    });
+
+    return jobOffers;
+  }
+
+  public async getDirectorActiveJobs(skip: number): Promise<OffertaLavoro[]> {
+    const jobOffers = await OffertaLavoroEntity.find({
+      where: { approvata: true, attiva: true },
+      order: { dataCreazione: 'ASC' },
+      relations: ['candidaturas', 'candidaturas.utenteCf'],
+      skip,
+      take: 6,
+    });
+
+    jobOffers.forEach(jobOffer => {
+      jobOffer.candidaturas = jobOffer.candidaturas.sort((a, b) => a.punteggio - b.punteggio);
     });
 
     return jobOffers;
@@ -201,14 +273,16 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     await newApplication.save();
   }
 
-  public async acceptApplication(applicationId: number): Promise<void> {
-    const application = await CandidaturaEntity.getRepository().findOne({ where: { id: applicationId }, loadRelationIds: true });
-    application.approvata = true;
+  public async closeOffer(jobOfferId: number, applicationId?: number): Promise<void> {
+    if (applicationId) {
+      const application = await CandidaturaEntity.getRepository().findOne({ where: { id: applicationId }, loadRelationIds: true });
+      application.approvata = true;
+      await application.save();
+    }
 
-    const jobOffer = await OffertaLavoroEntity.findOne({ where: { id: application.offerta } });
+    const jobOffer = await OffertaLavoroEntity.findOne({ where: { id: jobOfferId } });
     jobOffer.attiva = false;
 
-    await application.save();
     await jobOffer.save();
   }
 
@@ -261,19 +335,60 @@ class JobsService extends Repository<OffertaLavoroEntity> {
       take: 6,
     });
 
+    jobOffers.forEach(jobOffer => {
+      jobOffer.candidaturas = jobOffer.candidaturas.sort((a, b) => a.punteggio - b.punteggio);
+    });
+
     return jobOffers;
   }
 
   public async getDirectorJobsHistory(skip: number): Promise<OffertaLavoro[]> {
     const jobOffers = await OffertaLavoroEntity.find({
-      where: { approvata: Not(IsNull()) },
+      where: { attiva: false },
       order: { attiva: 'DESC', dataCreazione: 'ASC' },
       relations: ['candidaturas', 'candidaturas.utenteCf'],
       skip,
       take: 6,
     });
 
+    jobOffers.forEach(jobOffer => {
+      jobOffer.candidaturas = jobOffer.candidaturas.sort((a, b) => a.punteggio - b.punteggio);
+    });
+
     return jobOffers;
+  }
+
+  public async sendInterviewInvite(interviewData: InterviewDto): Promise<Candidatura[]> {
+    const ids = interviewData.invites.map((item, index) => interviewData.selected[index] && item.candidaturaId);
+    const candidaturas = await CandidaturaEntity.getRepository().findByIds(ids, { relations: ['utenteCf', 'offerta'] });
+    const user = await UtenteEntity.getRepository().findOne({ where: { cf: candidaturas[0].offerta.responsabileCf }, select: ['email'] });
+
+    for (const candidatura of candidaturas) {
+      candidatura.colloquio = true;
+
+      const invite = interviewData.invites.find(item => item.candidaturaId === candidatura.id);
+
+      await sendEmail(
+        candidatura.utenteCf.email,
+        `Invito colloquio - ${candidatura.offerta.ruolo}`,
+        `Il responsabile della struttura "${candidatura.offerta.struttura}" la invita ad un colloquio per il ruolo "${
+          candidatura.offerta.ruolo
+        }" che si svolgerà il ${new Date(invite.date).toLocaleDateString('it-IT')} alle ${invite.time} nel seguente luogo: "${
+          invite.place
+        }".\n\nSe necessario, può contattare il responsabile al seguente indirizzo email: ${user.email}.\n\nCordiali saluti`,
+        user.email,
+      );
+
+      await candidatura.save();
+    }
+
+    return candidaturas;
+  }
+
+  public async suggestCandidate(applicationId: number): Promise<void> {
+    const application = await CandidaturaEntity.getRepository().findOne({ where: { id: applicationId }, loadRelationIds: true });
+    application.proposto = true;
+    await application.save();
   }
 }
 

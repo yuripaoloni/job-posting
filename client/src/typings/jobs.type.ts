@@ -17,7 +17,7 @@ export type Job = {
   approvata: boolean | null;
   attiva: boolean | null;
   punteggio: PunteggioOfferta | null;
-  richiestaOffertas: RichiestaOfferta;
+  richiestaOfferta: RichiestaOfferta;
   descEsito?: string | null;
   candidaturas?: Candidatura[] | null;
   richiestaSoftSkills?: RichiestaSoftSkill[] | null;

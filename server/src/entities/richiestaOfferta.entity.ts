@@ -27,7 +27,7 @@ export class RichiestaOffertaEntity extends BaseEntity implements RichiestaOffer
   @Column('int', { name: 'punti_esperienza_unicam', nullable: true })
   puntiEsperienzaUnicam: number | null;
 
-  @OneToOne(() => OffertaLavoroEntity, offertaLavoro => offertaLavoro.richiestaOffertas, { onDelete: 'CASCADE' })
+  @OneToOne(() => OffertaLavoroEntity, offertaLavoro => offertaLavoro.richiestaOfferta, { onDelete: 'CASCADE' })
   @JoinColumn([{ name: 'offerta_id', referencedColumnName: 'id' }])
   offerta: OffertaLavoroEntity;
 

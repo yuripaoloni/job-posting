@@ -137,18 +137,18 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
       setRole(job.ruolo!);
       setExpiryData(job.dataScadenza!);
       setPreparation({
-        value: job.richiestaOffertas.preparazione!,
-        points: job.richiestaOffertas.puntiPreparazione!,
+        value: job.richiestaOfferta.preparazione!,
+        points: job.richiestaOfferta.puntiPreparazione!,
       });
       setUnicamExperience({
-        value: job.richiestaOffertas.esperienzaUnicam!,
-        points: job.richiestaOffertas.puntiEsperienzaUnicam!,
+        value: job.richiestaOfferta.esperienzaUnicam!,
+        points: job.richiestaOfferta.puntiEsperienzaUnicam!,
       });
       setWorkExperience({
-        value: job.richiestaOffertas.esperienzaLavorativa!,
-        points: job.richiestaOffertas.puntiEsperienzaLavorativa!,
+        value: job.richiestaOfferta.esperienzaLavorativa!,
+        points: job.richiestaOfferta.puntiEsperienzaLavorativa!,
       });
-      setLanguages(job.richiestaOffertas.richiestaCompetenzeLinguistiches!);
+      setLanguages(job.richiestaOfferta.richiestaCompetenzeLinguistiches!);
 
       const titles = job.richiestaSoftSkills!.map(
         (item) => item.softSkill!.titolo

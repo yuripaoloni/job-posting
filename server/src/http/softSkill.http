@@ -11,7 +11,22 @@ POST {{ baseURL }}/user/answers
 Content-Type: application/json
 
 {
-    "answers": [3,5,9,13,17,21,25,29,33,37,43,45,49,53]
+    "answers": [
+        {"skillId": 1, "answerId": 3},
+        {"skillId": 2, "answerId": 5},
+        {"skillId": 3, "answerId": 9},
+        {"skillId": 4, "answerId": 13},
+        {"skillId": 5, "answerId": 17},
+        {"skillId": 6, "answerId": 21},
+        {"skillId": 7, "answerId": 25},
+        {"skillId": 8, "answerId": 29},
+        {"skillId": 9, "answerId": 33},
+        {"skillId": 10, "answerId": 37},
+        {"skillId": 11, "answerId": 43},
+        {"skillId": 12, "answerId": 45},
+        {"skillId": 13, "answerId": 49},
+        {"skillId": 14, "answerId": 53}
+    ]
 }
 
 ###

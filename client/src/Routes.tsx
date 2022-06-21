@@ -8,6 +8,7 @@ import Profile from "./pages/user/Profile";
 import SoftSkills from "./pages/user/SoftSkills";
 
 import RequireAuth from "./components/auth/RequireAuth";
+import ActiveJobs from "./pages/jobs/ActiveJobs";
 
 const Routes = () => {
   return (
@@ -18,6 +19,14 @@ const Routes = () => {
         element={
           <RequireAuth>
             <Jobs />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="active"
+        element={
+          <RequireAuth>
+            <ActiveJobs />
           </RequireAuth>
         }
       />

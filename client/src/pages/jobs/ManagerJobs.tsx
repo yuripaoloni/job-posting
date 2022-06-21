@@ -61,6 +61,7 @@ const ManagerJobs = ({
       <JobParticipantsModal
         isOpen={showParticipantsModal}
         toggleModal={toggleParticipantsModal}
+        updateJobs={updateJobs}
         job={selectedJob}
       />
       <Row className="justify-content-between align-items-center px-3 mb-4">

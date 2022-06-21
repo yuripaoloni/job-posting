@@ -5,9 +5,6 @@ import PageContainer from "../../components/layout/PageContainer";
 import JobCard from "../../components/jobs/JobCard";
 import JobParticipantsModal from "../../components/jobs/JobParticipantsModal";
 
-import { useConfirm } from "../../contexts/ConfirmContext";
-import { useFetch } from "../../contexts/FetchContext";
-
 import { Job } from "../../typings/jobs.type";
 import LoadMoreButton from "../../components/layout/LoadMoreButton";
 
@@ -27,32 +24,9 @@ const DirectorJobsHistory = ({
   const [showParticipantsModal, setShowParticipantsModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
 
-  const { fetchData } = useFetch();
-  const { toggleConfirm } = useConfirm();
-
   const toggleParticipantsModal = (job?: Job) => {
     setShowParticipantsModal((prev) => !prev);
     job && setSelectedJob(job);
-  };
-
-  const onAcceptApplication = async (
-    applicationId: number,
-    candidate: string
-  ) => {
-    toggleConfirm(`Selezionare il candidato ${candidate} ?`, () =>
-      acceptApplication(applicationId)
-    );
-  };
-
-  const acceptApplication = async (applicationId: number) => {
-    toggleParticipantsModal();
-
-    const res = await fetchData<{ success: boolean }>(
-      `/jobs/offers/accept/${applicationId}`,
-      "GET"
-    );
-
-    res?.data.success && updateJobs({ ...selectedJob!, attiva: false }, true);
   };
 
   return (
@@ -60,7 +34,7 @@ const DirectorJobsHistory = ({
       <JobParticipantsModal
         isOpen={showParticipantsModal}
         toggleModal={toggleParticipantsModal}
-        onAcceptApplication={onAcceptApplication}
+        updateJobs={updateJobs}
         job={selectedJob}
       />
       <Row className="justify-content-between align-items-center px-3 mb-4">
@@ -75,7 +49,7 @@ const DirectorJobsHistory = ({
                 onShowParticipants={() => toggleParticipantsModal(job)}
               />
             ))
-          : "Nessuna offerta disponibile"}
+          : "Nessuna offerta nello storico"}
       </Row>
       <LoadMoreButton show={endReached} onClick={() => onLoadMore()} />
     </PageContainer>

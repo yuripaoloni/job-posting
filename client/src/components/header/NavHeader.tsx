@@ -16,7 +16,7 @@ import { useAuth } from "../../contexts/AuthContext";
 const NavHeader = () => {
   const [openNav, setOpenNav] = useState(false);
 
-  const { isAuth } = useAuth();
+  const { isAuth, userType } = useAuth();
 
   return (
     <Header theme="" type="navbar">
@@ -46,7 +46,16 @@ const NavHeader = () => {
               {isAuth && (
                 <NavItem>
                   <NavLink to="/jobs" tag={RRNavLink}>
-                    Offerte lavorative
+                    {userType === 1
+                      ? "Offerte da approvare"
+                      : "Offerte lavorative"}
+                  </NavLink>
+                </NavItem>
+              )}
+              {isAuth && userType === 1 && (
+                <NavItem>
+                  <NavLink to="/active" tag={RRNavLink}>
+                    Offerte attive
                   </NavLink>
                 </NavItem>
               )}

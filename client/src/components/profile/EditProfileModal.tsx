@@ -15,6 +15,9 @@ import {
 } from "design-react-kit";
 import { CompetenzeLinguistiche, Utente } from "../../typings/utente.type";
 import { useFetch } from "../../contexts/FetchContext";
+import Select from "../layout/Select";
+import { CategoriaPreparazione, Options } from "../../typings/utils.type";
+import { languagesOptions, levelsOptions } from "../../utils/selectOptions";
 
 type EditProfileModalProps = {
   isOpen: boolean;
@@ -34,12 +37,33 @@ const EditProfileModal = ({
   updateUser,
 }: EditProfileModalProps) => {
   const [firstOccupationYear, setFirstOccupationYear] = useState<number>(0);
-  const [preparation, setPreparation] = useState<string>("");
+  const [preparation, setPreparation] = useState("");
   const [languages, setLanguages] = useState<CompetenzeLinguistiche[]>([
     { id: 1, lingua: "Inglese", livello: "A1" },
   ]);
+  const [categories, setCategories] = useState<Options[]>([
+    { value: "", text: "" },
+  ]);
 
   const { fetchData } = useFetch();
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const categories = await fetchData<CategoriaPreparazione[]>(
+        "/utils/categories",
+        "GET"
+      );
+
+      categories?.data &&
+        setCategories(
+          categories.data.map((item) => {
+            return { value: item.descrizione!, text: item.descrizione! };
+          })
+        );
+    };
+
+    fetchCategories();
+  }, [fetchData]);
 
   useEffect(() => {
     if (user) {
@@ -92,13 +116,10 @@ const EditProfileModal = ({
       </ModalHeader>
       <ModalBody>
         <FormGroup>
-          <Input
-            type="text"
-            id="preparation"
-            value={preparation}
-            infoText="Aggiungi diploma/laurea"
-            placeholder="Laurea Triennale in..."
+          <Select
             label="Preparazione"
+            value={preparation}
+            options={categories}
             onChange={(e) => setPreparation(e.target.value)}
           />
         </FormGroup>
@@ -115,37 +136,20 @@ const EditProfileModal = ({
         {languages.map((item, index) => (
           <FormGroup key={index} tag={Row} className="align-items-center">
             <Col xs={6}>
-              <div className="select-wrapper">
-                <label htmlFor="defaultSelect">Lingua</label>
-                <select
-                  id="defaultSelect"
-                  value={item.lingua}
-                  onChange={(e) => handleLanguageChange(index, e.target.value)}
-                >
-                  <option value="Inglese">Inglese</option>
-                  <option value="Francese">Francese</option>
-                  <option value="Spagnolo">Spagnolo</option>
-                  <option value="Tedesco">Tedesco</option>
-                  <option value="Cinese">Cinese</option>
-                </select>
-              </div>
+              <Select
+                label="Lingua"
+                value={item.lingua}
+                options={languagesOptions}
+                onChange={(e) => handleLanguageChange(index, e.target.value)}
+              />
             </Col>
             <Col xs={5}>
-              <div className="select-wrapper">
-                <label htmlFor="defaultSelect">Livello</label>
-                <select
-                  id="defaultSelect"
-                  value={item.livello}
-                  onChange={(e) => handleLevelChange(index, e.target.value)}
-                >
-                  <option value="A1">A1</option>
-                  <option value="A2">A2</option>
-                  <option value="B1">B1</option>
-                  <option value="B2">B2</option>
-                  <option value="C1">C1</option>
-                  <option value="C2">C2</option>
-                </select>
-              </div>
+              <Select
+                label="Livello"
+                value={item.livello}
+                options={levelsOptions}
+                onChange={(e) => handleLevelChange(index, e.target.value)}
+              />
             </Col>
             <Col xs={1}>
               <Icon

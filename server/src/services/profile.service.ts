@@ -23,8 +23,8 @@ class ProfileService extends Repository<UtenteEntity> {
       loadRelationIds: true,
     });
 
-    const removedLanguages = languages.filter(x => !updateProfileData.languages.find(y => y.lingua === x.lingua));
-    const addedLanguages = updateProfileData.languages.filter(x => !languages.find(y => y.lingua === x.lingua));
+    const removedLanguages = languages.filter(x => !updateProfileData.languages.find(y => y.lingua === x.lingua && y.livello === x.livello));
+    const addedLanguages = updateProfileData.languages.filter(x => !languages.find(y => y.lingua === x.lingua && y.livello === x.livello));
 
     for (const addedLanguage of addedLanguages) {
       const newLanguage = new CompetenzeLinguisticheEntity();

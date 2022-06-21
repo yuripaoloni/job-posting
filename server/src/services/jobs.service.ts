@@ -25,8 +25,8 @@ const handleOfferRelations = [
   'richiestaSoftSkills.softSkill.risposteSoftSkills',
   'richiestaSoftSkills.rispostaRichiestaSoftSkills',
   'richiestaSoftSkills.rispostaRichiestaSoftSkills.rispostaId',
-  'richiestaOffertas',
-  'richiestaOffertas.richiestaCompetenzeLinguistiches',
+  'richiestaOfferta',
+  'richiestaOfferta.richiestaCompetenzeLinguistiches',
 ];
 
 @EntityRepository()
@@ -134,8 +134,8 @@ class JobsService extends Repository<OffertaLavoroEntity> {
       loadRelationIds: true,
     });
 
-    const removedLanguages = languages.filter(x => !jobOfferData.languages.find(y => y.lingua === x.lingua));
-    const addedLanguages = jobOfferData.languages.filter(x => !languages.find(y => y.lingua === x.lingua));
+    const removedLanguages = languages.filter(x => !jobOfferData.languages.find(y => y.lingua === x.lingua && y.livello === x.livello));
+    const addedLanguages = jobOfferData.languages.filter(x => !languages.find(y => y.lingua === x.lingua && y.livello === x.livello));
 
     for (const addedLanguage of addedLanguages) {
       const newLanguage = new RichiestaCompetenzeLinguisticheEntity();

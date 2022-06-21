@@ -390,14 +390,16 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
           </h6>
         </FormGroup>
         <div className="form-row">
-          <Select
-            label="Preparazione richiesta"
-            options={categories}
-            value={preparation.value}
-            onChange={(e) =>
-              setPreparation({ ...preparation, value: e.target.value })
-            }
-          />
+          <Col sm={10} xs={9}>
+            <Select
+              label="Preparazione richiesta"
+              options={categories}
+              value={preparation.value}
+              onChange={(e) =>
+                setPreparation({ ...preparation, value: e.target.value })
+              }
+            />
+          </Col>
           <Input
             type="number"
             label="Peso"
@@ -411,12 +413,12 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             onChange={(e) =>
               setPreparation({ ...preparation, points: e.target.valueAsNumber })
             }
-            wrapperClass="col col-2"
+            wrapperClass="col col-sm-2 col-3"
             max={50}
           />
         </div>
         <Row>
-          <FormGroup check>
+          <FormGroup check className="col col-xl-3 col-lg-4 col-md-7 col-10">
             <Input
               id="work-checkbox"
               type="checkbox"
@@ -446,12 +448,12 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
                 points: e.target.valueAsNumber,
               })
             }
-            wrapperClass="col col-1"
+            wrapperClass="col col-lg-1 col-md-2"
             max={50}
           />
         </Row>
         <Row>
-          <FormGroup check>
+          <FormGroup check className="col col-xl-3 col-lg-4 col-md-7 col-10">
             <Input
               id="unicam-checkbox"
               type="checkbox"
@@ -481,7 +483,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
                 points: e.target.valueAsNumber,
               })
             }
-            wrapperClass="col col-1"
+            wrapperClass="col col-lg-1 col-md-2"
             max={50}
           />
         </Row>
@@ -504,7 +506,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
                   onChange={(e) => handleLevelChange(index, e.target.value)}
                 />
               </Col>
-              <Col xs={2}>
+              <Col xs={3}>
                 <Input
                   type="number"
                   label="Peso"
@@ -516,7 +518,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
                   max={50}
                 />
               </Col>
-              <Col xs={2}>
+              <Col xs={1}>
                 <Icon
                   icon="it-minus-circle"
                   color="danger"

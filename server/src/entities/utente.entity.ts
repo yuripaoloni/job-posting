@@ -33,6 +33,9 @@ export class UtenteEntity extends BaseEntity implements Utente {
   @Column('nvarchar', { name: 'preparazione', nullable: true, length: 255 })
   preparazione: string | null;
 
+  @Column('nvarchar', { name: 'categoria', nullable: true, length: 255 })
+  categoria: string | null;
+
   @OneToMany(() => CandidaturaEntity, candidatura => candidatura.utenteCf)
   candidaturas: CandidaturaEntity[];
 

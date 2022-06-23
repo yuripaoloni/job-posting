@@ -14,3 +14,10 @@ export const levelsOptions = [
   { value: "C1", text: "C1" },
   { value: "C2", text: "C2" },
 ];
+
+export const categoryOptions = [
+  { value: "B", text: "B" },
+  { value: "C", text: "C" },
+  { value: "D", text: "D" },
+  { value: "EP", text: "EP" },
+];

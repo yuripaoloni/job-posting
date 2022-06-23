@@ -17,6 +17,7 @@ class ProfileService extends Repository<UtenteEntity> {
 
     user.annoPrimaOccupazione = updateProfileData.firstOccupationYear;
     user.preparazione = updateProfileData.preparation;
+    user.categoria = updateProfileData.category;
 
     const languages = await CompetenzeLinguisticheEntity.getRepository().find({
       where: { utenteCf: cf },

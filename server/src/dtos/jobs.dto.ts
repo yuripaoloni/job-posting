@@ -38,6 +38,9 @@ export class JobOfferDto {
   public description: string;
 
   @IsString()
+  public category: string;
+
+  @IsString()
   @MaxLength(255)
   public expiryDate: string;
 

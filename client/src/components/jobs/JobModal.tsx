@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from "react";
+import { Fragment, memo, useEffect, useState } from "react";
 import {
   Modal,
   ModalHeader,
@@ -33,7 +33,11 @@ import {
 } from "../../typings/jobs.type";
 import { CategoriaPreparazione, Options } from "../../typings/utils.type";
 
-import { languagesOptions, levelsOptions } from "../../utils/selectOptions";
+import {
+  categoryOptions,
+  languagesOptions,
+  levelsOptions,
+} from "../../utils/selectOptions";
 
 type JobModalProps = {
   isOpen: boolean;
@@ -45,6 +49,7 @@ type JobModalProps = {
 const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
   const [role, setRole] = useState("");
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("B");
   const [expiryDate, setExpiryData] = useState("");
 
   const [softSkillsTitle, setSoftSkillsTitles] = useState([""]);
@@ -118,7 +123,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
         "GET"
       );
 
-      categories?.data &&
+      if (categories?.data) {
         setCategories(
           categories.data
             .map((item) => {
@@ -126,6 +131,13 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             })
             .concat({ value: "Nessuna preferenza", text: "Nessuna preferenza" })
         );
+        setPreparation((prev) => {
+          return {
+            ...prev,
+            value: categories.data[0].descrizione!,
+          };
+        });
+      }
     };
 
     fetchSoftSkills();
@@ -135,6 +147,8 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
   useEffect(() => {
     if (job) {
       setRole(job.ruolo!);
+      setDescription(job.descrizione!);
+      setCategory(job.categoria!);
       setExpiryData(job.dataScadenza!);
       setPreparation({
         value: job.richiestaOfferta.preparazione!,
@@ -180,6 +194,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
       setAnswersOrder(answersOrder);
     } else {
       setRole("");
+      setDescription("");
       setExpiryData("");
     }
   }, [job]);
@@ -238,6 +253,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
         {
           role,
           description,
+          category,
           expiryDate,
           preparation,
           unicamExperience,
@@ -350,6 +366,14 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             infoText={`Max 500 caratteri - ${description.length}`}
             label="Descrizione"
             onChange={(e) => setDescription(e.target.value)}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Select
+            label="Categoria"
+            value={category}
+            options={categoryOptions}
+            onChange={(e) => setCategory(e.target.value)}
           />
         </FormGroup>
         <FormGroup>
@@ -489,7 +513,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
         </Row>
         <Row>
           {languages.map((item, index) => (
-            <>
+            <Fragment key={index}>
               <Col xs={5}>
                 <Select
                   label="Lingua"
@@ -526,7 +550,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
                   onClick={() => removeLanguage(index)}
                 />
               </Col>
-            </>
+            </Fragment>
           ))}
           <Chip
             simple

@@ -17,7 +17,11 @@ import { CompetenzeLinguistiche, Utente } from "../../typings/utente.type";
 import { useFetch } from "../../contexts/FetchContext";
 import Select from "../layout/Select";
 import { CategoriaPreparazione, Options } from "../../typings/utils.type";
-import { languagesOptions, levelsOptions } from "../../utils/selectOptions";
+import {
+  categoryOptions,
+  languagesOptions,
+  levelsOptions,
+} from "../../utils/selectOptions";
 
 type EditProfileModalProps = {
   isOpen: boolean;
@@ -26,6 +30,7 @@ type EditProfileModalProps = {
   updateUser: (
     firstOccupationYear: number,
     preparation: string,
+    category: string,
     languages: CompetenzeLinguistiche[]
   ) => void;
 };
@@ -38,6 +43,7 @@ const EditProfileModal = ({
 }: EditProfileModalProps) => {
   const [firstOccupationYear, setFirstOccupationYear] = useState<number>(0);
   const [preparation, setPreparation] = useState("");
+  const [category, setCategory] = useState(categoryOptions[0].value);
   const [languages, setLanguages] = useState<CompetenzeLinguistiche[]>([
     { id: 1, lingua: "Inglese", livello: "A1" },
   ]);
@@ -54,12 +60,14 @@ const EditProfileModal = ({
         "GET"
       );
 
-      categories?.data &&
+      if (categories?.data) {
         setCategories(
           categories.data.map((item) => {
             return { value: item.descrizione!, text: item.descrizione! };
           })
         );
+        setPreparation(categories.data[0].descrizione!);
+      }
     };
 
     fetchCategories();
@@ -67,9 +75,12 @@ const EditProfileModal = ({
 
   useEffect(() => {
     if (user) {
-      setFirstOccupationYear(user.annoPrimaOccupazione!);
-      setPreparation(user.preparazione!);
-      setLanguages(user.competenzeLinguistiches!);
+      user.annoPrimaOccupazione &&
+        setFirstOccupationYear(user.annoPrimaOccupazione);
+      setCategory(user.categoria ? user.categoria : categoryOptions[0].value);
+      user.preparazione && setPreparation(user.preparazione);
+      user.competenzeLinguistiches &&
+        setLanguages(user.competenzeLinguistiches);
     }
   }, [user]);
 
@@ -79,11 +90,12 @@ const EditProfileModal = ({
     const res = await fetchData<{ success: boolean }>("/profile", "POST", {
       firstOccupationYear,
       preparation,
+      category,
       languages,
     });
 
     res?.data.success &&
-      updateUser(firstOccupationYear, preparation, languages);
+      updateUser(firstOccupationYear, preparation, category, languages);
   };
 
   const removeLanguage = (index: number) => {
@@ -121,6 +133,14 @@ const EditProfileModal = ({
             value={preparation}
             options={categories}
             onChange={(e) => setPreparation(e.target.value)}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Select
+            label="Categoria"
+            value={category}
+            options={categoryOptions}
+            onChange={(e) => setCategory(e.target.value)}
           />
         </FormGroup>
         <FormGroup>

@@ -41,6 +41,7 @@ const Profile = (props: ProfileProps) => {
   const updateUser = (
     firstOccupationYear: number,
     preparation: string,
+    category: string,
     languages: CompetenzeLinguistiche[]
   ) => {
     setUser((prev) => {
@@ -48,6 +49,7 @@ const Profile = (props: ProfileProps) => {
         ...prev!,
         annoPrimaOccupazione: firstOccupationYear,
         preparazione: preparation,
+        categoria: category,
         competenzeLinguistiches: languages,
       };
     });
@@ -100,6 +102,10 @@ const Profile = (props: ProfileProps) => {
                     <dt className="col-sm-6">Preparazione:</dt>
                     <dd className="col-sm-6">
                       {user?.preparazione ? user?.preparazione : "N/A"}
+                    </dd>
+                    <dt className="col-sm-6">Categoria:</dt>
+                    <dd className="col-sm-6">
+                      {user?.categoria ? user?.categoria : "N/A"}
                     </dd>
                     <dt className="col-sm-6">
                       Anno prima occupazione lavorativa:{" "}

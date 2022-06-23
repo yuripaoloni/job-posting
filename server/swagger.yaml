@@ -749,6 +749,7 @@ definitions:
     required:
       - firstOccupationYear
       - preparation
+      - category
       - languages
     properties:
       firstOccupationYear:
@@ -757,6 +758,9 @@ definitions:
       preparation:
         type: string
         description: degree
+      category:
+        type: string
+        description: B, C, D, EP
       languages:
         type: array
         description: array of languages
@@ -902,11 +906,17 @@ definitions:
     type: object
     required:
       - role
+      - description
       - expiryDate
+      - category
       - skillsOrder
       - answersOrder
     properties:
       role:
+        type: string
+      description:
+        type: string
+      category:
         type: string
       expiryDate:
         type: string

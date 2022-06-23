@@ -9,6 +9,9 @@ export class UpdateProfileDto {
   @IsString()
   public preparation: string;
 
+  @IsString()
+  public category: string;
+
   @ValidateNested({ each: true })
   @Type(() => Languages)
   public languages: Languages[];

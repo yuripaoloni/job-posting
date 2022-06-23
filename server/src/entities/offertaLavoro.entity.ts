@@ -20,6 +20,9 @@ export class OffertaLavoroEntity extends BaseEntity implements OffertaLavoro {
   @Column('nvarchar', { name: 'descrizione', nullable: true, length: 500 })
   descrizione: string | null;
 
+  @Column('nvarchar', { name: 'categoria', nullable: true, length: 255 })
+  categoria: string | null;
+
   @Column('nvarchar', { name: 'struttura', nullable: true, length: 255 })
   struttura: string | null;
 

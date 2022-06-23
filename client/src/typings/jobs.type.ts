@@ -11,6 +11,7 @@ export type Job = {
   responsabileCf: string | null;
   ruolo: string | null;
   descrizione: string | null;
+  categoria: string | null;
   struttura: string | null;
   dataCreazione: string | null;
   dataScadenza: string | null;

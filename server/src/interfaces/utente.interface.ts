@@ -11,6 +11,7 @@ export interface Utente {
   email: string | null;
   annoPrimaOccupazione: number | null;
   annoIngressoUnicam: number | null;
+  categoria: string | null;
   preparazione: string | null;
   candidaturas?: Candidatura[] | null;
   competenzeLinguistiches?: CompetenzeLinguistiche[] | null;

@@ -8,6 +8,7 @@ export interface OffertaLavoro {
   responsabileCf: string | null;
   ruolo: string | null;
   descrizione: string | null;
+  categoria: string | null;
   struttura: string | null;
   dataCreazione: Date | null;
   dataScadenza: Date | null;

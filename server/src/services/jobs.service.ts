@@ -37,6 +37,7 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     const newJobOffer = new OffertaLavoroEntity();
     newJobOffer.dataScadenza = new Date(jobOfferData.expiryDate);
     newJobOffer.ruolo = jobOfferData.role;
+    newJobOffer.categoria = jobOfferData.category;
     newJobOffer.descrizione = jobOfferData.description;
     newJobOffer.responsabileCf = cf;
     newJobOffer.struttura = user.struttura.descStruttura;
@@ -113,7 +114,13 @@ class JobsService extends Repository<OffertaLavoroEntity> {
   public async updateJobOffer(jobOfferData: JobOfferDto, jobOfferId: number): Promise<OffertaLavoro> {
     await OffertaLavoroEntity.update(
       { id: jobOfferId },
-      { ruolo: jobOfferData.role, descrizione: jobOfferData.description, dataScadenza: jobOfferData.expiryDate, punteggiAggiornati: false },
+      {
+        ruolo: jobOfferData.role,
+        descrizione: jobOfferData.description,
+        categoria: jobOfferData.category,
+        dataScadenza: jobOfferData.expiryDate,
+        punteggiAggiornati: false,
+      },
     );
 
     const richiestaOfferta = await RichiestaOffertaEntity.getRepository().findOne({
@@ -185,11 +192,12 @@ class JobsService extends Repository<OffertaLavoroEntity> {
   }
 
   public async getWorkerJobOffers(cf: string, skip: number): Promise<OffertaLavoro[]> {
+    const user = await UtenteEntity.getRepository().findOne({ where: { cf }, select: ['categoria'] });
     const userAnswers: RisposteUtente[] = await RisposteUtenteEntity.getRepository().find({ where: { utenteCf: cf }, loadRelationIds: true });
 
     const jobOffers: OffertaLavoro[] =
       userAnswers.length === 0
-        ? await OffertaLavoroEntity.find({ where: { approvata: true, attiva: true }, skip: skip, take: 6 })
+        ? await OffertaLavoroEntity.find({ where: { approvata: true, attiva: true, categoria: user.categoria }, skip: skip, take: 6 })
         : await OffertaLavoroEntity.createQueryBuilder('jobs')
             .leftJoin('jobs.candidaturas', 'candidatura', 'candidatura.utenteCf = :cf', { cf })
             .where('candidatura.id is null')
@@ -199,6 +207,7 @@ class JobsService extends Repository<OffertaLavoroEntity> {
             .andWhere('jobs.approvata = 1')
             .andWhere('jobs.attiva = 1')
             .andWhere('jobs.punteggiAggiornati = 1')
+            .andWhere('jobs.categoria like :cat', { cat: `%${user.categoria}%` })
             .skip(skip)
             .take(6)
             .getMany();

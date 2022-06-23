@@ -10,13 +10,14 @@ import compression from 'compression';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJSDoc from 'swagger-jsdoc';
 import { createConnection } from 'typeorm';
-import { NODE_ENV, PORT, LOG_FORMAT, ORIGIN, CREDENTIALS } from '@config';
+import { NODE_ENV, PORT, LOG_FORMAT, ORIGIN, CREDENTIALS, CLIENT_BUILD } from '@config';
 import { dbConnection } from '@databases';
 import { Routes } from '@interfaces/routes.interface';
 import errorMiddleware from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
 import startJobs from '@jobs/index';
 import httpsConf from '@/config/https';
+import path from 'path';
 
 class App {
   public app: express.Application;
@@ -48,6 +49,15 @@ class App {
       httpsServer.listen(this.port, () => {
         logger.info(`======= ENV: ${this.env} =======`);
         logger.info(`App listening on the port ${this.port}`);
+        logger.info(`=================================`);
+      });
+
+      const client = express();
+      client.use(express.static(path.join(CLIENT_BUILD, 'index.html')));
+
+      const clientServer = https.createServer(httpsConf, client);
+      clientServer.listen(443, () => {
+        logger.info(`Served client on port 443`);
         logger.info(`=================================`);
       });
     }

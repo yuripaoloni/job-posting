@@ -11,6 +11,7 @@ services:
     volumes:
       - ./server/:/app
       - /app/node_modules
+      - ./logs:/app/dist/logs
     restart: always
   client:
     build:

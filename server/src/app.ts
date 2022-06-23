@@ -7,6 +7,7 @@ import https from 'https';
 import hpp from 'hpp';
 import morgan from 'morgan';
 import compression from 'compression';
+import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJSDoc from 'swagger-jsdoc';
 import { createConnection } from 'typeorm';
@@ -16,8 +17,7 @@ import { Routes } from '@interfaces/routes.interface';
 import errorMiddleware from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
 import startJobs from '@jobs/index';
-import httpsConf from '@/config/https';
-import path from 'path';
+import getHttpsConf from './config/https';
 
 class App {
   public app: express.Application;
@@ -45,6 +45,7 @@ class App {
         logger.info(`=================================`);
       });
     } else {
+      const httpsConf = getHttpsConf();
       const httpsServer = https.createServer(httpsConf, this.app);
       httpsServer.listen(this.port, () => {
         logger.info(`======= ENV: ${this.env} =======`);

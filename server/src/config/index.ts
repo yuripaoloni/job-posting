@@ -21,5 +21,4 @@ export const {
   ORIGIN,
   PRIVATE_KEY,
   CERTIFICATE,
-  CLIENT_BUILD,
 } = process.env;

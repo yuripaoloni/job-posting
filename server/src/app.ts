@@ -11,7 +11,7 @@ import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJSDoc from 'swagger-jsdoc';
 import { createConnection } from 'typeorm';
-import { NODE_ENV, PORT, LOG_FORMAT, ORIGIN, CREDENTIALS, CLIENT_BUILD } from '@config';
+import { NODE_ENV, PORT, LOG_FORMAT, ORIGIN, CREDENTIALS } from '@config';
 import { dbConnection } from '@databases';
 import { Routes } from '@interfaces/routes.interface';
 import errorMiddleware from '@middlewares/error.middleware';
@@ -54,7 +54,12 @@ class App {
       });
 
       const client = express();
-      client.use(express.static(path.join(CLIENT_BUILD, 'index.html')));
+
+      client.use(express.static(path.join(__dirname, '../../client/build')));
+
+      client.get('/*', function (req, res) {
+        res.sendFile(path.join(__dirname, '../../client/build', 'index.html'));
+      });
 
       const clientServer = https.createServer(httpsConf, client);
       clientServer.listen(443, () => {

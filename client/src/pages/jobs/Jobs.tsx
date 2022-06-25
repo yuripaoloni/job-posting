@@ -33,6 +33,7 @@ const Jobs = () => {
   }, [fetchData, skip]);
 
   const updateJobs = (job: Job, update: boolean, jobId?: number) => {
+    console.log(job.richiestaSoftSkills);
     let updatedJobs = jobs ? jobs?.slice() : [];
     if (update) {
       const index = updatedJobs.findIndex((item) => item.id === job.id);

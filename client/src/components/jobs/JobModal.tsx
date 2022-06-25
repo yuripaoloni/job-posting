@@ -73,9 +73,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
     [{ id: 1, lingua: "Inglese", livello: "A1", punti: 0 }]
   );
 
-  const [skillsOrder, setSkillsOrder] = useState<SkillsOrder[]>([
-    { id: 1, order: 1 },
-  ]);
+  const [skillsOrder, setSkillsOrder] = useState<SkillsOrder[]>([{ id: 1 }]);
   const [answersOrder, setAnswersOrder] = useState<AnswersOrder[]>([
     { softSkillId: 1, answers: [{ answerId: 1, order: 1 }] },
   ]);
@@ -93,9 +91,9 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
 
       const newSkillsOrder = res?.data
         ? res?.data.map((skill, index) => {
-            return { id: skill.id, order: index + 1 };
+            return { id: skill.id };
           })
-        : [{ id: 1, order: 1 }];
+        : [{ id: 1 }];
 
       const newAnswersOrder = res?.data
         ? res?.data.map((skill, index) => {
@@ -173,7 +171,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
       );
 
       const skillsOrder = job.richiestaSoftSkills!.map((item) => {
-        return { id: item.softSkill!.id, order: item.ordine };
+        return { id: item.softSkill!.id };
       });
 
       const answersOrder = job.richiestaSoftSkills!.map((item) => {
@@ -195,7 +193,18 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
     } else {
       setRole("");
       setDescription("");
+      setCategory("B");
       setExpiryData("");
+      setPreparation({ value: "", points: 0 });
+      setUnicamExperience({
+        value: false,
+        points: 0,
+      });
+      setWorkExperience({
+        value: false,
+        points: 0,
+      });
+      setLanguages([{ id: 1, lingua: "Inglese", livello: "A1", punti: 0 }]);
     }
   }, [job]);
 
@@ -213,14 +222,6 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
         "danger"
       );
 
-    const valueArr = skillsOrder.map((item) => item.order);
-    const hasDuplicateSkills = valueArr.some(
-      (item, index) => valueArr.indexOf(item) !== index
-    );
-
-    hasDuplicateSkills &&
-      toggleAlert("2 o più skill hanno lo stesso ordinamento.", "danger");
-
     const duplicateAnswers = answersOrder.flatMap((item, index) => {
       const valueArr = item.answers.map((item) => item.order);
       return valueArr.some((item, index) => valueArr.indexOf(item) !== index)
@@ -236,9 +237,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
         "danger"
       );
 
-    return (
-      !invalidPoints && !hasDuplicateSkills && duplicateAnswers.length === 0
-    );
+    return !invalidPoints && duplicateAnswers.length === 0;
   };
 
   const createOrUpdateJobOffer = async () => {
@@ -271,7 +270,6 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
   const handleSkillsOrderChange = (order: number, skillIndex: number) => {
     const updatedSkillsOrder = skillsOrder.slice();
     const updatedSkillOrder = updatedSkillsOrder[skillIndex];
-    updatedSkillOrder.order = order;
     updatedSkillsOrder.splice(skillIndex, 1);
     updatedSkillsOrder.splice(order - 1, 0, updatedSkillOrder);
 

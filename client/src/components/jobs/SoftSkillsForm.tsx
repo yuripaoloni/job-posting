@@ -54,8 +54,10 @@ const SoftSkillsForm = ({
                 active={activeTab === index}
                 onClick={() => toggle(index)}
               >
-                <span>{skillsOrder[index].order}</span>
-                <span className="d-none d-lg-inline"> - {title}</span>
+                {/*show up only from MD to XS*/}
+                <span className="d-inline d-lg-none">{index + 1}</span>{" "}
+                {/* under LG the title disappear */}
+                <span className="d-none d-lg-inline">{title}</span>
               </NavLink>
             </NavItem>
           ))}
@@ -81,7 +83,7 @@ const SoftSkillsForm = ({
                     type="number"
                     min={1}
                     max={14}
-                    value={skillsOrder[softSkillIndex].order}
+                    value={softSkillIndex + 1}
                     onChange={(e) => {
                       toggle(e.target.valueAsNumber - 1);
                       handleSkillsOrderChange(

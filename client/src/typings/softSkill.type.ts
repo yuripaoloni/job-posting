@@ -12,7 +12,6 @@ export type RisposteSoftSkill = {
 
 export type SkillsOrder = {
   id: number;
-  order: number;
 };
 
 export type AnswersOrder = {

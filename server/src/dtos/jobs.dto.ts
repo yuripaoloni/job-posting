@@ -87,9 +87,6 @@ class LanguagesPoints {
 class SkillsOrder {
   @IsNumber()
   public id: number;
-
-  @IsNumber()
-  public order: number;
 }
 
 class AnswersOrder {

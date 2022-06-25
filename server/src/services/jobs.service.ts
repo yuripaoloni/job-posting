@@ -68,11 +68,11 @@ class JobsService extends Repository<OffertaLavoroEntity> {
       }
     }
 
-    for (const skillOrder of jobOfferData.skillsOrder) {
+    for (const [index, skillOrder] of jobOfferData.skillsOrder.entries()) {
       const softSkill = await SoftSkillEntity.getRepository().findOne({ where: { id: skillOrder.id } });
 
       const newRichiestaSoftSkill = new RichiestaSoftSkillEntity();
-      newRichiestaSoftSkill.ordine = skillOrder.order;
+      newRichiestaSoftSkill.ordine = index + 1;
       newRichiestaSoftSkill.softSkill = softSkill;
       newRichiestaSoftSkill.offerta = newJobOffer;
 
@@ -159,10 +159,10 @@ class JobsService extends Repository<OffertaLavoroEntity> {
       await RichiestaCompetenzeLinguisticheEntity.getRepository().delete({ id: removedLanguage.id });
     }
 
-    for (const skillOrder of jobOfferData.skillsOrder) {
+    for (const [index, skillOrder] of jobOfferData.skillsOrder.entries()) {
       const richiestaSoftSkill = await RichiestaSoftSkillEntity.getRepository().findOne({ where: { offerta: jobOfferId, softSkill: skillOrder.id } });
 
-      richiestaSoftSkill.ordine = skillOrder.order;
+      richiestaSoftSkill.ordine = index + 1;
 
       for (const answerOrder of jobOfferData.answersOrder) {
         if (answerOrder.softSkillId === skillOrder.id) {
@@ -187,6 +187,7 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     });
 
     jobOffer.candidaturas = jobOffer.candidaturas.sort((a, b) => a.punteggio - b.punteggio);
+    jobOffer.richiestaSoftSkills = jobOffer.richiestaSoftSkills.sort((a, b) => a.ordine - b.ordine);
 
     return jobOffer;
   }

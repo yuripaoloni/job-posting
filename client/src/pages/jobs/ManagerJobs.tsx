@@ -75,7 +75,7 @@ const ManagerJobs = ({
             <Icon color="white" icon="it-plus" size="sm" />
           </span>
           <span className="d-none d-md-block ml-2">
-            Crea una nuova offerta lavorativa
+            Crea una nuova posizione
           </span>
         </Button>
       </Row>

@@ -58,7 +58,7 @@ const Landing = () => {
               <CardText>Apri una nuova posizione lavorativa</CardText>
               <CardReadMore
                 iconName="it-arrow-right"
-                text="Crea offerta"
+                text="Crea nuova posizione"
                 role="button"
                 onClick={() => navigate("/jobs")}
               />

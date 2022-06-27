@@ -98,7 +98,7 @@ class JobsService extends Repository<OffertaLavoroEntity> {
 
     await sendEmail(
       DG_EMAIL,
-      `Nuova offerta lavorativa - ${newJobOffer.ruolo}`,
+      `Nuova posizione - ${newJobOffer.ruolo}`,
       `Una nuova offerta di lavoro "${newJobOffer.ruolo}" per ${newJobOffer.struttura} è stata creata in data ${new Date(
         newJobOffer.dataCreazione,
       ).toLocaleDateString('it-IT')} da ${user.cognome} ${user.nome} (${user.email}).\n\nCordiali saluti`,

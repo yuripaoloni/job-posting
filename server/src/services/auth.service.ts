@@ -37,7 +37,7 @@ class AuthService extends Repository<UtenteEntity> {
 
     const caricaUtente: CaricheUtenti = await CaricheUtentiEntity.getRepository().findOne({ where: { utenteCf: employeeId }, loadRelationIds: true });
 
-    const tipoUtenteId = caricaUtente.idTipoutente ? caricaUtente.idTipoutente : WORKER;
+    const tipoUtenteId = caricaUtente ? caricaUtente.idTipoutente : WORKER;
 
     const tokenData = this.createToken(utente, tipoUtenteId);
     const cookie = this.createCookie(tokenData);

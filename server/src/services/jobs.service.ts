@@ -196,9 +196,9 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     const user = await UtenteEntity.getRepository().findOne({ where: { cf }, select: ['categoria'] });
     const userAnswers: RisposteUtente[] = await RisposteUtenteEntity.getRepository().find({ where: { utenteCf: cf }, loadRelationIds: true });
 
-    const jobOffers: OffertaLavoro[] =
+    let jobOffers: OffertaLavoro[] =
       userAnswers.length === 0
-        ? await OffertaLavoroEntity.find({ where: { approvata: true, attiva: true, categoria: user.categoria }, skip: skip, take: 6 })
+        ? await OffertaLavoroEntity.find({ where: { approvata: true, attiva: true }, skip: skip, take: 6 })
         : await OffertaLavoroEntity.createQueryBuilder('jobs')
             .leftJoin('jobs.candidaturas', 'candidatura', 'candidatura.utenteCf = :cf', { cf })
             .where('candidatura.id is null')
@@ -208,10 +208,13 @@ class JobsService extends Repository<OffertaLavoroEntity> {
             .andWhere('jobs.approvata = 1')
             .andWhere('jobs.attiva = 1')
             .andWhere('jobs.punteggiAggiornati = 1')
-            .andWhere('jobs.categoria like :cat', { cat: `%${user.categoria}%` })
             .skip(skip)
             .take(6)
             .getMany();
+
+    if (user?.categoria) {
+      jobOffers = jobOffers.filter(item => item.categoria === user.categoria);
+    }
 
     return jobOffers;
   }

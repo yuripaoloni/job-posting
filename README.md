@@ -1,5 +1,7 @@
 # Job Posting
 
+Job posting platform for the University of Camerino.
+
 ## Development
 
 To start the client add a `.env.local` file with the content below, install deps with `yarn install` and run `yarn start`. Client will start at [localhost:3000](localhost:3000)

@@ -32,9 +32,9 @@ const Landing = () => {
               <div className="top-icon">
                 <Icon icon="it-user" color="primary" />
               </div>
-              <CardTitle tag="h5">Sei un lavoratore Unicam?</CardTitle>
+              <CardTitle tag="h5">Sei un dipendente Unicam?</CardTitle>
               <CardText>
-                Completa il processo di profilazione e visualizza le posizione
+                Completa il processo di profilazione e visualizza le posizioni
                 lavorative aperte
               </CardText>
               <CardReadMore

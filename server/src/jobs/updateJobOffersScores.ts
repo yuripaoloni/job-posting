@@ -6,7 +6,7 @@ import { updateUserScores } from '@/utils/updateUserScores';
 
 // every day at 01.00 updates user scores for job offers updated during the previous day
 // such offers are indivduated with { punteggiAggiornati: false }
-const updateJobOffersScores = cron.job('25 45 16 * * *', async () => {
+const updateJobOffersScores = cron.job('00 00 01 * * *', async () => {
   logger.info(`CRON JOB - updateJobOffersScores started`);
   try {
     const users = await UtenteEntity.getRepository().find({

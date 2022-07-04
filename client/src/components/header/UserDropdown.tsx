@@ -26,6 +26,7 @@ const UserDropdown = ({ isOpen, toggleDropdown }: UserDropdownProps) => {
     await fetchData("/auth/logout", "GET");
 
     toggleAuth(false, 0, "");
+    localStorage.removeItem("originUserType");
     navigate("/");
   };
 
@@ -76,7 +77,7 @@ const UserDropdown = ({ isOpen, toggleDropdown }: UserDropdownProps) => {
               <span>{userType === 0 ? "Candidature" : "Storico offerte"}</span>
             </LinkListItem>
           </Link>
-          {userType !== 0 && (
+          {localStorage.getItem("originUserType") !== "0" && (
             <LinkListItem
               className="right-icon"
               onClick={() => onChangeUserType(userType === 2 ? 0 : 2)}
@@ -85,12 +86,30 @@ const UserDropdown = ({ isOpen, toggleDropdown }: UserDropdownProps) => {
               <Icon
                 className="right"
                 color="primary"
-                icon="it-search"
+                icon={userType === 2 ? "it-search" : "it-plus"}
                 aria-hidden
                 size="sm"
               />
               <span>
                 {userType === 2 ? "Cerca posizioni" : "Crea posizioni"}
+              </span>
+            </LinkListItem>
+          )}
+          {localStorage.getItem("originUserType") === "1" && (
+            <LinkListItem
+              className="right-icon"
+              onClick={() => onChangeUserType(userType === 1 ? 0 : 1)}
+              role="button"
+            >
+              <Icon
+                className="right"
+                color="primary"
+                icon={userType === 1 ? "it-search" : "it-check"}
+                aria-hidden
+                size="sm"
+              />
+              <span>
+                {userType === 1 ? "Cerca posizioni" : "Approva posizioni"}
               </span>
             </LinkListItem>
           )}

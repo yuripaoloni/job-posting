@@ -36,6 +36,7 @@ const SignInModal = ({ isOpen, toggleModal }: SignInModalProps) => {
     if (isUserType(res?.data.tipoUtenteId)) {
       toggleAuth(true, res!.data.tipoUtenteId, username);
       toggleModal();
+      localStorage.setItem("originUserType", res!.data.tipoUtenteId.toString());
     }
   };
 
@@ -58,7 +59,9 @@ const SignInModal = ({ isOpen, toggleModal }: SignInModalProps) => {
         <FormGroup>
           <Input
             type="text"
-            invalid={/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(username)}
+            invalid={/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+              username
+            )}
             id="username"
             value={username}
             label="Username"

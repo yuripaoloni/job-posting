@@ -33,7 +33,10 @@ class AuthController {
       const cookie = await this.authService.changeUserType(req.cf, userType);
 
       res.setHeader('Set-Cookie', [cookie]);
-      res.status(200).json({ userType, message: `Passato a profilo ${userType === 0 ? 'utente' : 'responsabile di struttura'}` });
+      res.status(200).json({
+        userType,
+        message: `Passato a profilo ${userType === 0 ? 'utente' : userType === 1 ? 'Direttore Generale' : 'Responsabile di Struttura'}`,
+      });
     } catch (error) {
       next(error);
     }
@@ -41,7 +44,9 @@ class AuthController {
 
   public validate = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-      res.status(200).json({ tipoUtenteId: req.tipoUtenteId, username: req.username, message: 'Accesso effettuato' });
+      const originUserType = await this.authService.getUserType(req.cf);
+
+      res.status(200).json({ originUserType, tipoUtenteId: req.tipoUtenteId, username: req.username, message: 'Accesso effettuato' });
     } catch (error) {
       next(error);
     }

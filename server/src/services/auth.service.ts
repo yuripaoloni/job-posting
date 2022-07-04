@@ -54,6 +54,12 @@ class AuthService extends Repository<UtenteEntity> {
     return cookie;
   }
 
+  public async getUserType(cf: string): Promise<number> {
+    const userType = await CaricheUtentiEntity.getRepository().findOne({ where: { utenteCf: cf }, loadRelationIds: { relations: ['idTipoutente'] } });
+
+    return userType ? Number(userType.idTipoutente) : 0;
+  }
+
   public async changeRole(cf: string, userType: number): Promise<void> {
     const tipoUtente = await TipiUtenteEntity.getRepository().findOne({ where: { idTipoutente: userType } });
     await CaricheUtentiEntity.getRepository().update({ utenteCf: cf }, { idTipoutente: tipoUtente });

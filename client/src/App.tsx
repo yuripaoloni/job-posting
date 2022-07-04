@@ -21,6 +21,10 @@ function App() {
 
       if (isUserType(res?.data.tipoUtenteId)) {
         toggleAuth(true, res?.data.tipoUtenteId, res?.data.username);
+        localStorage.setItem(
+          "originUserType",
+          res?.data.originUserType.toString()
+        );
       }
     }
 

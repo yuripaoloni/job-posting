@@ -216,6 +216,12 @@ const JobModal = ({
   }, [job]);
 
   const validateInputs = (): boolean => {
+    description.length > 500 &&
+      toggleAlert(
+        "La descrizione dell'offerta non deve superare i 500 caratteri.",
+        "danger"
+      );
+
     const invalidPoints =
       preparation.points +
         workExperience.points +

@@ -44,9 +44,16 @@ type JobModalProps = {
   toggleModal: () => void;
   updateJobs: (job: Job, update: boolean) => void;
   job: Job | null;
+  view?: boolean;
 };
 
-const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
+const JobModal = ({
+  isOpen,
+  toggleModal,
+  updateJobs,
+  job,
+  view,
+}: JobModalProps) => {
   const [role, setRole] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("B");
@@ -343,7 +350,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
         toggle={() => toggleModal()}
         id="jobModal"
       >
-        {job ? "Aggiorna" : "Nuova"} offerta lavorativa
+        {view ? "" : job ? "Aggiorna" : "Nuova"} Offerta lavorativa
       </ModalHeader>
       <ModalBody>
         <FormGroup>
@@ -354,6 +361,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             label="Ruolo"
             infoText="Posizione richiesta"
             onChange={(e) => setRole(e.target.value)}
+            readOnly={view}
           />
         </FormGroup>
         <FormGroup>
@@ -364,6 +372,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             infoText={`Max 500 caratteri - ${description.length}`}
             label="Descrizione"
             onChange={(e) => setDescription(e.target.value)}
+            readOnly={view}
           />
         </FormGroup>
         <FormGroup>
@@ -372,6 +381,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             value={category}
             options={categoryOptions}
             onChange={(e) => setCategory(e.target.value)}
+            disabled={view ? true : false}
           />
         </FormGroup>
         <FormGroup>
@@ -383,6 +393,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             infoText="Data di scadenza dell'offerta"
             placeholder={new Date().toUTCString()}
             onChange={(e) => setExpiryData(e.target.value)}
+            readOnly={view}
           />
         </FormGroup>
         <FormGroup>
@@ -420,6 +431,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
               onChange={(e) =>
                 setPreparation({ ...preparation, value: e.target.value })
               }
+              disabled={view}
             />
           </Col>
           <Input
@@ -437,6 +449,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             }
             wrapperClass="col col-sm-2 col-3"
             max={50}
+            readOnly={view}
           />
         </div>
         <Row>
@@ -453,6 +466,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
                   };
                 })
               }
+              disabled={view}
             />
             <Label for="work-checkbox" check>
               Esperienza lavorativa 10+
@@ -472,6 +486,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             }
             wrapperClass="col col-lg-1 col-md-2"
             max={50}
+            readOnly={view}
           />
         </Row>
         <Row>
@@ -488,6 +503,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
                   };
                 })
               }
+              disabled={view}
             />
             <Label for="unicam-checkbox" check>
               Esperienza Unicam 5+
@@ -507,6 +523,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
             }
             wrapperClass="col col-lg-1 col-md-2"
             max={50}
+            readOnly={view}
           />
         </Row>
         <Row>
@@ -518,6 +535,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
                   value={item.lingua}
                   options={languagesOptions}
                   onChange={(e) => handleLanguageChange(index, e.target.value)}
+                  disabled={view}
                 />
               </Col>
               <Col xs={3}>
@@ -526,6 +544,7 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
                   value={item.livello}
                   options={levelsOptions}
                   onChange={(e) => handleLevelChange(index, e.target.value)}
+                  disabled={view}
                 />
               </Col>
               <Col xs={3}>
@@ -538,38 +557,43 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
                     handleLanguagePointsChange(index, e.target.valueAsNumber)
                   }
                   max={50}
+                  readOnly={view}
                 />
               </Col>
               <Col xs={1}>
-                <Icon
-                  icon="it-minus-circle"
-                  color="danger"
-                  role="button"
-                  onClick={() => removeLanguage(index)}
-                />
+                {!view && (
+                  <Icon
+                    icon="it-minus-circle"
+                    color="danger"
+                    role="button"
+                    onClick={() => removeLanguage(index)}
+                  />
+                )}
               </Col>
             </Fragment>
           ))}
-          <Chip
-            simple
-            className="mx-0 mb-4"
-            color="primary"
-            role="button"
-            onClick={() =>
-              setLanguages((prev) => [
-                ...prev,
-                {
-                  id: prev.length + 1,
-                  lingua: "Inglese",
-                  livello: "A1",
-                  punti: 0,
-                },
-              ])
-            }
-          >
-            <Icon icon="it-plus" size="xs" />
-            <ChipLabel>Aggiungi lingua </ChipLabel>
-          </Chip>
+          {!view && (
+            <Chip
+              simple
+              className="mx-0 mb-4"
+              color="primary"
+              role="button"
+              onClick={() =>
+                setLanguages((prev) => [
+                  ...prev,
+                  {
+                    id: prev.length + 1,
+                    lingua: "Inglese",
+                    livello: "A1",
+                    punti: 0,
+                  },
+                ])
+              }
+            >
+              <Icon icon="it-plus" size="xs" />
+              <ChipLabel>Aggiungi lingua </ChipLabel>
+            </Chip>
+          )}
         </Row>
         <FormGroup>
           <h6>
@@ -588,12 +612,15 @@ const JobModal = ({ isOpen, toggleModal, updateJobs, job }: JobModalProps) => {
           softSkills={softSkills}
           handleSkillsOrderChange={handleSkillsOrderChange}
           handleAnswersOrderChange={handleAnswersOrderChange}
+          view={view}
         />
       </ModalBody>
       <ModalFooter>
-        <Button color="primary" onClick={() => createOrUpdateJobOffer()}>
-          {job ? "Aggiorna" : "Crea"} offerta
-        </Button>
+        {!view && (
+          <Button color="primary" onClick={() => createOrUpdateJobOffer()}>
+            {job ? "Aggiorna" : "Crea"} offerta
+          </Button>
+        )}
       </ModalFooter>
     </Modal>
   );

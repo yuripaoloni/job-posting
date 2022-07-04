@@ -3,6 +3,7 @@ import { useState } from "react";
 import DetermineJobModal from "../../components/jobs/DetermineJobModal";
 
 import JobCard from "../../components/jobs/JobCard";
+import JobModal from "../../components/jobs/JobModal";
 import LoadMoreButton from "../../components/layout/LoadMoreButton";
 import PageContainer from "../../components/layout/PageContainer";
 import { useFetch } from "../../contexts/FetchContext";
@@ -25,11 +26,17 @@ const DirectorJobs = ({
   onLoadMore,
   endReached,
 }: DirectorJobsProps) => {
+  const [showJobModal, setShowJobModal] = useState(false);
   const [showDetermineJobModal, setShowDetermineJobModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [approved, setApproved] = useState(false);
 
   const { fetchData } = useFetch();
+
+  const toggleJobModal = (job?: Job) => {
+    setShowJobModal((prev) => !prev);
+    setSelectedJob(job ? job : null);
+  };
 
   const toggleDetermineJobModal = (job?: Job, approved?: boolean) => {
     setShowDetermineJobModal((prev) => !prev);
@@ -53,6 +60,13 @@ const DirectorJobs = ({
 
   return (
     <PageContainer>
+      <JobModal
+        isOpen={showJobModal}
+        toggleModal={toggleJobModal}
+        updateJobs={updateJobs}
+        job={selectedJob}
+        view={true}
+      />
       <DetermineJobModal
         isOpen={showDetermineJobModal}
         toggleModal={toggleDetermineJobModal}
@@ -72,6 +86,7 @@ const DirectorJobs = ({
                 userType={userType}
                 onApproveJob={() => toggleDetermineJobModal(job, true)}
                 onRejectJob={() => toggleDetermineJobModal(job, false)}
+                onEditJob={() => toggleJobModal(job)}
               />
             ))
           : "Nessuna nuova offerta"}

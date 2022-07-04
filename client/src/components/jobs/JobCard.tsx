@@ -44,9 +44,9 @@ type UserTypeProps =
       // director
       onApproveJob: () => void;
       onRejectJob: () => void;
+      onEditJob: () => void;
       onShowParticipants?: never;
       onDeleteJob?: never;
-      onEditJob?: never;
       onApplyJob?: never;
     }
   | {
@@ -170,7 +170,12 @@ const JobCard = ({
                     onClick={() => onRejectJob!()}
                     role="button"
                   />
-                  {infoIcon}
+                  <Icon
+                    icon="it-info-circle"
+                    className="ml-2"
+                    onClick={() => onEditJob!()}
+                    role="button"
+                  />
                 </div>
               ) : userType === 2 ? (
                 <div>
@@ -190,7 +195,6 @@ const JobCard = ({
                       role="button"
                     />
                   )}
-                  {infoIcon}
                 </div>
               ) : (
                 <div>

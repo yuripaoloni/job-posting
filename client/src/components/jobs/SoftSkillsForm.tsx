@@ -27,6 +27,7 @@ type SoftSkillsFormProps = {
     skillIndex: number,
     answerIndex: number
   ) => void;
+  view?: boolean;
 };
 
 const SoftSkillsForm = ({
@@ -36,6 +37,7 @@ const SoftSkillsForm = ({
   softSkills,
   handleAnswersOrderChange,
   handleSkillsOrderChange,
+  view,
 }: SoftSkillsFormProps) => {
   const [activeTab, setActiveTab] = useState(0);
 
@@ -91,6 +93,7 @@ const SoftSkillsForm = ({
                         softSkillIndex
                       );
                     }}
+                    readOnly={view}
                   />
                 </Col>
               </Row>
@@ -117,6 +120,7 @@ const SoftSkillsForm = ({
                           answerIndex
                         )
                       }
+                      readOnly={view}
                     />
                   </Col>
                 </Row>

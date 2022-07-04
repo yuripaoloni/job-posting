@@ -9,7 +9,6 @@ import {
   Icon,
   CardFooterCTA,
   Tooltip,
-  Fade,
   Popover,
   PopoverHeader,
   PopoverBody,
@@ -105,112 +104,110 @@ const JobCard = ({
         <PopoverHeader>Descrizione</PopoverHeader>
         <PopoverBody>{job.descrizione}</PopoverBody>
       </Popover>
-      <Fade>
-        <Card spacing className="card-bg">
-          <CardBody>
-            <CardTagsHeader className="align-items-center">
-              <Tooltip
-                placement="top"
-                target={`status-badge-${job.id}`}
-                isOpen={job.approvata === false && showTooltip}
-                toggle={() => setShowTooltip((prev) => !prev)}
-              >
-                {job.descEsito}
-              </Tooltip>
-              <Badge
-                id={`status-badge-${job.id}`}
-                color={
-                  job.attiva === false
-                    ? "danger"
-                    : job.approvata === true
-                    ? "success"
-                    : job.approvata === null
-                    ? "warning"
-                    : "danger"
-                }
-                pill
-              >
-                {job.attiva === false
-                  ? "Non attiva"
+      <Card spacing className="card-bg">
+        <CardBody>
+          <CardTagsHeader className="align-items-center">
+            <Tooltip
+              placement="top"
+              target={`status-badge-${job.id}`}
+              isOpen={job.approvata === false && showTooltip}
+              toggle={() => setShowTooltip((prev) => !prev)}
+            >
+              {job.descEsito}
+            </Tooltip>
+            <Badge
+              id={`status-badge-${job.id}`}
+              color={
+                job.attiva === false
+                  ? "danger"
                   : job.approvata === true
-                  ? "Attiva"
+                  ? "success"
                   : job.approvata === null
-                  ? "In approvazione"
-                  : "Non attiva"}
-              </Badge>
-              {userType === 0 ? (
-                <>
-                  <Score
-                    score={
-                      job.punteggio?.punteggio ? job.punteggio?.punteggio : 0
-                    }
-                  />
-                  <div>
-                    <Icon
-                      icon="it-plus-circle"
-                      className="ml-2"
-                      onClick={() => onApplyJob!()}
-                      role="button"
-                    />
-                    {infoIcon}
-                  </div>
-                </>
-              ) : userType === 1 ? (
+                  ? "warning"
+                  : "danger"
+              }
+              pill
+            >
+              {job.attiva === false
+                ? "Non attiva"
+                : job.approvata === true
+                ? "Attiva"
+                : job.approvata === null
+                ? "In approvazione"
+                : "Non attiva"}
+            </Badge>
+            {userType === 0 ? (
+              <>
+                <Score
+                  score={
+                    job.punteggio?.punteggio ? job.punteggio?.punteggio : 0
+                  }
+                />
                 <div>
                   <Icon
-                    color="success"
-                    icon="it-check-circle"
-                    onClick={() => onApproveJob!()}
-                    role="button"
-                  />
-                  <Icon
-                    icon="it-close-circle"
-                    color="danger"
+                    icon="it-plus-circle"
                     className="ml-2"
-                    onClick={() => onRejectJob!()}
+                    onClick={() => onApplyJob!()}
                     role="button"
                   />
-                  <Icon
-                    icon="it-info-circle"
-                    className="ml-2"
-                    onClick={() => onEditJob!()}
-                    role="button"
-                  />
-                </div>
-              ) : userType === 2 ? (
-                <div>
-                  {job.approvata === true && participantIcon}
-                  <Icon
-                    icon="it-pencil"
-                    className="ml-2"
-                    onClick={() => onEditJob!()}
-                    role="button"
-                  />
-                  {!job.approvata && (
-                    <Icon
-                      icon="it-delete"
-                      color="danger"
-                      className="ml-2"
-                      onClick={() => onDeleteJob!()}
-                      role="button"
-                    />
-                  )}
-                </div>
-              ) : (
-                <div>
-                  {job.approvata && participantIcon}
                   {infoIcon}
                 </div>
-              )}
-            </CardTagsHeader>
-            <CardTitle tag="h4">{job.ruolo}</CardTitle>
-            <CardSignature>{job.struttura}</CardSignature>
-            <CardFooterCTA>
-              {`Valida fino al ${job.dataScadenza}`}
-            </CardFooterCTA>
-          </CardBody>
-        </Card>
-      </Fade>
+              </>
+            ) : userType === 1 ? (
+              <div>
+                <Icon
+                  color="success"
+                  icon="it-check-circle"
+                  onClick={() => onApproveJob!()}
+                  role="button"
+                />
+                <Icon
+                  icon="it-close-circle"
+                  color="danger"
+                  className="ml-2"
+                  onClick={() => onRejectJob!()}
+                  role="button"
+                />
+                <Icon
+                  icon="it-info-circle"
+                  className="ml-2"
+                  onClick={() => onEditJob!()}
+                  role="button"
+                />
+              </div>
+            ) : userType === 2 ? (
+              <div>
+                {job.approvata === true && participantIcon}
+                <Icon
+                  icon="it-pencil"
+                  className="ml-2"
+                  onClick={() => onEditJob!()}
+                  role="button"
+                />
+                {!job.approvata && (
+                  <Icon
+                    icon="it-delete"
+                    color="danger"
+                    className="ml-2"
+                    onClick={() => onDeleteJob!()}
+                    role="button"
+                  />
+                )}
+              </div>
+            ) : (
+              <div>
+                {job.approvata && participantIcon}
+                {infoIcon}
+              </div>
+            )}
+          </CardTagsHeader>
+          <CardTitle tag="h4">{job.ruolo}</CardTitle>
+          <CardSignature className="text-truncate">
+            {job.struttura}
+          </CardSignature>
+          <CardFooterCTA>{`Valida fino al ${job.dataScadenza}`}</CardFooterCTA>
+        </CardBody>
+      </Card>
     </Col>
   );
 };

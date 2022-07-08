@@ -216,7 +216,9 @@ const JobModal = ({
   }, [job]);
 
   const validateInputs = (): boolean => {
-    description.length > 500 &&
+    const invalidDescription = description.length > 500;
+
+    invalidDescription &&
       toggleAlert(
         "La descrizione dell'offerta non deve superare i 500 caratteri.",
         "danger"
@@ -250,7 +252,9 @@ const JobModal = ({
         "danger"
       );
 
-    return !invalidPoints && duplicateAnswers.length === 0;
+    return (
+      !invalidDescription && !invalidPoints && duplicateAnswers.length === 0
+    );
   };
 
   const createOrUpdateJobOffer = async () => {

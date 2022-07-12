@@ -23,36 +23,35 @@ const SelectCandidate = ({ job, onCloseOffer }: SelectCandidateProps) => {
         </h6>
       </Row>
       {job?.candidaturas && job?.candidaturas?.length > 0
-        ? job?.candidaturas?.map(
-            (candidatura) =>
-              candidatura.colloquio && (
-                <Row
-                  key={candidatura.id}
-                  className="align-items-center justify-content-between border-bottom px-2 py-2"
-                >
-                  <Candidate candidatura={candidatura} xs={8} />
-                  <Col xs={2}>
-                    <Button
-                      size="sm"
-                      outline={!candidatura.proposto}
-                      color="primary"
-                      onClick={() =>
-                        onCloseOffer(
-                          job.id,
-                          candidatura.id,
-                          formatNameSurname(
-                            candidatura.utenteCf!.nome!,
-                            candidatura.utenteCf!.cognome!
-                          )
+        ? job?.candidaturas?.map((candidatura) => (
+            <Row
+              key={candidatura.id}
+              className="align-items-center justify-content-sm-around justify-content-evenly border-bottom px-2 py-2"
+            >
+              <Candidate candidatura={candidatura} sm={8} xs={6} />
+              <Col xs={2}>
+                {candidatura.colloquio && (
+                  <Button
+                    size="sm"
+                    outline={!candidatura.proposto}
+                    color="primary"
+                    onClick={() =>
+                      onCloseOffer(
+                        job.id,
+                        candidatura.id,
+                        formatNameSurname(
+                          candidatura.utenteCf!.nome!,
+                          candidatura.utenteCf!.cognome!
                         )
-                      }
-                    >
-                      Seleziona candidato
-                    </Button>
-                  </Col>
-                </Row>
-              )
-          )
+                      )
+                    }
+                  >
+                    Seleziona candidato
+                  </Button>
+                )}
+              </Col>
+            </Row>
+          ))
         : "Nessun candidatura"}
     </>
   );

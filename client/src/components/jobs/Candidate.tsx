@@ -26,8 +26,12 @@ const Candidate = ({ candidatura, xs, sm, md, lg, xl }: CandidateProps) => {
         <small> ({candidatura.utenteCf?.email})</small>
       </h6>
       <p>{candidatura.utenteCf?.preparazione}</p>
-      <p>Prima occupazione nel {candidatura.utenteCf?.annoPrimaOccupazione}</p>
-      <p>Ingresso in Unicam nel {candidatura.utenteCf?.annoIngressoUnicam}</p>
+      {candidatura.utenteCf?.annoPrimaOccupazione && (
+        <p>Prima occupazione nel {candidatura.utenteCf.annoPrimaOccupazione}</p>
+      )}
+      {candidatura.utenteCf?.annoIngressoUnicam && (
+        <p>Ingresso in Unicam nel {candidatura.utenteCf.annoIngressoUnicam}</p>
+      )}
       <p>
         {candidatura.utenteCf?.competenzeLinguistiches?.map(
           (competenzaLinguistica) =>

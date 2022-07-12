@@ -128,19 +128,21 @@ const SoftSkills = () => {
                 </Form>
               </TabPane>
             ))}
-            <Row className="justify-content-end m-1">
-              <Button
-                color="primary"
-                onClick={() =>
-                  toggleConfirm(
-                    "Attenzione, le risposte possono essere aggiornate solo una volta all'anno. Procedere comunque ?",
-                    () => onSubmit()
-                  )
-                }
-              >
-                INVIA
-              </Button>
-            </Row>
+            {activeTab + 1 === softSkills?.length && (
+              <Row className="justify-content-end m-1">
+                <Button
+                  color="primary"
+                  onClick={() =>
+                    toggleConfirm(
+                      "Attenzione, le risposte possono essere aggiornate solo una volta all'anno. Procedere comunque ?",
+                      () => onSubmit()
+                    )
+                  }
+                >
+                  INVIA
+                </Button>
+              </Row>
+            )}
           </TabContent>
         </Col>
       </Row>

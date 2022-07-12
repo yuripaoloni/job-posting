@@ -16,6 +16,7 @@ import { RichiestaCompetenzeLinguisticheEntity } from '@/entities/richiestaCompe
 import { Candidatura } from '@/interfaces/candidatura.interface';
 import sendEmail from '@/utils/mail';
 import { DG_EMAIL } from '@/config';
+import { HttpException } from '@/exceptions/HttpException';
 
 const handleOfferRelations = [
   'candidaturas',
@@ -194,6 +195,8 @@ class JobsService extends Repository<OffertaLavoroEntity> {
 
   public async getWorkerJobOffers(cf: string, skip: number): Promise<OffertaLavoro[]> {
     const user = await UtenteEntity.getRepository().findOne({ where: { cf }, select: ['categoria'] });
+    if (!user) throw new HttpException(400, 'Per visualizzare le offerte è necessario inserire la propria categoria nella sezione Profilo.');
+
     const userAnswers: RisposteUtente[] = await RisposteUtenteEntity.getRepository().find({ where: { utenteCf: cf }, loadRelationIds: true });
 
     let jobOffers: OffertaLavoro[] =

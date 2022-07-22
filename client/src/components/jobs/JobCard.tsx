@@ -94,7 +94,7 @@ const JobCard = ({
   );
 
   return (
-    <Col lg={4} md={6} sm={12}>
+    <Col xl={4} md={6} sm={12}>
       <Popover
         placement="bottom"
         target={targetRef}
@@ -115,27 +115,38 @@ const JobCard = ({
             >
               {job.descEsito}
             </Tooltip>
-            <Badge
-              id={`status-badge-${job.id}`}
-              color={
-                job.attiva === false
-                  ? "danger"
+            <div className="col col-xl-2 col-lg-3 col-md-4 col-3">
+              <Badge
+                id={`status-badge-${job.id}`}
+                color={
+                  job.attiva === false
+                    ? "danger"
+                    : job.approvata === true
+                    ? "success"
+                    : job.approvata === null
+                    ? "warning"
+                    : "danger"
+                }
+                pill
+                className="col"
+              >
+                {job.attiva === false
+                  ? "Non attiva"
                   : job.approvata === true
-                  ? "success"
+                  ? "Attiva"
                   : job.approvata === null
-                  ? "warning"
-                  : "danger"
-              }
-              pill
-            >
-              {job.attiva === false
-                ? "Non attiva"
-                : job.approvata === true
-                ? "Attiva"
-                : job.approvata === null
-                ? "In approvazione"
-                : "Non attiva"}
-            </Badge>
+                  ? "In approvazione"
+                  : "Non attiva"}
+              </Badge>
+              <Badge
+                id={`cat-badge-${job.id}`}
+                color="warning"
+                pill
+                className="col"
+              >
+                {`Cat. ${job.categoria!}`}
+              </Badge>
+            </div>
             {userType === 0 ? (
               <>
                 <Score

@@ -199,7 +199,7 @@ class JobsService extends Repository<OffertaLavoroEntity> {
 
     const userAnswers: RisposteUtente[] = await RisposteUtenteEntity.getRepository().find({ where: { utenteCf: cf }, loadRelationIds: true });
 
-    let jobOffers: OffertaLavoro[] =
+    const jobOffers: OffertaLavoro[] =
       userAnswers.length === 0
         ? await OffertaLavoroEntity.find({ where: { approvata: true, attiva: true }, skip: skip, take: 6 })
         : await OffertaLavoroEntity.createQueryBuilder('jobs')
@@ -213,10 +213,6 @@ class JobsService extends Repository<OffertaLavoroEntity> {
             .skip(skip)
             .take(6)
             .getMany();
-
-    if (user?.categoria) {
-      jobOffers = jobOffers.filter(item => item.categoria === user.categoria);
-    }
 
     return jobOffers;
   }
@@ -279,6 +275,9 @@ class JobsService extends Repository<OffertaLavoroEntity> {
   public async applyToJobOffer(cf: string, applyJobData: ApplyJobDto): Promise<void> {
     const user = await UtenteEntity.getRepository().findOne({ where: { cf } });
     const jobOffer = await OffertaLavoroEntity.findOne({ where: { id: applyJobData.jobOfferId } });
+
+    if (user.categoria !== jobOffer.categoria)
+      throw new HttpException(400, "Categoria utente non coincide con la categoria specificata nell'offerta");
 
     const newApplication = new CandidaturaEntity();
     newApplication.approvata = false;

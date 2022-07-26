@@ -98,7 +98,7 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     }
 
     await sendEmail(
-      DG_EMAIL,
+      [DG_EMAIL],
       `Nuova posizione - ${newJobOffer.ruolo}`,
       `Una nuova offerta di lavoro "${newJobOffer.ruolo}" per ${newJobOffer.struttura} è stata creata in data ${new Date(
         newJobOffer.dataCreazione,
@@ -313,9 +313,10 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     jobOffer.attiva = determineJobData.approved;
     jobOffer.descEsito = determineJobData.message;
     jobOffer.punteggiAggiornati = false;
+    jobOffer.dataApprovazione = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
 
     await sendEmail(
-      user.email,
+      [user.email],
       `Esito offerta lavorativa - ${jobOffer.ruolo}`,
       `L'offerta di lavoro "${jobOffer.ruolo}" per ${jobOffer.struttura} da lei creata in data ${new Date(jobOffer.dataCreazione).toLocaleDateString(
         'it-IT',
@@ -384,7 +385,7 @@ class JobsService extends Repository<OffertaLavoroEntity> {
       const invite = interviewData.invites.find(item => item.candidaturaId === candidatura.id);
 
       await sendEmail(
-        candidatura.utenteCf.email,
+        [candidatura.utenteCf.email],
         `Invito colloquio - ${candidatura.offerta.ruolo}`,
         `Il responsabile della struttura "${candidatura.offerta.struttura}" la invita ad un colloquio per il ruolo "${
           candidatura.offerta.ruolo

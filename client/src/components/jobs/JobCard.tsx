@@ -115,7 +115,7 @@ const JobCard = ({
             >
               {job.descEsito}
             </Tooltip>
-            <div className="col col-xl-2 col-lg-3 col-md-4 col-3">
+            <div className="col col-xl-5 col-lg-3 col-md-4 col-3">
               <Badge
                 id={`status-badge-${job.id}`}
                 color={
@@ -128,7 +128,7 @@ const JobCard = ({
                     : "danger"
                 }
                 pill
-                className="col"
+                className="mr-sm-1"
               >
                 {job.attiva === false
                   ? "Non attiva"
@@ -138,12 +138,7 @@ const JobCard = ({
                   ? "In approvazione"
                   : "Non attiva"}
               </Badge>
-              <Badge
-                id={`cat-badge-${job.id}`}
-                color="warning"
-                pill
-                className="col"
-              >
+              <Badge id={`cat-badge-${job.id}`} color="warning" pill>
                 {`Cat. ${job.categoria!}`}
               </Badge>
             </div>

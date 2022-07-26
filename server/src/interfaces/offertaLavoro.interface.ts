@@ -11,6 +11,7 @@ export interface OffertaLavoro {
   categoria: string | null;
   struttura: string | null;
   dataCreazione: Date | null;
+  dataApprovazione: Date | null;
   dataScadenza: Date | null;
   approvata: boolean | null;
   attiva: boolean | null;

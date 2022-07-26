@@ -33,6 +33,9 @@ export class OffertaLavoroEntity extends BaseEntity implements OffertaLavoro {
   })
   dataCreazione: Date | null;
 
+  @Column('date', { name: 'data_approvazione', nullable: true })
+  dataApprovazione: Date | null;
+
   @Column('date', { name: 'data_scadenza', nullable: true })
   dataScadenza: Date | null;
 

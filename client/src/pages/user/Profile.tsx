@@ -56,7 +56,7 @@ const Profile = (props: ProfileProps) => {
   };
 
   return (
-    <Container fluid className="p-md-5 p-3">
+    <Container fluid className="min-vh-100 p-md-5 p-3">
       <EditProfileModal
         isOpen={showEditProfileModal}
         toggleModal={toggleEditProfileModal}

@@ -71,7 +71,7 @@ const SoftSkills = () => {
   };
 
   return (
-    <Container fluid className="py-4">
+    <Container fluid className="min-vh-100 py-4">
       <h4 className="text-center">
         Individua la definizione che meglio si adatta al tuo profilo
       </h4>

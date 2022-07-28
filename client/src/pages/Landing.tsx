@@ -15,7 +15,7 @@ const Landing = () => {
   const navigate = useNavigate();
 
   return (
-    <Container fluid className="p-4">
+    <Container fluid className="min-vh-100 p-4">
       <Row className="justify-content-center">
         <h1 className="display-1">Job Posting</h1>
       </Row>

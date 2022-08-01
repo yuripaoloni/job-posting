@@ -141,6 +141,8 @@ const JobParticipantsModal = ({
     }
   };
 
+  console.log(!job?.attiva);
+
   return (
     <Modal
       isOpen={isOpen}
@@ -150,7 +152,7 @@ const JobParticipantsModal = ({
     >
       <ModalHeader>Lista candidature - {job?.ruolo}</ModalHeader>
       <ModalBody>
-        {!job?.attiva ? (
+        {job?.attiva ? (
           job?.candidaturas && job?.candidaturas?.length > 0 ? (
             job?.candidaturas.map((candidatura) => (
               <Row

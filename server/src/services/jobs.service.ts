@@ -352,7 +352,7 @@ class JobsService extends Repository<OffertaLavoroEntity> {
     });
 
     jobOffers.forEach(jobOffer => {
-      jobOffer.candidaturas = jobOffer.candidaturas.sort((a, b) => a.punteggio - b.punteggio);
+      jobOffer.candidaturas = jobOffer.candidaturas.sort((a, b) => b.punteggio - a.punteggio);
     });
 
     return jobOffers;

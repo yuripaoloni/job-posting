@@ -141,8 +141,6 @@ const JobParticipantsModal = ({
     }
   };
 
-  console.log(!job?.attiva);
-
   return (
     <Modal
       isOpen={isOpen}

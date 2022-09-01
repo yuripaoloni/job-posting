@@ -23,6 +23,7 @@ class SoftSkillRoute implements Routes {
       this.softSkillController.updateUserAnswers,
     );
     this.router.get(`${this.path}`, authMiddleware, this.softSkillController.getSoftSkills);
+    this.router.get(`${this.path}/application/:applicationId`, authMiddleware, this.softSkillController.getUserSoftSkillsAnswers);
   }
 }
 

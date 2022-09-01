@@ -6,9 +6,9 @@ import Landing from "./pages/Landing";
 import JobsHistory from "./pages/jobsHistory/JobsHistory";
 import Profile from "./pages/user/Profile";
 import SoftSkills from "./pages/user/SoftSkills";
-
 import RequireAuth from "./components/auth/RequireAuth";
 import ActiveJobs from "./pages/jobs/ActiveJobs";
+import AdminSoftSkills from "./pages/user/AdminSoftSkills";
 
 const Routes = () => {
   return (
@@ -51,6 +51,14 @@ const Routes = () => {
         element={
           <RequireAuth>
             <SoftSkills />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="competencies/application/:applicationId"
+        element={
+          <RequireAuth>
+            <AdminSoftSkills />
           </RequireAuth>
         }
       />

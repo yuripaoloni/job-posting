@@ -1,10 +1,15 @@
 import { Progress } from "design-react-kit";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 type ScoreProps = {
   score: number | null | undefined;
+  applicationId?: number;
 };
 
-const Score = ({ score }: ScoreProps) => {
+const Score = ({ score, applicationId }: ScoreProps) => {
+  const { userType } = useAuth();
+
   return (
     <div>
       <h6
@@ -16,7 +21,14 @@ const Score = ({ score }: ScoreProps) => {
             : "text-danger"
         }
       >
-        Affinità {score!}%
+        Affinità {score!}%{" "}
+        {(userType === 1 || userType === 2) && (
+          <small>
+            <Link to={`/competencies/application/${applicationId}`}>
+              (Vedi risposte)
+            </Link>
+          </small>
+        )}
       </h6>
       <span>
         <Progress

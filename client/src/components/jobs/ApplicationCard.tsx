@@ -42,7 +42,10 @@ const ApplicationCard = ({
                 ? "Approvata"
                 : "In attesa"}
             </Badge>
-            <Score score={application.punteggio} />
+            <Score
+              score={application.punteggio}
+              applicationId={application.id}
+            />
             <Icon
               icon="it-close-circle"
               color="danger"

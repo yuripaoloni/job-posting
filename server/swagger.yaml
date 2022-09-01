@@ -266,6 +266,45 @@ paths:
         500:
           description: 'Server Error'
 
+  /softSkills/application/{applicationId}:
+    get:
+      security:
+        - cookieAuth: []
+      tags:
+        - softSkill
+      summary: Get a candidate soft skills answers. Soft skills and possible answers are ordered according to the job specification.
+      parameters:
+        - name: applicationId
+          in: path
+          description: application id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Soft skills
+          schema:
+            type: object
+            required:
+              - softSkills
+              - userAnswers
+              - user
+              - offerta
+            properties:
+              softSkills:
+                $ref: '#/definitions/softSkills'
+              userAnswers:
+                $ref: '#/definitions/userAnswers'
+              offerta:
+                type: string
+              user:
+                type: string
+        401:
+          description: 'Wrong auth token'
+        404:
+          description: 'Missing auth token'
+        500:
+          description: 'Server Error'
+
   /jobs/offers/{skip}:
     get:
       security:

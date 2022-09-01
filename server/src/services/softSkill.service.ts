@@ -9,6 +9,8 @@ import { RisposteUtente } from '@/interfaces/risposteUtente.interface';
 import { OffertaLavoroEntity } from '@/entities/offertaLavoro.entity';
 import { HttpException } from '@/exceptions/HttpException';
 import { updateUserScores } from '@/utils/updateUserScores';
+import { CandidaturaEntity } from '@/entities/candidatura.entity';
+import { RichiestaSoftSkillEntity } from '@/entities/richiestaSoftSkill.entity';
 
 @EntityRepository()
 class SoftSkillService extends Repository<SoftSkillEntity> {
@@ -82,6 +84,50 @@ class SoftSkillService extends Repository<SoftSkillEntity> {
     });
 
     await updateUserScores(user, jobOffers);
+  }
+
+  public async getCandidateAnswersArray(
+    applicationId: number,
+  ): Promise<{ softSkills: SoftSkills[]; userAnswers: { skillId: number; answerId: number }[]; user: string; offerta: string }> {
+    const candidatura = await CandidaturaEntity.getRepository().findOne({ where: { id: applicationId }, relations: ['utenteCf', 'offerta'] });
+    let softSkills: SoftSkills[] = await SoftSkillEntity.find({ relations: ['risposteSoftSkills'] });
+    const richiestaSoftSkills = await RichiestaSoftSkillEntity.getRepository().find({
+      where: { offerta: candidatura.offerta },
+      relations: ['softSkill', 'rispostaRichiestaSoftSkills', 'rispostaRichiestaSoftSkills.rispostaId'],
+      order: { ordine: 'ASC' },
+    });
+
+    const skillsOrder: number[] = richiestaSoftSkills.map(item => item.softSkill.id);
+    const answersOrder = richiestaSoftSkills.map(item =>
+      item.rispostaRichiestaSoftSkills.sort((a, b) => a.ordine - b.ordine).map(risposta => risposta.rispostaId.idRisposta),
+    );
+
+    const updatedAnswers: RisposteUtente[] = await RisposteUtenteEntity.getRepository().find({
+      where: { utenteCf: candidatura.utenteCf.cf },
+      loadRelationIds: true,
+    });
+
+    const userAnswers = updatedAnswers
+      .map(answer => {
+        return {
+          skillId: answer.softSkill,
+          answerId: answer.risposta,
+        };
+      })
+      .sort((a, b) => skillsOrder.indexOf(a.skillId) - skillsOrder.indexOf(b.skillId));
+
+    softSkills = softSkills.sort((a, b) => skillsOrder.indexOf(a.id) - skillsOrder.indexOf(b.id));
+
+    softSkills = softSkills.map((softSkill, index) => {
+      return {
+        ...softSkill,
+        risposteSoftSkills: softSkill.risposteSoftSkills.sort(
+          (c, d) => answersOrder[index].indexOf(c.idRisposta) - answersOrder[index].indexOf(d.idRisposta),
+        ),
+      };
+    });
+
+    return { softSkills, userAnswers, user: `${candidatura.utenteCf.nome} ${candidatura.utenteCf.cognome}`, offerta: `${candidatura.offerta.ruolo}` };
   }
 }
 

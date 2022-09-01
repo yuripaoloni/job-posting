@@ -38,7 +38,7 @@ const Candidate = ({ candidatura, xs, sm, md, lg, xl }: CandidateProps) => {
             `${competenzaLinguistica.lingua}-${competenzaLinguistica.livello}`
         )}
       </p>
-      <Score score={candidatura.punteggio} />
+      <Score score={candidatura.punteggio} applicationId={candidatura.id} />
     </Col>
   );
 };

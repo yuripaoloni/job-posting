@@ -43,6 +43,18 @@ class SoftSkillController {
       next(error);
     }
   };
+
+  public getUserSoftSkillsAnswers = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const applicationId = Number(req.params.applicationId);
+
+      const { softSkills, userAnswers, offerta, user } = await this.softSkillsService.getCandidateAnswersArray(applicationId);
+
+      res.status(200).json({ softSkills, userAnswers, offerta, user });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default SoftSkillController;

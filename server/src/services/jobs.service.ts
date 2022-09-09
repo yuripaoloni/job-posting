@@ -361,7 +361,7 @@ class JobsService extends Repository<OffertaLavoroEntity> {
   public async getDirectorJobsHistory(skip: number): Promise<OffertaLavoro[]> {
     const jobOffers = await OffertaLavoroEntity.find({
       where: { attiva: false },
-      order: { attiva: 'DESC', dataCreazione: 'ASC' },
+      order: { attiva: 'DESC', dataCreazione: 'DESC' },
       relations: ['candidaturas', 'candidaturas.utenteCf'],
       skip,
       take: 6,

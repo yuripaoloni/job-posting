@@ -52,7 +52,7 @@ const useConfirm = () => {
   const context = useContext(ConfirmContext);
 
   if (context === undefined) {
-    throw new Error("useAlert must be used within ConfirmProvider");
+    throw new Error("useConfirm must be used within ConfirmProvider");
   }
 
   return context;
